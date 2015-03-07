@@ -176,7 +176,9 @@ namespace Microsoft.WindowsAzure.Commands.ServiceManagement.Test.FunctionalTests
 
             List<AzureEnvironment> environments =  vmPowershellCmdlets.GetAzureEnvironment();
 
-            if (CredentialHelper.TestEnvironment.Equals(PreviewEnvName))
+            Console.WriteLine("Test Environment: {0}", CredentialHelper.TestEnvironment);
+
+            if (CredentialHelper.TestEnvironment.Contains(PreviewEnvName))
             {
                 if (vmPowershellCmdlets.GetAzureEnvironment(PreviewEnvName).Count == 0)
                 {
