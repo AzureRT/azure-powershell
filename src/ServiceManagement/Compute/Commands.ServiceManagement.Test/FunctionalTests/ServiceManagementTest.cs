@@ -181,11 +181,15 @@ namespace Microsoft.WindowsAzure.Commands.ServiceManagement.Test.FunctionalTests
             List<AzureEnvironment> environments =  vmPowershellCmdlets.GetAzureEnvironment();
             var serviceManagementUrl = GetServiceManagementUrl(CredentialHelper.PublishSettingsFile);
 
+            Console.WriteLine("The service management URL for the subscription is : {0}", serviceManagementUrl);
+
             foreach (var env in environments)
             {
                 var envServiceManagementUrl = (string) env.Endpoints[AzureEnvironment.Endpoint.ServiceManagement];
+
                 if (!string.IsNullOrEmpty(envServiceManagementUrl))
                 {
+                    Console.WriteLine("The service management URL for evironment {0} is : {1}", env, serviceManagementUrl);
                     if (envServiceManagementUrl.Equals(serviceManagementUrl))
                     {
                         currentEnvName = env.Name;
