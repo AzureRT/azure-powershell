@@ -12,6 +12,7 @@
 // limitations under the License.
 // ----------------------------------------------------------------------------------
 
+using System.Collections.Concurrent;
 using Microsoft.Azure.Common.Authentication;
 using Microsoft.Azure.Common.Authentication.Models;
 using Microsoft.IdentityModel.Clients.ActiveDirectory;
@@ -26,18 +27,41 @@ namespace Microsoft.WindowsAzure.Commands.Utilities.Common
 {
     public abstract class AzurePSCmdlet : PSCmdlet
     {
-        private readonly RecordingTracingInterceptor _httpTracingInterceptor = new RecordingTracingInterceptor();
+        private readonly ConcurrentQueue<string> _debugMessages = new ConcurrentQueue<string>();
+        private RecordingTracingInterceptor _httpTracingInterceptor;
+        private DebugStreamTraceListener _adalListener;
+        protected static AzureProfile _currentProfile = null;
 
         [Parameter(Mandatory = false, HelpMessage = "In-memory profile.")]
         public AzureProfile Profile { get; set; }
 
-        public static AzureProfile CurrentProfile { get; set; }
+        /// <summary>
+        /// Sets the current profile - the profile used when no Profile is explicitly passed in.  Should be used only by
+        /// Profile cmdlets and tests that need to set up a particular profile
+        /// </summary>
+        public static AzureProfile CurrentProfile 
+        {
+            private get
+            {
+                if (_currentProfile == null)
+                {
+                    _currentProfile = InitializeDefaultProfile();
+                    SetTokenCacheForProfile(_currentProfile);
+                }
+
+                return _currentProfile;
+            }
+
+            set
+            {
+                SetTokenCacheForProfile(value);
+                _currentProfile = value;
+            }
+        }
 
         protected static TokenCache DefaultDiskTokenCache { get; set; }
 
         protected static TokenCache DefaultMemoryTokenCache { get; set; }
-
-        protected static AzureProfile DefaultProfile { get; set; }
 
         static AzurePSCmdlet()
         {
@@ -50,24 +74,23 @@ namespace Microsoft.WindowsAzure.Commands.Utilities.Common
             if (!TestMockSupport.RunningMocked)
             {
                 InitializeTokenCaches();
-                DefaultProfile = InitializeDefaultProfile();
-                CurrentProfile = DefaultProfile;
-                UpdateSessionStateForProfile(CurrentProfile);
                 AzureSession.DataStore = new DiskDataStore();
+                SetTokenCacheForProfile(CurrentProfile);
             }
         }
 
         /// <summary>
         /// Create the default profile, based on the default profile path
         /// </summary>
-        /// <returns>The default prpofile, serialized from the default location on disk</returns>
+        /// <returns>The default profile, serialized from the default location on disk</returns>
         protected static AzureProfile InitializeDefaultProfile()
         {
             if (!string.IsNullOrEmpty(AzureSession.ProfileDirectory) && !string.IsNullOrEmpty(AzureSession.ProfileFile))
             {
                 try
                 {
-                    return new AzureProfile(Path.Combine(AzureSession.ProfileDirectory, AzureSession.ProfileFile));
+                   GeneralUtilities.EnsureDefaultProfileDirectoryExists();
+                   return new AzureProfile(Path.Combine(AzureSession.ProfileDirectory, AzureSession.ProfileFile));
                 }
                 catch
                 {
@@ -78,12 +101,27 @@ namespace Microsoft.WindowsAzure.Commands.Utilities.Common
             return new AzureProfile();
         }
 
+        /// <summary>
+        /// Get the context for the current profile before BeginProcessing is called
+        /// </summary>
+        /// <returns>The context for the current profile</returns>
+        protected AzureContext GetCurrentContext()
+        {
+            if (Profile != null)
+            {
+                return Profile.Context;
+            }
+
+            return CurrentProfile.Context;
+        }
+
         protected static void InitializeTokenCaches()
         {
             DefaultMemoryTokenCache = new TokenCache();
             if (!string.IsNullOrWhiteSpace(AzureSession.ProfileDirectory) &&
                 !string.IsNullOrWhiteSpace(AzureSession.TokenCacheFile))
             {
+                GeneralUtilities.EnsureDefaultProfileDirectoryExists();
                 DefaultDiskTokenCache = new ProtectedFileTokenCache(Path.Combine(AzureSession.ProfileDirectory, AzureSession.TokenCacheFile));
             }
             else
@@ -96,7 +134,7 @@ namespace Microsoft.WindowsAzure.Commands.Utilities.Common
         /// Update the token cache when setting the profile
         /// </summary>
         /// <param name="profile"></param>
-        protected static void UpdateSessionStateForProfile(AzureProfile profile)
+        protected static void SetTokenCacheForProfile(AzureProfile profile)
         {
             var defaultProfilePath = Path.Combine(AzureSession.ProfileDirectory, AzureSession.ProfileFile);
             if (string.Equals(profile.ProfilePath, defaultProfilePath, StringComparison.OrdinalIgnoreCase))
@@ -124,12 +162,15 @@ namespace Microsoft.WindowsAzure.Commands.Utilities.Common
                 WriteDebugWithTimestamp(string.Format(Resources.BeginProcessingWithParameterSetLog, this.GetType().Name, ParameterSetName));
             }
 
-            if (Profile.Context != null && Profile.Context.Account != null && Profile.Context.Account.Id != null)
+            if (Profile != null && Profile.Context != null && Profile.Context.Account != null && Profile.Context.Account.Id != null)
             {
                 WriteDebugWithTimestamp(string.Format("using account id '{0}'...", Profile.Context.Account.Id));
             }
 
+            _httpTracingInterceptor = _httpTracingInterceptor?? new RecordingTracingInterceptor(_debugMessages);
+            _adalListener = _adalListener?? new DebugStreamTraceListener(_debugMessages);
             RecordingTracingInterceptor.AddToContext(_httpTracingInterceptor);
+            DebugStreamTraceListener.AddAdalTracing(_adalListener);
 
             base.BeginProcessing();
         }
@@ -137,14 +178,14 @@ namespace Microsoft.WindowsAzure.Commands.Utilities.Common
         /// <summary>
         /// Ensure that there is a profile for the command
         /// </summary>
-        private void InitializeProfile()
+        protected  virtual void InitializeProfile()
         {
             if (Profile == null)
             {
                 Profile = AzurePSCmdlet.CurrentProfile;
             }
 
-            UpdateSessionStateForProfile(Profile);
+            SetTokenCacheForProfile(Profile);
         }
 
         /// <summary>
@@ -156,15 +197,11 @@ namespace Microsoft.WindowsAzure.Commands.Utilities.Common
             WriteDebugWithTimestamp(message);
 
             RecordingTracingInterceptor.RemoveFromContext(_httpTracingInterceptor);
-            FlushMessagesFromTracingInterceptor();
+            DebugStreamTraceListener.RemoveAdalTracing(_adalListener);
+            FlushDebugMessages();
 
             base.EndProcessing();
         }
-
-        /*public AzureContext Profile.Context
-        {
-            get { return Profile.Context; }
-        }*/
 
         public bool HasCurrentSubscription
         {
@@ -188,49 +225,49 @@ namespace Microsoft.WindowsAzure.Commands.Utilities.Common
 
         public new void WriteError(ErrorRecord errorRecord)
         {
-            FlushMessagesFromTracingInterceptor();
+            FlushDebugMessages();
             base.WriteError(errorRecord);
         }
 
         public new void WriteObject(object sendToPipeline)
         {
-            FlushMessagesFromTracingInterceptor();
+            FlushDebugMessages();
             base.WriteObject(sendToPipeline);
         }
 
         public new void WriteObject(object sendToPipeline, bool enumerateCollection)
         {
-            FlushMessagesFromTracingInterceptor();
+            FlushDebugMessages();
             base.WriteObject(sendToPipeline, enumerateCollection);
         }
 
         public new void WriteVerbose(string text)
         {
-            FlushMessagesFromTracingInterceptor();
+            FlushDebugMessages();
             base.WriteVerbose(text);
         }
 
         public new void WriteWarning(string text)
         {
-            FlushMessagesFromTracingInterceptor();
+            FlushDebugMessages();
             base.WriteWarning(text);
         }
 
         public new void WriteCommandDetail(string text)
         {
-            FlushMessagesFromTracingInterceptor();
+            FlushDebugMessages();
             base.WriteCommandDetail(text);
         }
 
         public new void WriteProgress(ProgressRecord progressRecord)
         {
-            FlushMessagesFromTracingInterceptor();
+            FlushDebugMessages();
             base.WriteProgress(progressRecord);
         }
 
         public new void WriteDebug(string text)
         {
-            FlushMessagesFromTracingInterceptor();
+            FlushDebugMessages();
             base.WriteDebug(text);
         }
 
@@ -307,10 +344,10 @@ namespace Microsoft.WindowsAzure.Commands.Utilities.Common
             }
         }
 
-        private void FlushMessagesFromTracingInterceptor()
+        private void FlushDebugMessages()
         {
             string message;
-            while (_httpTracingInterceptor.MessageQueue.TryDequeue(out message))
+            while (_debugMessages.TryDequeue(out message))
             {
                 base.WriteDebug(message);
             }
