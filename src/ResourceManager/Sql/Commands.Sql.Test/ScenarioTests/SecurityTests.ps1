@@ -12,6 +12,36 @@
 # limitations under the License.
 # ----------------------------------------------------------------------------------
 
+
+<#
+.SYNOPSIS
+Tests that when setting the storage account property's value in a database's auditing policy, that value is later fetched properly
+#>
+function Test-DatabaseUpdatePolicyWithStorageV2
+{
+	# Setup
+	$testSuffix = 102
+	Create-TestEnvironmentWithStorageV2 $testSuffix
+	$params = Get-SqlAuditingTestEnvironmentParameters $testSuffix
+
+	try 
+	{
+		# Test
+		Set-AzureSqlDatabaseAuditingPolicy -ResourceGroupName $params.rgname -ServerName $params.serverName -DatabaseName $params.databaseName -StorageAccountName $params.storageAccount
+		$policy = Get-AzureSqlDatabaseAuditingPolicy -ResourceGroupName $params.rgname -ServerName $params.serverName -DatabaseName $params.databaseName
+	
+		# Assert
+		Assert-AreEqual $policy.StorageAccountName $params.storageAccount
+		Assert-AreEqual $policy.AuditState "Enabled"  
+		Assert-AreEqual $policy.UseServerDefault "Disabled"
+	}
+	finally
+	{
+		# Cleanup
+		Remove-TestEnvironment $testSuffix
+	}
+}
+
 <#
 .SYNOPSIS
 Tests that when setting the storage account property's value in a database's auditing policy, that value is later fetched properly
@@ -38,6 +68,49 @@ function Test-DatabaseUpdatePolicyWithStorage
 	{
 		# Cleanup
 		Remove-TestEnvironment $testSuffix
+	}
+}
+
+<#
+.SYNOPSIS
+Tests the flow in which re-setting the policy with storage account that has the same name as before, but it is now on a different region
+#>
+function Test-DatabaseUpdatePolicyWithSameNameStorageOnDifferentRegion
+{
+	# Setup
+	$testSuffix = 173
+	Create-TestEnvironment $testSuffix
+	$params = Get-SqlAuditingTestEnvironmentParameters $testSuffix
+
+	try 
+	{
+		# Test
+		Set-AzureSqlDatabaseAuditingPolicy -ResourceGroupName $params.rgname -ServerName $params.serverName -DatabaseName $params.databaseName -StorageAccountName $params.storageAccount
+		$policy = Get-AzureSqlDatabaseAuditingPolicy -ResourceGroupName $params.rgname -ServerName $params.serverName -DatabaseName $params.databaseName
+	
+		# Assert
+		Assert-AreEqual $policy.StorageAccountName $params.storageAccount
+		Assert-AreEqual $policy.AuditState "Enabled"  
+		Assert-AreEqual $policy.UseServerDefault "Disabled"
+
+		Azure\Remove-AzureStorageAccount -StorageAccountName $params.storageAccount 
+		$newResourceGroupName =  "test-rg-for-sql-cmdlets-" + $testSuffix
+		New-AzureResourceGroup -Name $newResourceGroupName -Location "japanwest" 
+		New-AzureStorageAccount -StorageAccountName $params.storageAccount  -ResourceGroupName $newResourceGroupName -Location "japanwest" -Type Standard_GRS 
+
+		Set-AzureSqlDatabaseAuditingPolicy -ResourceGroupName $params.rgname -ServerName $params.serverName -DatabaseName $params.databaseName -StorageAccountName $params.storageAccount
+		$policy = Get-AzureSqlDatabaseAuditingPolicy -ResourceGroupName $params.rgname -ServerName $params.serverName -DatabaseName $params.databaseName
+	
+		# Assert
+		Assert-AreEqual $policy.StorageAccountName $params.storageAccount
+		Assert-AreEqual $policy.AuditState "Enabled"  
+		Assert-AreEqual $policy.UseServerDefault "Disabled"
+
+
+	}
+	finally
+	{
+		# Cleanup
 	}
 }
 
@@ -161,9 +234,9 @@ function Test-DatabaseUpdatePolicyWithEventTypes
 	
 		# Assert
 		Assert-AreEqual $policy.EventType.Length 3
-		Assert-True {$policy.EventType.Contains([Microsoft.Azure.Commands.Sql.Security.Model.AuditEventType]::PlainSQL_Success)}
-		Assert-True {$policy.EventType.Contains([Microsoft.Azure.Commands.Sql.Security.Model.AuditEventType]::ParameterizedSQL_Success)}
-		Assert-True {$policy.EventType.Contains([Microsoft.Azure.Commands.Sql.Security.Model.AuditEventType]::ParameterizedSQL_Failure)}
+		Assert-True {$policy.EventType.Contains([Microsoft.Azure.Commands.Sql.Auditing.Model.AuditEventType]::PlainSQL_Success)}
+		Assert-True {$policy.EventType.Contains([Microsoft.Azure.Commands.Sql.Auditing.Model.AuditEventType]::ParameterizedSQL_Success)}
+		Assert-True {$policy.EventType.Contains([Microsoft.Azure.Commands.Sql.Auditing.Model.AuditEventType]::ParameterizedSQL_Failure)}
 
 		# Test
 		Set-AzureSqlDatabaseAuditingPolicy -ResourceGroupName $params.rgname -ServerName $params.serverName -DatabaseName $params.databaseName -StorageAccountName $params.storageAccount -EventType "None"
@@ -205,9 +278,9 @@ function Test-ServerUpdatePolicyWithEventTypes
 	
 		# Assert
 		Assert-AreEqual $policy.EventType.Length 3
-		Assert-True {$policy.EventType.Contains([Microsoft.Azure.Commands.Sql.Security.Model.AuditEventType]::PlainSQL_Success)}
-		Assert-True {$policy.EventType.Contains([Microsoft.Azure.Commands.Sql.Security.Model.AuditEventType]::ParameterizedSQL_Success)}
-		Assert-True {$policy.EventType.Contains([Microsoft.Azure.Commands.Sql.Security.Model.AuditEventType]::ParameterizedSQL_Failure)}
+		Assert-True {$policy.EventType.Contains([Microsoft.Azure.Commands.Sql.Auditing.Model.AuditEventType]::PlainSQL_Success)}
+		Assert-True {$policy.EventType.Contains([Microsoft.Azure.Commands.Sql.Auditing.Model.AuditEventType]::ParameterizedSQL_Success)}
+		Assert-True {$policy.EventType.Contains([Microsoft.Azure.Commands.Sql.Auditing.Model.AuditEventType]::ParameterizedSQL_Failure)}
 
 
 		# Test
@@ -421,7 +494,7 @@ function Test-DatabaseDisableEnableKeepProperties
 		Assert-AreEqual $policy.AuditState "Enabled"
 		Assert-AreEqual $policy.UseServerDefault "Disabled"
 		Assert-AreEqual $policy.EventType.Length 1
-		Assert-True {$policy.EventType.Contains([Microsoft.Azure.Commands.Sql.Security.Model.AuditEventType]::Login_Failure)}
+		Assert-True {$policy.EventType.Contains([Microsoft.Azure.Commands.Sql.Auditing.Model.AuditEventType]::Login_Failure)}
 	}
 	finally
 	{
@@ -453,7 +526,7 @@ function Test-ServerDisableEnableKeepProperties
 		Assert-AreEqual $policy.StorageAccountName $params.storageAccount
 		Assert-AreEqual $policy.AuditState "Enabled"
 		Assert-AreEqual $policy.EventType.Length 1
-		Assert-True {$policy.EventType.Contains([Microsoft.Azure.Commands.Sql.Security.Model.AuditEventType]::TransactionManagement_Success)}
+		Assert-True {$policy.EventType.Contains([Microsoft.Azure.Commands.Sql.Auditing.Model.AuditEventType]::TransactionManagement_Success)}
 	}
 	finally
 	{
@@ -603,48 +676,6 @@ function Test-FailWithBadServerIndentity
 		Assert-Throws { Get-AzureSqlServerAuditingPolicy -ResourceGroupName $params.rgname -ServerName "NONEXISTING-SERVER" }
 		Assert-Throws { Set-AzureSqlServerAuditingPolicy -ResourceGroupName "NONEXISTING-RG"  -ServerName $params.serverName -StorageAccountName $params.storageAccount}
 		Assert-Throws { Set-AzureSqlServerAuditingPolicy -ResourceGroupName $params.rgname -ServerName "NONEXISTING-SERVER" -StorageAccountName $params.storageAccount}
-	}
-	finally
-	{
-		# Cleanup
-		Remove-TestEnvironment $testSuffix
-	}
-}
-
-<#
-.SYNOPSIS
-Tests that the direct access property is getting updated correctly for a sql database
-#>
-function Test-DatabaseDirectAccess
-{
-	# Setup
-	$testSuffix = 551
-	Create-TestEnvironment $testSuffix
-	$params = Get-SqlAuditingTestEnvironmentParameters $testSuffix
-
-	try
-	{
-		# Test
-		Enable-AzureSqlDatabaseDirectAccess -ResourceGroupName $params.rgname -ServerName $params.serverName -DatabaseName $params.databaseName
-		$policy = Get-AzureSqlDatabaseSecureConnectionPolicy -ResourceGroupName $params.rgname -ServerName $params.serverName -DatabaseName $params.databaseName
-	
-		# Assert
-		Assert-AreEqual $policy.SecureConnectionState "Optional"
-
-		# Test
-		Disable-AzureSqlDatabaseDirectAccess -ResourceGroupName $params.rgname -ServerName $params.serverName -DatabaseName $params.databaseName
-		$policy = Get-AzureSqlDatabaseSecureConnectionPolicy -ResourceGroupName $params.rgname -ServerName $params.serverName -DatabaseName $params.databaseName
-	
-		# Assert
-		Assert-AreEqual $policy.SecureConnectionState "Required"
-
-		# Test
-		Enable-AzureSqlDatabaseDirectAccess -ResourceGroupName $params.rgname -ServerName $params.serverName -DatabaseName $params.databaseName
-		$policy = Get-AzureSqlDatabaseSecureConnectionPolicy -ResourceGroupName $params.rgname -ServerName $params.serverName -DatabaseName $params.databaseName
-	
-		# Assert
-		Assert-AreEqual $policy.SecureConnectionState "Optional"
-
 	}
 	finally
 	{
