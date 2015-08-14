@@ -181,6 +181,12 @@ namespace Microsoft.WindowsAzure.Commands.ServiceManagement.Test.FunctionalTests
             CredentialHelper.GetTestSettings(Resource.TestSettings);
 
             vmPowershellCmdlets.RemoveAzureSubscriptions();
+            var ussouthEnv = vmPowershellCmdlets.GetAzureEnvironment("ussouth");
+            if (ussouthEnv != null && ussouthEnv.Count > 0)
+            {
+                Console.WriteLine("Removing ussouth environment...");
+                vmPowershellCmdlets.RunPSScript("Remove-AzureEnvironment -Name ussouth -Force");
+            }
 
             List<PSAzureEnvironment> environments = vmPowershellCmdlets.GetAzureEnvironment();
 
@@ -221,58 +227,50 @@ namespace Microsoft.WindowsAzure.Commands.ServiceManagement.Test.FunctionalTests
 
                 foreach (var env in environments)
                 {
-                    var envServiceManagementUrl = (string) env.Endpoints[AzureEnvironment.Endpoint.ServiceManagement];
-
-                    if (!string.IsNullOrEmpty(envServiceManagementUrl))
+                    if ((!string.IsNullOrEmpty(env.ServiceManagementUrl)))
                     {
                         Console.WriteLine("The service management URL for evironment {0} is : {1}", env, serviceManagementUrl);
-                        if (envServiceManagementUrl.Equals(serviceManagementUrl))
+                        if (env.ServiceManagementUrl.Equals(serviceManagementUrl))
                         {
                             currentEnvName = env.Name;
                             var curEnv = vmPowershellCmdlets.GetAzureEnvironment(currentEnvName)[0];
                             Console.WriteLine("Using the existing environment: {0}", currentEnvName);
-                            Console.WriteLine("PublichSettingsFileUrl: {0}", curEnv.GetEndpoint(AzureEnvironment.Endpoint.PublishSettingsFileUrl));
-                            Console.WriteLine("ServiceManagement: {0}", curEnv.GetEndpoint(AzureEnvironment.Endpoint.ServiceManagement));
-                            Console.WriteLine("ManagementPortalUrl: {0}", curEnv.GetEndpoint(AzureEnvironment.Endpoint.ManagementPortalUrl));
-                            Console.WriteLine("ActiveDirectory: {0}", curEnv.GetEndpoint(AzureEnvironment.Endpoint.ActiveDirectory));
-                            Console.WriteLine("ActiveDirectoryServiceEndpointResourceId: {0}", curEnv.GetEndpoint(AzureEnvironment.Endpoint.ActiveDirectoryServiceEndpointResourceId));
-                            Console.WriteLine("ResourceManager: {0}", curEnv.GetEndpoint(AzureEnvironment.Endpoint.ResourceManager));
-                            Console.WriteLine("Gallery: {0}", curEnv.GetEndpoint(AzureEnvironment.Endpoint.Gallery));
-                            Console.WriteLine("Graph: {0}", curEnv.GetEndpoint(AzureEnvironment.Endpoint.Graph));
+                            Console.WriteLine("PublichSettingsFileUrl: {0}", curEnv.PublishSettingsFileUrl);
+                            Console.WriteLine("ServiceManagement: {0}", curEnv.ServiceManagementUrl);
+                            Console.WriteLine("ManagementPortalUrl: {0}", curEnv.ManagementPortalUrl);
+                            Console.WriteLine("ActiveDirectory: {0}", curEnv.ActiveDirectoryAuthority);
+                            Console.WriteLine("ActiveDirectoryServiceEndpointResourceId: {0}", curEnv.ActiveDirectoryServiceEndpointResourceId);
+                            Console.WriteLine("ResourceManager: {0}", curEnv.ResourceManagerUrl);
+                            Console.WriteLine("Gallery: {0}", curEnv.GalleryUrl);
+                            Console.WriteLine("Graph: {0}", curEnv.GalleryUrl);
                             break;
                         }
                     }
                 }
 
                 if (string.IsNullOrEmpty(currentEnvName))
-                {
-                    if (vmPowershellCmdlets.GetAzureEnvironment("ussouth").Count > 0)
-                    {
-                        Console.WriteLine("Removing ussouth environment...");
-                        vmPowershellCmdlets.RunPSScript("Remove-AzureEnvironment -Name ussouth -Force");
-                    }
-
+                {   
                     Console.WriteLine("Creating new environment... : {0}", TempEnvName);
                     var prodEnv = vmPowershellCmdlets.GetAzureEnvironment("AzureCloud")[0];
                     vmPowershellCmdlets.RunPSScript(string.Format(
                         @"Add-AzureEnvironment -Name {0} `
-                        -PublishSettingsFileUrl {1} `
-                        -ServiceEndpoint {2} `
-                        -ManagementPortalUrl {3} `
-                        -ActiveDirectoryEndpoint {4} `
-                        -ActiveDirectoryServiceEndpointResourceId {5} `
-                        -ResourceManagerEndpoint {6} `
-                        -GalleryEndpoint {7} `
-                        -GraphEndpoint {8}",
+                    -PublishSettingsFileUrl {1} `
+                    -ServiceEndpoint {2} `
+                    -ManagementPortalUrl {3} `
+                    -ActiveDirectoryEndpoint {4} `
+                    -ActiveDirectoryServiceEndpointResourceId {5} `
+                    -ResourceManagerEndpoint {6} `
+                    -GalleryEndpoint {7} `
+                    -GraphEndpoint {8}",
                         TempEnvName,
-                        prodEnv.GetEndpoint(AzureEnvironment.Endpoint.PublishSettingsFileUrl),
+                        prodEnv.PublishSettingsFileUrl,
                         serviceManagementUrl,
-                        prodEnv.GetEndpoint(AzureEnvironment.Endpoint.ManagementPortalUrl),
-                        prodEnv.GetEndpoint(AzureEnvironment.Endpoint.ActiveDirectory),
-                        prodEnv.GetEndpoint(AzureEnvironment.Endpoint.ActiveDirectoryServiceEndpointResourceId),
-                        prodEnv.GetEndpoint(AzureEnvironment.Endpoint.ResourceManager),
-                        prodEnv.GetEndpoint(AzureEnvironment.Endpoint.Gallery),
-                        prodEnv.GetEndpoint(AzureEnvironment.Endpoint.Graph)));
+                        prodEnv.ManagementPortalUrl,
+                        prodEnv.ActiveDirectoryAuthority,
+                        prodEnv.ActiveDirectoryServiceEndpointResourceId,
+                        prodEnv.ResourceManagerUrl,
+                        prodEnv.GalleryUrl,
+                        prodEnv.GalleryUrl));
 
                     vmPowershellCmdlets.ImportAzurePublishSettingsFile(CredentialHelper.PublishSettingsFile, TempEnvName);
                 }
