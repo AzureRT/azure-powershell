@@ -1598,14 +1598,16 @@ namespace Microsoft.WindowsAzure.Commands.ServiceManagement.Test.FunctionalTests
             {
                 if (Utilities.MatchKeywords(image.ImageName, keywords, exactMatch) >= 0
                     && ((diskSize == null) || (image.LogicalSizeInGB <= diskSize))
-                    && image.Location.Contains(CredentialHelper.Location))
+                    && image.Location.Contains(CredentialHelper.Location)
+                    && image.ImageFamily.Contains("Server"))
                     return image.ImageName;
             }
             foreach (SM.OSImageContext image in vmImages)
             {
                 if (Utilities.MatchKeywords(image.OS, keywords, exactMatch) >= 0
                     && ((diskSize == null) || (image.LogicalSizeInGB <= diskSize))
-                    && image.Location.Contains(CredentialHelper.Location))
+                    && image.Location.Contains(CredentialHelper.Location)
+                    && image.ImageFamily.Contains("Server"))
                     return image.ImageName;
             }
             return null;
