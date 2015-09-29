@@ -101,7 +101,7 @@ namespace Microsoft.WindowsAzure.Commands.ServiceManagement.Test.FunctionalTests
 
                 string newAzureVMName = Utilities.GetUniqueShortName(vmNamePrefix);
 
-                imageName = vmPowershellCmdlets.GetAzureVMImageName(new[] { "Windows" }, false, 50);
+                imageName = vmPowershellCmdlets.GetAzureVMImageName(new[] { "Windows" }, false, 130);
 
                 RecordTimeTaken(ref prevTime);
 
@@ -222,7 +222,7 @@ namespace Microsoft.WindowsAzure.Commands.ServiceManagement.Test.FunctionalTests
                 //
                 // Set-AzureOSDisk
                 //
-                vm = vmPowershellCmdlets.SetAzureOSDisk(null, vm, 100);
+                vm = vmPowershellCmdlets.SetAzureOSDisk(null, vm, 200);
 
                 //
                 // New-AzureDns
