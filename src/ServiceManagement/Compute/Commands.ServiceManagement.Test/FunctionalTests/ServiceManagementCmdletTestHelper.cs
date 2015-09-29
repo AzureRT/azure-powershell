@@ -1599,6 +1599,7 @@ namespace Microsoft.WindowsAzure.Commands.ServiceManagement.Test.FunctionalTests
                 if ((Utilities.MatchKeywords(image.ImageName, keywords, exactMatch) >= 0
                     || Utilities.MatchKeywords(image.OS, keywords, exactMatch) >= 0)
                     && ((diskSize == null) || (image.LogicalSizeInGB <= diskSize))
+                    && (image.IsPremium == null || ! image.IsPremium.Value)
                     && Utilities.MatchKeywords(image.Location, new [] {CredentialHelper.Location}, exactMatch) >= 0
                     && Utilities.MatchKeywords(image.ImageFamily, new [] {"Server"}, exactMatch) >= 0)
                     return image.ImageName;
