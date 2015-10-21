@@ -431,7 +431,7 @@
     <Message Importance="high" Text="Running ..." />
     <Delete Files="Project.covarage" />
     <Exec
-      Command=".\packages\xunit.runner.console.2.0.0\tools\xunit.console.x86.exe $(ComputeTestDebug) -class &quot;Microsoft.Azure.Commands.Compute.Test.ScenarioTests.VMDynamicTests&quot;"
+      Command=".\packages\xunit.runner.console.2.0.0\tools\xunit.console.x86.exe $(ComputeTestDebug) -class &quot;Microsoft.Azure.Commands.Compute.Test.ScenarioTests.VMDynamicTests&quot; -class &quot;Microsoft.Azure.Commands.Compute.Test.ScenarioTests.AvailabilitySetTests&quot; -class &quot;Microsoft.Azure.Commands.Compute.Test.ScenarioTests.ComputeCloudExceptionTests&quot; -method &quot;Microsoft.Azure.Commands.Compute.Test.ScenarioTests.VirtualMachineTests.TestLinuxVirtualMachine&quot; -method &quot;Microsoft.Azure.Commands.Compute.Test.ScenarioTests.VirtualMachineProfileTests.TestVirtualMachineProfile&quot;"
       ContinueOnError="false" />
   </Target>
   
