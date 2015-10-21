@@ -427,6 +427,14 @@
       ContinueOnError="false" />
   </Target>
 
+  <Target Name="BasicVMTest" DependsOnTargets="RestoreNugetPackages;Clean;Build">
+    <Message Importance="high" Text="Running ..." />
+    <Delete Files="Project.covarage" />
+    <Exec
+      Command=".\packages\xunit.runner.console.2.0.0\tools\xunit.console.x86.exe $(ComputeTestDebug) -class &quot;Microsoft.Azure.Commands.Compute.Test.ScenarioTests.VMDynamicTests&quot;"
+      ContinueOnError="false" />
+  </Target>
+  
   <ItemGroup>
     <LiveTestDlls Include="$(ResourceManagerTestDebug)" />    
   </ItemGroup>
