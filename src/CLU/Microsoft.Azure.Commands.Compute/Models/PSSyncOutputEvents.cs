@@ -36,9 +36,9 @@ namespace Microsoft.Azure.Commands.Compute.Models
         {
             this.cmdlet = cmdlet;
             // TODO: CLU
-            this.runspace = RunspaceFactory.CreateRunspace(null);
+            this.runspace = RunspaceFactory.CreateRunspace(InitialSessionState.CreateDefault());
             //this.runspace = RunspaceFactory.CreateRunspace(this.cmdlet.Host);
-            this.runspace.Open();
+            //this.runspace.Open();
         }
 
         private static string FormatDuration(TimeSpan ts)
@@ -47,7 +47,7 @@ namespace Microsoft.Azure.Commands.Compute.Models
             {
                 return String.Format("{0:00}:{1:00}:{2:00}", ts.Hours, ts.Minutes, ts.Seconds);
             }
-            return String.Format(Rsrc.ResourceManager.GetString("PSSyncOutputEventsFormatDuration"), ts.Days, ts.Hours, ts.Minutes, ts.Seconds);
+            return String.Format(Rsrc.PSSyncOutputEventsFormatDuration, ts.Days, ts.Hours, ts.Minutes, ts.Seconds);
         }
 
         public void ProgressCopyStatus(ProgressRecord record)
@@ -57,13 +57,13 @@ namespace Microsoft.Azure.Commands.Compute.Models
 
         public void ProgressCopyStatus(double precentComplete, double avgThroughputMbps, TimeSpan remainingTime)
         {
-            LogProgress(0, Rsrc.ResourceManager.GetString("PSSyncOutputEventsCopying"), precentComplete, remainingTime, avgThroughputMbps);
+            LogProgress(0, Rsrc.PSSyncOutputEventsCopying, precentComplete, remainingTime, avgThroughputMbps);
         }
 
         public void ProgressCopyComplete(TimeSpan elapsed)
         {
-            LogProgressComplete(0, Rsrc.ResourceManager.GetString("PSSyncOutputEventsCopying"));
-            LogMessage(Rsrc.ResourceManager.GetString("PSSyncOutputEventsElapsedTimeForCopy"), FormatDuration(elapsed));
+            LogProgressComplete(0, Rsrc.PSSyncOutputEventsCopying);
+            LogMessage(Rsrc.PSSyncOutputEventsElapsedTimeForCopy, FormatDuration(elapsed));
         }
 
         public void ProgressUploadStatus(ProgressRecord record)
@@ -73,52 +73,55 @@ namespace Microsoft.Azure.Commands.Compute.Models
 
         public void ProgressUploadStatus(double precentComplete, double avgThroughputMbps, TimeSpan remainingTime)
         {
-            LogProgress(0, Rsrc.ResourceManager.GetString("PSSyncOutputEventsUploading"), precentComplete, remainingTime, avgThroughputMbps);
+            LogProgress(0, Rsrc.PSSyncOutputEventsUploading, precentComplete, remainingTime, avgThroughputMbps);
         }
 
         private void LogProgress(int activityId, string activity, double precentComplete, TimeSpan remainingTime, double avgThroughputMbps)
         {
-            var message = String.Format(Rsrc.ResourceManager.GetString("PSSyncOutputEventsLogProgress"),
-                                        precentComplete,
-                                        FormatDuration(remainingTime),
-                                        avgThroughputMbps);
-            var progressCommand = String.Format(@"Write-Progress -Id {0} -Activity '{1}' -Status '{2}' -SecondsRemaining {3} -PercentComplete {4}", activityId, activity, message, (int)remainingTime.TotalSeconds, (int)precentComplete);
             using (var ps = System.Management.Automation.PowerShell.Create())
             {
                 ps.Runspace = runspace;
+                var message = String.Format(Rsrc.PSSyncOutputEventsLogProgress,
+                                            precentComplete,
+                                            FormatDuration(remainingTime),
+                                            avgThroughputMbps);
+                var progressCommand = String.Format(@"Write-Progress -Id {0} -Activity '{1}' -Status '{2}' -SecondsRemaining {3} -PercentComplete {4}", activityId, activity, message, (int)remainingTime.TotalSeconds, (int)precentComplete);
                 // TODO: CLU
+                Console.WriteLine(progressCommand);
                 //ps.AddScript(progressCommand);
-                ps.Invoke();
+                //ps.Invoke();
             }
         }
 
         private void LogProgressComplete(int activityId, string activity)
         {
-            var progressCommand = String.Format(@"Write-Progress -Id {0} -Activity '{1}' -Status '{2}' -Completed", activityId, activity, Rsrc.ResourceManager.GetString("PSSyncOutputEventsLogProgressCompleteCompleted"));
             using (var ps = System.Management.Automation.PowerShell.Create())
             {
-                ps.Runspace = runspace;
+                var progressCommand = String.Format(@"Write-Progress -Id {0} -Activity '{1}' -Status '{2}' -Completed", activityId, activity, Rsrc.PSSyncOutputEventsLogProgressCompleteCompleted);
                 // TODO: CLU
+                Console.WriteLine(progressCommand);
+                ps.Runspace = runspace;
                 //ps.AddScript(progressCommand);
-                ps.Invoke();
+                //ps.Invoke();
             }
         }
 
         public void MessageCreatingNewPageBlob(long pageBlobSize)
         {
-            LogMessage(Rsrc.ResourceManager.GetString("PSSyncOutputEventsCreatingNewPageBlob, pageBlobSize"));
+            LogMessage(Rsrc.PSSyncOutputEventsCreatingNewPageBlob, pageBlobSize);
         }
 
         private void LogMessage(string format, params object[] parameters)
         {
-            var message = String.Format(format, parameters);
-            var verboseMessage = String.Format("Write-Host '{0}'", message);
             using (var ps = System.Management.Automation.PowerShell.Create())
             {
                 ps.Runspace = runspace;
+                var message = String.Format(format, parameters);
+                var verboseMessage = String.Format("Write-Host '{0}'", message);
                 // TODO: CLU
+                Console.WriteLine(verboseMessage);
                 //ps.AddScript(verboseMessage);
-                ps.Invoke();
+                //ps.Invoke();
             }
         }
 
@@ -127,21 +130,23 @@ namespace Microsoft.Azure.Commands.Compute.Models
             using (var ps = System.Management.Automation.PowerShell.Create())
             {
                 ps.Runspace = runspace;
-                ps.AddCommand("Write-Error");
-                ps.AddParameter("ErrorRecord", new ErrorRecord(e, String.Empty, ErrorCategory.NotSpecified, null));
-                ps.Invoke();
+                // TODO: CLU
+                Console.Error.WriteLine(new ErrorRecord(e, String.Empty, ErrorCategory.NotSpecified, null));
+                //ps.AddCommand("Write-Error");
+                //ps.AddParameter("ErrorRecord", new ErrorRecord(e, String.Empty, ErrorCategory.NotSpecified, null));
+                //ps.Invoke();
             }
         }
 
         public void MessageResumingUpload()
         {
-            LogMessage(Rsrc.ResourceManager.GetString("PSSyncOutputEventsResumingUpload"));
+            LogMessage(Rsrc.PSSyncOutputEventsResumingUpload);
         }
 
         public void ProgressUploadComplete(TimeSpan elapsed)
         {
-            LogProgressComplete(0, Rsrc.ResourceManager.GetString("PSSyncOutputEventsUploading"));
-            LogMessage(Rsrc.ResourceManager.GetString("PSSyncOutputEventsElapsedTimeForUpload"), FormatDuration(elapsed));
+            LogProgressComplete(0, Rsrc.PSSyncOutputEventsUploading);
+            LogMessage(Rsrc.PSSyncOutputEventsElapsedTimeForUpload, FormatDuration(elapsed));
         }
 
         public void ProgressDownloadStatus(ProgressRecord record)
@@ -151,13 +156,13 @@ namespace Microsoft.Azure.Commands.Compute.Models
 
         public void ProgressDownloadStatus(double precentComplete, double avgThroughputMbps, TimeSpan remainingTime)
         {
-            LogProgress(0, Rsrc.ResourceManager.GetString("PSSyncOutputEventsDownloading"), precentComplete, remainingTime, avgThroughputMbps);
+            LogProgress(0, Rsrc.PSSyncOutputEventsDownloading, precentComplete, remainingTime, avgThroughputMbps);
         }
 
         public void ProgressDownloadComplete(TimeSpan elapsed)
         {
-            LogProgressComplete(0, Rsrc.ResourceManager.GetString("PSSyncOutputEventsDownloading"));
-            LogMessage(Rsrc.ResourceManager.GetString("PSSyncOutputEventsElapsedTimeForDownload"), FormatDuration(elapsed));
+            LogProgressComplete(0, Rsrc.PSSyncOutputEventsDownloading);
+            LogMessage(Rsrc.PSSyncOutputEventsElapsedTimeForDownload, FormatDuration(elapsed));
         }
 
         public void ProgressOperationStatus(ProgressRecord record)
@@ -167,19 +172,19 @@ namespace Microsoft.Azure.Commands.Compute.Models
 
         public void ProgressOperationStatus(double percentComplete, double avgThroughputMbps, TimeSpan remainingTime)
         {
-            LogProgress(1, Rsrc.ResourceManager.GetString("PSSyncOutputEventsCalculatingMD5Hash"), percentComplete, remainingTime, avgThroughputMbps);
+            LogProgress(1, Rsrc.PSSyncOutputEventsCalculatingMD5Hash, percentComplete, remainingTime, avgThroughputMbps);
         }
 
         public void ProgressOperationComplete(TimeSpan elapsed)
         {
-            LogProgressComplete(1, Rsrc.ResourceManager.GetString("PSSyncOutputEventsCalculatingMD5Hash"));
-            LogMessage(Rsrc.ResourceManager.GetString("PSSyncOutputEventsElapsedTimeForOperation"), FormatDuration(elapsed));
+            LogProgressComplete(1, Rsrc.PSSyncOutputEventsCalculatingMD5Hash);
+            LogMessage(Rsrc.PSSyncOutputEventsElapsedTimeForOperation, FormatDuration(elapsed));
         }
 
 
         public void ErrorUploadFailedWithExceptions(IList<Exception> exceptions)
         {
-            LogMessage(Rsrc.ResourceManager.GetString("PSSyncOutputEventsUploadFailedWithException"));
+            LogMessage(Rsrc.PSSyncOutputEventsUploadFailedWithException);
             foreach (var exception in exceptions)
             {
                 LogError(exception);
@@ -188,17 +193,17 @@ namespace Microsoft.Azure.Commands.Compute.Models
 
         public void MessageCalculatingMD5Hash(string filePath)
         {
-            LogMessage(Rsrc.ResourceManager.GetString("PSSyncOutputEventsCalculatingMD5HashForFile"), filePath);
+            LogMessage(Rsrc.PSSyncOutputEventsCalculatingMD5HashForFile, filePath);
         }
 
         public void MessageMD5HashCalculationFinished()
         {
-            LogMessage(Rsrc.ResourceManager.GetString("PSSyncOutputEventsMD5HashCalculationFinished"));
+            LogMessage(Rsrc.PSSyncOutputEventsMD5HashCalculationFinished);
         }
 
         public void MessageRetryingAfterANetworkDisruption()
         {
-            LogMessage(Rsrc.ResourceManager.GetString("PSSyncOutputEventsRetryingAfterANetworkDisruption"));
+            LogMessage(Rsrc.PSSyncOutputEventsRetryingAfterANetworkDisruption);
         }
 
         public void DebugRetryingAfterException(Exception lastException)
@@ -215,34 +220,35 @@ namespace Microsoft.Azure.Commands.Compute.Models
 
         public void MessageDetectingActualDataBlocks()
         {
-            LogMessage(Rsrc.ResourceManager.GetString("PSSyncOutputEventsDetectingActualDataBlocks"));
+            LogMessage(Rsrc.PSSyncOutputEventsDetectingActualDataBlocks);
         }
 
         public void MessageDetectingActualDataBlocksCompleted()
         {
-            LogMessage(Rsrc.ResourceManager.GetString("PSSyncOutputEventsDetectingActualDataBlocksCompleted"));
+            LogMessage(Rsrc.PSSyncOutputEventsDetectingActualDataBlocksCompleted);
         }
 
         public void MessagePrintBlockRange(IndexRange range)
         {
-            LogMessage(Rsrc.ResourceManager.GetString("PSSyncOutputEventsPrintBlockRange"), range, range.Length);
+            LogMessage(Rsrc.PSSyncOutputEventsPrintBlockRange, range, range.Length);
         }
 
         public void DebugEmptyBlockDetected(IndexRange range)
         {
-            LogDebug(Rsrc.ResourceManager.GetString("PSSyncOutputEventsEmptyBlockDetected"), range.ToString());
+            LogDebug(Rsrc.PSSyncOutputEventsEmptyBlockDetected, range.ToString());
         }
 
         private void LogDebug(string format, params object[] parameters)
         {
-            var message = String.Format(format, parameters);
-            var debugMessage = String.Format("Write-Debug -Message '{0}'", message);
             using (var ps = System.Management.Automation.PowerShell.Create())
             {
                 ps.Runspace = runspace;
                 // TODO: CLU
+                var message = String.Format(format, parameters);
+                var debugMessage = String.Format("Write-Debug -Message '{0}'", message);
+                Console.WriteLine(debugMessage);
                 //ps.AddScript(debugMessage);
-                ps.Invoke();
+                //ps.Invoke();
             }
         }
 
@@ -253,33 +259,39 @@ namespace Microsoft.Azure.Commands.Compute.Models
                 if (processedRangeCount >= totalRangeCount)
                 {
 
-                    var progressCommand1 = String.Format(@"Write-Progress -Id {0} -Activity '{1}' -Status '{2}' -Completed", 2, Rsrc.ResourceManager.GetString("PSSyncOutputEventsProgressEmptyBlockDetection"), Rsrc.ResourceManager.GetString("PSSyncOutputEventsEmptyBlockDetectionCompleted"));
+                    var progressCommand1 = String.Format(@"Write-Progress -Id {0} -Activity '{1}' -Status '{2}' -Completed", 2, Rsrc.PSSyncOutputEventsProgressEmptyBlockDetection, Rsrc.PSSyncOutputEventsEmptyBlockDetectionCompleted);
                     ps.Runspace = runspace;
                     // TODO: CLU
+                    Console.WriteLine(progressCommand1);
                     //ps.AddScript(progressCommand1);
-                    ps.Invoke();
+                    //ps.Invoke();
                     return;
                 }
 
-                var progressCommand = String.Format(@"Write-Progress -Id {0} -Activity '{1}' -Status '{2}' -SecondsRemaining {3} -PercentComplete {4}", 2, Rsrc.ResourceManager.GetString("PSSyncOutputEventsProgressEmptyBlockDetection"), Rsrc.ResourceManager.GetString("PSSyncOutputEventsEmptyBlockDetectionDetecting"), -1, ((double)processedRangeCount / totalRangeCount) * 100);
+                var progressCommand = String.Format(@"Write-Progress -Id {0} -Activity '{1}' -Status '{2}' -SecondsRemaining {3} -PercentComplete {4}", 2, Rsrc.PSSyncOutputEventsProgressEmptyBlockDetection, Rsrc.PSSyncOutputEventsEmptyBlockDetectionDetecting, -1, ((double)processedRangeCount / totalRangeCount) * 100);
                 ps.Runspace = runspace;
                 // TODO: CLU
+                Console.WriteLine(progressCommand);
                 //ps.AddScript(progressCommand);
-                ps.Invoke();
+                //ps.Invoke();
             }
         }
 
         public void WriteVerboseWithTimestamp(string message, params object[] args)
         {
+            // TODO: CLU
             var messageWithTimeStamp = string.Format(CultureInfo.CurrentCulture, "{0:T} - {1}", DateTime.Now, string.Format(message, args));
             var progressCommand = String.Format(@"Write-Verbose -Message {0}", messageWithTimeStamp);
+            Console.WriteLine(progressCommand);
+            /*
             using (var ps = System.Management.Automation.PowerShell.Create())
             {
                 ps.Runspace = runspace;
                 // TODO: CLU
                 //ps.AddScript(progressCommand);
-                ps.Invoke();
+                //ps.Invoke();
             }
+            */
         }
 
 
@@ -295,7 +307,8 @@ namespace Microsoft.Azure.Commands.Compute.Models
             {
                 if (disposing)
                 {
-                    runspace.Dispose();
+                    // TODO: CLU
+                    //runspace.Dispose();
                 }
                 this.disposed = true;
             }
