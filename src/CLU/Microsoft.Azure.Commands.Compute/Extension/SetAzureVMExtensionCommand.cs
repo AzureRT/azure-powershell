@@ -28,6 +28,7 @@ namespace Microsoft.Azure.Commands.Compute
         ProfileNouns.VirtualMachineExtension,
         DefaultParameterSetName = SettingsParamSet)]
     [OutputType(typeof(PSComputeLongRunningOperation))]
+    [CliCommandAlias("vm;extension;set")]
     public class SetAzureVMExtensionCommand : VirtualMachineExtensionBaseCmdlet
     {
         protected const string SettingStringParamSet = "SettingString";
@@ -151,7 +152,9 @@ namespace Microsoft.Azure.Commands.Compute
                     this.Name,
                     parameters);
 
-                var result = Mapper.Map<PSComputeLongRunningOperation>(op);
+                // TODO: CLU
+                var result = op;
+                //var result = Mapper.Map<PSComputeLongRunningOperation>(op);
                 WriteObject(result);
             });
         }

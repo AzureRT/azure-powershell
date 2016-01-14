@@ -23,6 +23,7 @@ namespace Microsoft.Azure.Commands.Compute
 {
     [Cmdlet(VerbsCommon.Remove, ProfileNouns.VirtualMachine, DefaultParameterSetName = ResourceGroupNameParameterSet)]
     [OutputType(typeof(PSComputeLongRunningOperation))]
+    [CliCommandAlias("vm;rm")]
     public class RemoveAzureVMCommand : VirtualMachineActionBaseCmdlet
     {
         [Alias("ResourceName", "VMName")]
@@ -45,7 +46,7 @@ namespace Microsoft.Azure.Commands.Compute
             base.ProcessRecord();
             ExecuteClientAction(() =>
             {
-                if (this.Force.IsPresent || this.ShouldContinue(Resources.ResourceManager.GetString("VirtualMachineRemovalConfirmation"), Resources.ResourceManager.GetString("VirtualMachineRemovalCaption")))
+                if (this.Force.IsPresent || this.ShouldContinue(Resources.VirtualMachineRemovalConfirmation, Resources.VirtualMachineRemovalCaption))
                 {
                     this.VirtualMachineClient.Delete(this.ResourceGroupName, this.Name);
                 }

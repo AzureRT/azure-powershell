@@ -34,6 +34,7 @@ namespace Microsoft.Azure.Commands.Compute
         DefaultParameterSetName = WindowsParamSet),
     OutputType(
         typeof(PSVirtualMachine))]
+    [CliCommandAlias("vm;os;set")]
     public class SetAzureVMOperatingSystemCommand : Microsoft.Azure.Commands.ResourceManager.Common.AzureRMCmdlet
     {
         protected const string WindowsParamSet = "Windows";
@@ -163,7 +164,7 @@ namespace Microsoft.Azure.Commands.Compute
             {
                 if (this.VM.OSProfile.WindowsConfiguration != null)
                 {
-                    throw new ArgumentException(Resources.ResourceManager.GetString("BothWindowsAndLinuxConfigurationsSpecified"));
+                    throw new ArgumentException(Resources.BothWindowsAndLinuxConfigurationsSpecified);
                 }
 
                 if (this.VM.OSProfile.LinuxConfiguration == null)
@@ -180,7 +181,7 @@ namespace Microsoft.Azure.Commands.Compute
             {
                 if (this.VM.OSProfile.LinuxConfiguration != null)
                 {
-                    throw new ArgumentException(Resources.ResourceManager.GetString("BothWindowsAndLinuxConfigurationsSpecified"));
+                    throw new ArgumentException(Resources.BothWindowsAndLinuxConfigurationsSpecified);
                 }
 
                 if (this.VM.OSProfile.WindowsConfiguration == null)

@@ -34,6 +34,8 @@ namespace Microsoft.Azure.Commands.Compute
         VerbsCommon.Set,
         ProfileNouns.VirtualMachineCustomScriptExtension,
         DefaultParameterSetName = SetCustomScriptExtensionByContainerBlobsParamSetName)]
+    [CliCommandAlias("vm;customscriptextension;set")]
+    [OutputType(typeof(void))]
     public class SetAzureVMCustomScriptExtensionCommand : VirtualMachineExtensionBaseCmdlet
     {
         protected const string SetCustomScriptExtensionByContainerBlobsParamSetName = "SetCustomScriptExtensionByContainerAndFileNames";
@@ -197,7 +199,7 @@ namespace Microsoft.Azure.Commands.Compute
 
                         if (string.IsNullOrEmpty(this.Run))
                         {
-                            WriteWarning(Microsoft.Azure.Commands.Compute.Properties.Resources.ResourceManager.GetString("CustomScriptExtensionTryToUseTheFirstSpecifiedFileAsRunScript"));
+                            WriteWarning(Microsoft.Azure.Commands.Compute.Properties.Resources.CustomScriptExtensionTryToUseTheFirstSpecifiedFileAsRunScript);
                             this.Run = this.FileName[0];
                         }
                     }

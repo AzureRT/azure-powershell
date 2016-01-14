@@ -19,6 +19,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Management.Automation;
 using Microsoft.Azure.Commands.WebApps.Utilities;
+using Microsoft.Azure.Commands.Websites.Models.WebApp;
 using Microsoft.Azure.Management.WebSites.Models;
 
 namespace Microsoft.Azure.Commands.WebApps.Cmdlets.DeploymentSlots
@@ -26,7 +27,8 @@ namespace Microsoft.Azure.Commands.WebApps.Cmdlets.DeploymentSlots
     /// <summary>
     /// this commandlet will let you create a new Azure Web app using ARM APIs
     /// </summary>
-    [Cmdlet(VerbsCommon.Set, "AzureRMWebAppSlot")]
+    [Cmdlet(VerbsCommon.Set, "AzureRMWebAppSlot"), OutputType(typeof(PSSite))]
+    [CliCommandAlias("appservice;slot;set")]
     public class SetAzureWebAppSlotCmdlet : WebAppSlotBaseCmdlet
     {
         [Parameter(Position = 3, Mandatory = false, HelpMessage = "The name of the app service plan eg: Default1.")]
@@ -64,7 +66,9 @@ namespace Microsoft.Azure.Commands.WebApps.Cmdlets.DeploymentSlots
 
         [Parameter(Position = 11, Mandatory = false, HelpMessage = "Web app connection strings")]
         [ValidateNotNullOrEmpty]
-        public Hashtable ConnectionStrings { get; set; }
+        // TODO: CLU
+        //public Hashtable ConnectionStrings { get; set; }
+        public Dictionary<string, ConnStringValueTypePair> ConnectionStrings { get; set; }
 
         [Parameter(Position = 12, Mandatory = false, HelpMessage = "Web app handler mappings")]
         [ValidateNotNullOrEmpty]
@@ -117,7 +121,7 @@ namespace Microsoft.Azure.Commands.WebApps.Cmdlets.DeploymentSlots
                     }
 
                     // Update web app configuration
-                    WebsitesClient.UpdateWebAppConfiguration(ResourceGroupName, location, Name, Slot, siteConfig, AppSettings.ConvertToStringDictionary(), ConnectionStrings.ConvertToConnectionStringDictionary());
+                    WebsitesClient.UpdateWebAppConfiguration(ResourceGroupName, location, Name, Slot, siteConfig, AppSettings.ConvertToStringDictionary(), ConnectionStrings);
 
                     if (parameters.Contains("AppServicePlan"))
                     {
@@ -141,7 +145,7 @@ namespace Microsoft.Azure.Commands.WebApps.Cmdlets.DeploymentSlots
                     break;
             }
 
-            WriteObject(WebsitesClient.GetWebApp(ResourceGroupName, Name, Slot));
+            WriteObject((PSSite)WebsitesClient.GetWebApp(ResourceGroupName, Name, Slot));
         }
     }
 }

@@ -21,6 +21,7 @@ using System.Management.Automation;
 using Microsoft.Azure.Commands.WebApps.Models;
 using Microsoft.Azure.Commands.WebApps.Utilities;
 using Microsoft.Azure.Commands.WebApps.Validations;
+using Microsoft.Azure.Commands.Websites.Models.WebApp;
 using Microsoft.Azure.Management.WebSites.Models;
 
 namespace Microsoft.Azure.Commands.WebApps.Cmdlets.WebApps
@@ -28,7 +29,8 @@ namespace Microsoft.Azure.Commands.WebApps.Cmdlets.WebApps
     /// <summary>
     /// this commandlet will let you create a new Azure Web app using ARM APIs
     /// </summary>
-    [Cmdlet(VerbsCommon.Set, "AzureRMWebApp")]
+    [Cmdlet(VerbsCommon.Set, "AzureRMWebApp"), OutputType(typeof(PSSite))]
+    [CliCommandAlias("appservice;set")]
     public class SetAzureWebAppCmdlet : WebAppBaseCmdlet
     {
         [Parameter(ParameterSetName = ParameterSet1Name, Position = 2, Mandatory = false, HelpMessage = "The name of the app service plan eg: Default1.")]
@@ -68,7 +70,9 @@ namespace Microsoft.Azure.Commands.WebApps.Cmdlets.WebApps
         [Parameter(ParameterSetName = ParameterSet1Name, Position = 10, Mandatory = false, HelpMessage = "Web app connection strings. Example: -ConnectionStrings @{ ConnectionString1 = @{ Type = \"MySql\"; Value = \"MySql Connection string\"}; ConnectionString2 = @{ Type = \"SQLAzure\"; Value = \"SqlAzure Connection string 2\"} }")]
         [ValidateNotNullOrEmpty]
         [ValidateConnectionStrings]
-        public Hashtable ConnectionStrings { get; set; }
+        // TODO: CLU
+        //public Hashtable ConnectionStrings { get; set; }
+        public Dictionary<string, ConnStringValueTypePair> ConnectionStrings { get; set; }
 
         [Parameter(ParameterSetName = ParameterSet1Name, Position = 11, Mandatory = false, HelpMessage = "Web app handler mappings")]
         [ValidateNotNullOrEmpty]
@@ -126,7 +130,7 @@ namespace Microsoft.Azure.Commands.WebApps.Cmdlets.WebApps
                     }
 
                     // Update web app configuration
-                    WebsitesClient.UpdateWebAppConfiguration(ResourceGroupName, location, Name, null, siteConfig, AppSettings.ConvertToStringDictionary(), ConnectionStrings.ConvertToConnectionStringDictionary());
+                    WebsitesClient.UpdateWebAppConfiguration(ResourceGroupName, location, Name, null, siteConfig, AppSettings.ConvertToStringDictionary(), ConnectionStrings);
 
                     if (parameters.Contains("AppServicePlan"))
                     {
@@ -155,7 +159,7 @@ namespace Microsoft.Azure.Commands.WebApps.Cmdlets.WebApps
                     break;
             }
 
-            WriteObject(WebsitesClient.GetWebApp(ResourceGroupName, Name, null));
+            WriteObject((PSSite)WebsitesClient.GetWebApp(ResourceGroupName, Name, null));
         }
     }
 }

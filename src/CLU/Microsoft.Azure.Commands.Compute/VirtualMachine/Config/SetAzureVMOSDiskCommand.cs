@@ -28,6 +28,7 @@ namespace Microsoft.Azure.Commands.Compute
         DefaultParameterSetName = DefaultParamSet),
     OutputType(
         typeof(PSVirtualMachine))]
+    [CliCommandAlias("vm;os;disk;set")]
     public class SetAzureVMOSDiskCommand : Microsoft.Azure.Commands.ResourceManager.Common.AzureRMCmdlet
     {
         protected const string DefaultParamSet = "DefaultParamSet";
@@ -179,7 +180,7 @@ namespace Microsoft.Azure.Commands.Compute
                 || (!string.IsNullOrEmpty(this.KeyEncryptionKeyVaultId) && string.IsNullOrEmpty(this.KeyEncryptionKeyUrl)))
             {
                 WriteError(new ErrorRecord(
-                        new Exception(Properties.Resources.ResourceManager.GetString("VMOSDiskDiskEncryptionBothKekVaultIdAndKekUrlRequired")),
+                        new Exception(Properties.Resources.VMOSDiskDiskEncryptionBothKekVaultIdAndKekUrlRequired),
                         string.Empty, ErrorCategory.InvalidArgument, null));
             }
 

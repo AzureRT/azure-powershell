@@ -30,6 +30,7 @@ namespace Microsoft.Azure.Commands.Compute
         ProfileNouns.DataDisk),
     OutputType(
         typeof(PSVirtualMachine))]
+    [CliCommandAlias("vm;datadisk;set")]
     public class SetAzureVMDataDiskCommand : Microsoft.Azure.Commands.ResourceManager.Common.AzureRMCmdlet
     {
         private const string NameParameterSet = "ChangeWithName";
@@ -123,7 +124,7 @@ namespace Microsoft.Azure.Commands.Compute
             ThrowTerminatingError
                 (new ErrorRecord(
                     new InvalidOperationException(string.Format(CultureInfo.InvariantCulture,
-                        Resources.ResourceManager.GetString("DataDiskNotAssignedForVM"), missingDisk)),
+                        Resources.DataDiskNotAssignedForVM, missingDisk)),
                     string.Empty,
                     ErrorCategory.InvalidData,
                     null));

@@ -1,2 +1,2 @@
-#!/bin/bash
-azure account add -u "$azureUser" -p "$password" -s "$subscription"
+#!/bin/env/bash
+az login -u "$azureUser" -p "$password" -s "$userSubscription"

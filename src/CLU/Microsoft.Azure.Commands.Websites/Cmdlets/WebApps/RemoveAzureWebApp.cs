@@ -14,12 +14,15 @@
 // ----------------------------------------------------------------------------------
 
 using System.Management.Automation;
+using System.Net;
+
 namespace Microsoft.Azure.Commands.WebApps.Cmdlets.WebApps
 {
     /// <summary>
     /// this commandlet will let you delete an Azure web app
     /// </summary>
-    [Cmdlet(VerbsCommon.Remove, "AzureRMWebApp")]
+    [Cmdlet(VerbsCommon.Remove, "AzureRMWebApp"), OutputType(typeof(HttpStatusCode))]
+    [CliCommandAlias("appservice;rm")]
     public class RemoveAzureWebAppCmdlet : WebAppBaseCmdlet
     {
 
@@ -41,8 +44,8 @@ namespace Microsoft.Azure.Commands.WebApps.Cmdlets.WebApps
             base.ProcessRecord();
             ConfirmAction(
                 Force.IsPresent,
-                string.Format(Properties.Resources.RemoveWebsiteWarning, Name),
-                Properties.Resources.RemoveWebsiteMessage,
+                string.Format(WebSites.Properties.Resources.RemoveWebsiteWarning, Name),
+                WebSites.Properties.Resources.RemoveWebsiteMessage,
                 Name,
                 () =>
                 {

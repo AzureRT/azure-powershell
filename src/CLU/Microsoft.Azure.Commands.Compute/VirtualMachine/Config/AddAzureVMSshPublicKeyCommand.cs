@@ -30,6 +30,7 @@ namespace Microsoft.Azure.Commands.Compute
         ProfileNouns.SshPublicKey),
     OutputType(
         typeof(PSVirtualMachine))]
+    [CliCommandAlias("vm;ssh;public;key;add")]
     public class NewAzureSshPublicKeyCommand : Microsoft.Azure.Commands.ResourceManager.Common.AzureRMCmdlet
     {
         [Alias("VMProfile")]
@@ -70,7 +71,7 @@ namespace Microsoft.Azure.Commands.Compute
             }
             else if (this.VM.OSProfile.WindowsConfiguration != null && this.VM.OSProfile.LinuxConfiguration == null)
             {
-                throw new ArgumentException(Resources.ResourceManager.GetString("BothWindowsAndLinuxConfigurationsSpecified"));
+                throw new ArgumentException(Compute.Properties.Resources.BothWindowsAndLinuxConfigurationsSpecified);
             }
 
             if (this.VM.OSProfile.LinuxConfiguration.Ssh == null)

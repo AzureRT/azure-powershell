@@ -24,6 +24,7 @@ namespace Microsoft.Azure.Commands.Compute
 {
     [Cmdlet(VerbsData.Save, ProfileNouns.VirtualMachineImage, DefaultParameterSetName = ResourceGroupNameParameterSet)]
     [OutputType(typeof(PSComputeLongRunningOperation))]
+    [CliCommandAlias("vm;image;save")]
     public class SaveAzureVMImageCommand : VirtualMachineActionBaseCmdlet
     {
         [Alias("VMName")]
@@ -84,11 +85,13 @@ namespace Microsoft.Azure.Commands.Compute
                     this.Name,
                     parameters);
 
-                var result = Mapper.Map<PSComputeLongRunningOperation>(op);
+                // TODO: CLU
+                var result = op;
+                //var result = Mapper.Map<PSComputeLongRunningOperation>(op);
 
                 if (!string.IsNullOrWhiteSpace(this.Path))
                 {
-                    File.WriteAllText(this.Path, result.Output);
+                    File.WriteAllText(this.Path, result.Output == null ? null : result.Output.ToString());
                 }
 
                 WriteObject(result);

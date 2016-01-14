@@ -25,11 +25,13 @@ namespace Microsoft.Azure.Commands.ResourceManager.Cmdlets.Implementation
     using Microsoft.Azure.Commands.ResourceManager.Cmdlets.Entities.Resources;
     using Microsoft.Azure.Commands.ResourceManager.Cmdlets.Extensions;
     using Newtonsoft.Json.Linq;
+    using Models;
 
     /// <summary>
     /// Cmdlet to get existing resources.
     /// </summary>
-    [Cmdlet(VerbsCommon.Get, "AzureRmResource", DefaultParameterSetName = GetAzureResourceCmdlet.ParameterlessSet), OutputType(typeof(Resource<JToken>))]
+    [Cmdlet(VerbsCommon.Get, "AzureRmResource", DefaultParameterSetName = GetAzureResourceCmdlet.ParameterlessSet), OutputType(typeof(PSResourceObject))]
+    [CliCommandAlias("resourcemanager;resource;ls")]
     public sealed class GetAzureResourceCmdlet : ResourceManagerCmdletBase
     {
         /// <summary>
@@ -88,7 +90,7 @@ namespace Microsoft.Azure.Commands.ResourceManager.Cmdlets.Implementation
         /// <summary>
         /// Gets or sets the resource name parameter.
         /// </summary>
-        [Alias("Name")]
+        [Alias("Name", "n")]
         [Parameter(ParameterSetName = GetAzureResourceCmdlet.GetTenantResourceParameterSet, Mandatory = true, ValueFromPipelineByPropertyName = true, HelpMessage = "The resource name. e.g. to specify a database MyServer/MyDatabase.")]
         [Parameter(ParameterSetName = GetAzureResourceCmdlet.ListTenantResourcesParameterSet, Mandatory = false, ValueFromPipelineByPropertyName = true, HelpMessage = "The resource name. e.g. to specify a database MyServer/MyDatabase.")]
         [Parameter(ParameterSetName = GetAzureResourceCmdlet.GetResourceByNameGroupParameterSet, Mandatory = true, ValueFromPipelineByPropertyName = true, HelpMessage = "The resource name. e.g. to specify a database MyServer/MyDatabase.")]
@@ -228,14 +230,14 @@ namespace Microsoft.Azure.Commands.ResourceManager.Cmdlets.Implementation
                                 items = this.GetPopulatedResource(batch).Result;
                             }
 
-                            var powerShellObjects = items.SelectArray(genericResource => genericResource);
+                            var powerShellObjects = items.SelectArray(genericResource => genericResource.ToPSResourceObject());
 
                             this.WriteObject(sendToPipeline: powerShellObjects, enumerateCollection: true);
                         }
                     }
                     else
                     {
-                        this.WriteObject(sendToPipeline: resources.CoalesceEnumerable().SelectArray(res => res.ToResource()), enumerateCollection: true);
+                        this.WriteObject(sendToPipeline: resources.CoalesceEnumerable().SelectArray(res => res.ToResource().ToPSResourceObject()), enumerateCollection: true);
                     }
                 });
 

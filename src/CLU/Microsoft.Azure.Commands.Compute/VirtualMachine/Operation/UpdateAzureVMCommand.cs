@@ -24,6 +24,7 @@ namespace Microsoft.Azure.Commands.Compute
 {
     [Cmdlet(VerbsData.Update, ProfileNouns.VirtualMachine, DefaultParameterSetName = ResourceGroupNameParameterSet)]
     [OutputType(typeof(PSComputeLongRunningOperation))]
+    [CliCommandAlias("vm;update")]
     public class UpdateAzureVMCommand : VirtualMachineActionBaseCmdlet
     {
         [Alias("VMProfile")]
@@ -54,7 +55,9 @@ namespace Microsoft.Azure.Commands.Compute
                 };
 
                 var op = this.VirtualMachineClient.CreateOrUpdate(this.ResourceGroupName, this.VM.Name, parameters);
-                var result = Mapper.Map<PSComputeLongRunningOperation>(op);
+                // TODO: CLU
+                var result = op;
+                //var result = Mapper.Map<PSComputeLongRunningOperation>(op);
                 WriteObject(result);
             });
         }

@@ -28,6 +28,7 @@ namespace Microsoft.Azure.Commands.Compute.StorageServices
     /// Uploads a vhd as fixed disk format vhd to a blob in Microsoft Azure Storage
     /// </summary>
     [Cmdlet(VerbsCommon.Add, ProfileNouns.Vhd), OutputType(typeof(VhdUploadContext))]
+    [CliCommandAlias("vhd;add")]
     public class AddAzureVhdCommand : ComputeClientBaseCmdlet
     {
         private const int DefaultNumberOfUploaderThreads = 8;
@@ -124,7 +125,7 @@ namespace Microsoft.Azure.Commands.Compute.StorageServices
 
                 if (!String.IsNullOrEmpty(destinationUri.Uri.Query))
                 {
-                    var message = String.Format(Rsrc.ResourceManager.GetString("AddAzureVhdCommandSASUriNotSupportedInPatchMode"), destinationUri.Uri);
+                    var message = String.Format(Rsrc.AddAzureVhdCommandSASUriNotSupportedInPatchMode, destinationUri.Uri);
                     throw new ArgumentOutOfRangeException("Destination", message);
                 }
             }
