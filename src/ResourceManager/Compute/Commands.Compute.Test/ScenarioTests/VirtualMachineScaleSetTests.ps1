@@ -29,16 +29,12 @@ Add-AzureRmVmssPublicKey                        1.2.3   AzureRM.Compute
 Add-AzureRmVmssSecret                           1.2.3   AzureRM.Compute
 Get-AzureRmVmss                                 1.2.3   AzureRM.Compute
 Get-AzureRmVmssAllList                          1.2.3   AzureRM.Compute
-Get-AzureRmVmssAllNextList                      1.2.3   AzureRM.Compute
 Get-AzureRmVmssInstanceView                     1.2.3   AzureRM.Compute
 Get-AzureRmVmssList                             1.2.3   AzureRM.Compute
-Get-AzureRmVmssNextList                         1.2.3   AzureRM.Compute
 Get-AzureRmVmssSkusList                         1.2.3   AzureRM.Compute
-Get-AzureRmVmssSkusNextList                     1.2.3   AzureRM.Compute
 Get-AzureRmVmssVM                               1.2.3   AzureRM.Compute
 Get-AzureRmVmssVMInstanceView                   1.2.3   AzureRM.Compute
 Get-AzureRmVmssVMList                           1.2.3   AzureRM.Compute
-Get-AzureRmVmssVMNextList                       1.2.3   AzureRM.Compute
 New-AzureRmVmss                                 1.2.3   AzureRM.Compute
 New-AzureRmVmssConfig                           1.2.3   AzureRM.Compute
 New-AzureRmVmssIpConfigurationConfig            1.2.3   AzureRM.Compute
@@ -182,7 +178,7 @@ function Test-VirtualMachineScaleSet
         }
 
         # List Next (negative test)
-        Assert-ThrowsContains { Get-AzureRmVmssNextList -NextPageLink test.com  } "Invalid URI: The format of the URI could not be determined.";
+        # Assert-ThrowsContains { Get-AzureRmVmssNextList -NextPageLink test.com  } "Invalid URI: The format of the URI could not be determined.";
 
         # Stop/Start/Restart Operation
         for ($i = 0; $i -lt 2; $i++)
