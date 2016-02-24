@@ -338,7 +338,7 @@ $validate_all_method_names_code
             base.ProcessRecord();
             ExecuteClientAction(() =>
             {
-                if (ParameterSetName == `"$dynamic_param_set_name`" || ParameterSetName == `"${dynamic_param_set_name}ForFriendMethod`")
+                if (ParameterSetName.StartsWith(`"$dynamic_param_set_name`"))
                 {
                     argumentList = ConvertDynamicParameters(dynamicParameters);
                 }
@@ -1196,34 +1196,30 @@ else
             # Handle Friend Methods
             if (-not $friendMethodDict.ContainsKey($mtItem.Name))
             {
+                $searchName = $null;
+                $matchedMethodInfo = $null;
                 if ($mtItem.Name -eq 'Deallocate')
                 {
-                    $methods2 = Get-OperationMethods $operation_type;
-                    foreach ($friendMethodInfo in $methods2)
-                    {
-                        if ($friendMethodInfo.Name -eq 'PowerOff')
-                        {
-                            if (CheckIf-SameParameterList $methodInfo $friendMethodInfo)
-                            {
-                                $friendMethodDict.Add($mtItem.Name, $friendMethodInfo);
-                                break;
-                            }
-                        }
-                    }
+                    $searchName = 'PowerOff';
+                    $matchedMethodInfo = $methodInfo;
                 }
                 elseif ($mtItem.Name -eq 'Get')
                 {
+                    $searchName = 'GetInstanceView';
+                    $matchedMethodInfo = $methodInfo;
+                }
+                elseif ($mtItem.Name -eq 'List')
+                {
+                    $searchName = 'ListAll';
+                }
+             
+                if ($searchName -ne $null)
+                {
                     $methods2 = Get-OperationMethods $operation_type;
-                    foreach ($friendMethodInfo in $methods2)
+                    $foundMethod = Find-MatchedMethod $searchName $methods2 $matchedMethodInfo;
+                    if ($foundMethod -ne $null)
                     {
-                        if ($friendMethodInfo.Name -eq 'GetInstanceView')
-                        {
-                            if (CheckIf-SameParameterList $methodInfo $friendMethodInfo)
-                            {
-                                $friendMethodDict.Add($mtItem.Name, $friendMethodInfo);
-                                break;
-                            }
-                        }
+                        $friendMethodDict.Add($mtItem.Name, $foundMethod);
                     }
                 }
             }
@@ -1232,17 +1228,8 @@ else
             if ($mtItem.Name -like 'List*' -and (-not $pageMethodDict.ContainsKey($mtItem.Name)))
             {
                 $methods2 = Get-OperationMethods $operation_type;
-                foreach ($pageMethodInfo in $methods2)
-                {
-                    if ($pageMethodInfo.Name -eq ($mtItem.Name + 'Next'))
-                    {
-                        if (CheckIf-ListAndPageMethods $methodInfo $pageMethodInfo)
-                        {
-                            $pageMethodDict.Add($mtItem.Name, $pageMethodInfo);
-                            break;
-                        }
-                    }
-                }
+                $foundMethod = Find-MatchedMethod ($mtItem.Name + 'Next') $methods2;
+                $pageMethodDict.Add($mtItem.Name, $foundMethod);
             }
         }
         
@@ -1276,6 +1263,26 @@ else
             if ($pageMethodInfo -ne $null -and $pageMethodInfo.Name -ne $null)
             {
                 $pageMethodMessage = 'Page=' + ($pageMethodInfo.Name.Replace('Async', '')) + '';
+            }
+            
+            # Combine Get and List/ListAll Methods (if any)
+            $combineGetAndList = $false;
+            $combineGetAndListAll = $false;
+            if ($mtItem.Name -eq 'Get')
+            {
+                $methods3 = Get-OperationMethods $operation_type;
+                $foundMethod1 = Find-MatchedMethod 'List' $methods3;
+                $foundMethod2 = Find-MatchedMethod 'ListAll' $methods3;
+                
+                if ($foundMethod1 -ne $null)
+                {
+                    $combineGetAndList = $true;
+                }
+                
+                if ($foundMethod2 -ne $null)
+                {
+                    $combineGetAndListAll = $true;
+                }
             }
 
             # Output Info for Method Signature
@@ -1323,7 +1330,9 @@ else
                                                                      -FileOutputFolder $opOutFolder `
                                                                      -FunctionCmdletFlavor $opCmdletFlavor `
                                                                      -FriendMethodInfo $friendMethodInfo `
-                                                                     -PageMethodInfo $pageMethodInfo);
+                                                                     -PageMethodInfo $pageMethodInfo `
+                                                                     -CombineGetAndList $combineGetAndList `
+                                                                     -CombineGetAndListAll $combineGetAndListAll );
 
             if ($outputs.Count -ne $null)
             {

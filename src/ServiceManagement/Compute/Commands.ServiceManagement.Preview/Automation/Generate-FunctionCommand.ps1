@@ -34,7 +34,13 @@ param
     [System.Reflection.MethodInfo]$FriendMethodInfo = $null,
     
     [Parameter(Mandatory = $false)]
-    [System.Reflection.MethodInfo]$PageMethodInfo = $null
+    [System.Reflection.MethodInfo]$PageMethodInfo = $null,
+    
+    [Parameter(Mandatory = $false)]
+    [bool]$CombineGetAndList = $false,
+    
+    [Parameter(Mandatory = $false)]
+    [bool]$CombineGetAndListAll = $false
 )
 
 . "$PSScriptRoot\Import-StringFunction.ps1";
@@ -167,8 +173,8 @@ function Get-InvokeMethodCmdletCode
 
     # 2. Iterate through Param List
     $methodParamList = $MethodInfo.GetParameters();
-    $paramNameList = @();
-    $paramLocalNameList = @();
+    [System.Collections.ArrayList]$paramNameList = @();
+    [System.Collections.ArrayList]$paramLocalNameList = @();
     [System.Collections.ArrayList]$pruned_params = @();
     foreach ($methodParam in $methodParamList)
     {
@@ -195,7 +201,7 @@ function Get-InvokeMethodCmdletCode
         }
     }
 
-    $invoke_params_join_str = [string]::Join(', ', $paramLocalNameList);
+    $invoke_params_join_str = [string]::Join(', ', $paramLocalNameList.ToArray());
     
     # 2.1 Dynamic Parameter Assignment
     $dynamic_param_assignment_code_lines = @();
@@ -424,6 +430,63 @@ ${invoke_local_param_code_content}
             WriteObject(resultList, true);
         }
 "@;
+    }
+    elseif ($methodName -eq 'Get' -and $ModelClassNameSpace -like "*.Azure.Management.*Model*")
+    {
+        # Only for ARM Cmdlets
+        [System.Collections.ArrayList]$paramLocalNameList2 = @();
+        for ($i2 = 0; $i2 -lt $paramLocalNameList.Count - 1; $i2++)
+        {
+            $item2 = $paramLocalNameList[$i2];
+            $paramLocalNameList2 += $item2;
+        }
+        $invoke_cmdlt_source_template =  "        protected void Execute${invoke_param_set_name}Method(object[] ${invoke_input_params_name})" + $NEW_LINE;
+        $invoke_cmdlt_source_template += "        {" + $NEW_LINE;
+        $invoke_cmdlt_source_template += "${invoke_local_param_code_content}" + $NEW_LINE;
+        $invoke_cmdlt_source_template += "            if ("
+        for ($i2 = 0; $i2 -lt $paramLocalNameList.Count; $i2++)
+        {
+            if ($i2 -gt 0)
+            {
+                $invoke_cmdlt_source_template += " && ";
+            }
+            $invoke_cmdlt_source_template += "!string.IsNullOrEmpty(" + $paramLocalNameList[$i2] + ")"
+        }
+        $invoke_cmdlt_source_template += ")" + $NEW_LINE;
+        $invoke_cmdlt_source_template += "            {" + $NEW_LINE;
+        $invoke_cmdlt_source_template += "                var result = ${OperationName}Client.${methodName}(${invoke_params_join_str});" + $NEW_LINE;
+        $invoke_cmdlt_source_template += "                WriteObject(result);" + $NEW_LINE;
+        $invoke_cmdlt_source_template += "            }" + $NEW_LINE;
+
+        if ($CombineGetAndList)
+        {
+            $invoke_params_join_str_for_list = [string]::Join(', ', $paramLocalNameList2.ToArray());
+            $invoke_cmdlt_source_template += "            else if ("
+            for ($i2 = 0; $i2 -lt $paramLocalNameList2.Count; $i2++)
+            {
+                if ($i2 -gt 0)
+                {
+                    $invoke_cmdlt_source_template += " && ";
+                }
+                $invoke_cmdlt_source_template += "!string.IsNullOrEmpty(" + $paramLocalNameList2[$i2] + ")"
+            }
+            $invoke_cmdlt_source_template += ")" + $NEW_LINE;
+            $invoke_cmdlt_source_template += "            {" + $NEW_LINE;
+            $invoke_cmdlt_source_template += "                var result = ${OperationName}Client.List(${invoke_params_join_str_for_list});" + $NEW_LINE;
+            $invoke_cmdlt_source_template += "                WriteObject(result);" + $NEW_LINE;
+            $invoke_cmdlt_source_template += "            }" + $NEW_LINE;
+        }
+
+        if ($CombineGetAndListAll)
+        {
+            $invoke_cmdlt_source_template += "            else" + $NEW_LINE;
+            $invoke_cmdlt_source_template += "            {" + $NEW_LINE;
+            $invoke_cmdlt_source_template += "                var result = ${OperationName}Client.ListAll();" + $NEW_LINE;
+            $invoke_cmdlt_source_template += "                WriteObject(result);" + $NEW_LINE;
+            $invoke_cmdlt_source_template += "            }" + $NEW_LINE;
+        }
+
+        $invoke_cmdlt_source_template += "        }" + $NEW_LINE;
     }
     else
     {
