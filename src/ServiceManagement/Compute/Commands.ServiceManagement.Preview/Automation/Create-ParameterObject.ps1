@@ -12,18 +12,27 @@
 # limitations under the License.
 # ----------------------------------------------------------------------------------
 
-param(
-  [Parameter(Mandatory = $true)]
-  [System.Type]$typeInfo = $null
+[CmdletBinding(DefaultParameterSetName = "ByTypeInfo")]
+param
+(
+  [Parameter(Mandatory = $true, Position = 0, ParameterSetName = 'ByTypeInfo')]
+  [System.Type]$TypeInfo = $null,
+
+  [Parameter(Mandatory = $true, Position = 0, ParameterSetName = 'ByFullTypeNameAndDllPath')]
+  [string]$TypeFullName = $null,
+
+  [Parameter(Mandatory = $true, Position = 1, ParameterSetName = 'ByFullTypeNameAndDllPath')]
+  [string]$DllFullPath = $null
 )
 
 function Create-ParameterObjectImpl
 {
-    param(
-        [Parameter(Mandatory = $True)]
+    param
+    (
+        [Parameter(Mandatory = $true)]
         [System.Type]$typeInfo,
         
-        [Parameter(Mandatory = $True)]
+        [Parameter(Mandatory = $true)]
         [System.Collections.Hashtable]$typeList
     )
 
@@ -34,32 +43,32 @@ function Create-ParameterObjectImpl
 
     if ($typeInfo.FullName -like "Microsoft.*Azure.Management.*.*" -and (-not ($typeInfo.FullName -like "Microsoft.*Azure.Management.*.SubResource")))
     {
-        $typeList.Add($typeInfo.FullName, $typeInfo);
+        $st = $typeList.Add($typeInfo.FullName, $typeInfo);
     }
 
     if ($typeInfo.FullName -eq 'System.String' -or $typeInfo.FullName -eq 'string')
     {
-        return '';
+        $obj = '';
     }
-    if ($typeInfo.FullName -eq 'System.Uri')
+    elseif ($typeInfo.FullName -eq 'System.Uri')
     {
-        return '' -as 'System.Uri';
+        $obj = '' -as 'System.Uri';
     }
     elseif ($typeInfo.FullName -eq 'System.Boolean')
     {
-        return $false;
+        $obj = $false;
     }
     elseif ($typeInfo.FullName -eq 'System.Int32')
     {
-        return 0;
+        $obj = 0;
     }
     elseif ($typeInfo.FullName -eq 'System.UInt32')
     {
-        return 0;
+        $obj = 0;
     }
     elseif ($typeInfo.FullName -eq 'System.Byte[]')
     {
-        return New-Object -TypeName System.Byte[] -ArgumentList 0;
+        $obj = New-Object -TypeName System.Byte[] -ArgumentList 0;
     }
     elseif ($typeInfo.FullName -like 'System.Collections.Generic.IList*' -or $typeInfo.FullName -like 'System.Collections.Generic.List*')
     {
@@ -70,16 +79,16 @@ function Create-ParameterObjectImpl
         $listObj = New-Object -TypeName $typeName;
         $listObj.Add($itemObj);
 
-        return $listObj;
+        $obj = $listObj;
     }
     elseif ($typeInfo.FullName -like 'System.Collections.Generic.IDictionary*')
     {
         # Dictionary in client library always consists of string key & values.
-        return New-Object 'System.Collections.Generic.Dictionary[string,string]';
+        $obj = New-Object 'System.Collections.Generic.Dictionary[string,string]';
     }
     elseif ($typeInfo.FullName -like 'System.Nullable*')
     {
-        return $null;
+        $obj = $null;
     }
     else
     {
@@ -101,19 +110,28 @@ function Create-ParameterObjectImpl
                 $listTypeName = "System.Collections.Generic.List[" + $itemType.FullName + "]";
 
                 $propObjList = New-Object -TypeName $listTypeName;
-                $propObjList.Add($itemObj);
+                $st = $propObjList.Add($itemObj);
 
-                $prop.SetValue($obj, $propObjList -as $listTypeName);
+                $st = $prop.SetValue($obj, $propObjList -as $listTypeName);
             }
             else
             {
                 $propObj = Create-ParameterObjectImpl $prop.PropertyType $typeList;
-                $prop.SetValue($obj, $propObj);
+                $st = $prop.SetValue($obj, $propObj);
             }
         }
     }
 
+    $st = $typeList.Remove($typeInfo.FullName);
+
     return $obj;
 }
 
-Write-Output (Create-ParameterObjectImpl $typeInfo @{});
+if (($TypeFullName -ne $null) -and ($TypeFullName.Trim() -ne ''))
+{
+    . "$PSScriptRoot\Import-AssemblyFunction.ps1";
+    $dll = Load-AssemblyFile $DllFullPath;
+    $TypeInfo = $dll.GetType($TypeFullName);
+}
+
+Write-Output (Create-ParameterObjectImpl $TypeInfo @{});

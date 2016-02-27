@@ -73,9 +73,9 @@ $code_common_header =
 // code is regenerated.
 "@;
 
-$client_model_namespace = $client_library_namespace + '.Models';
-$is_hyak_mode = $client_library_namespace -like "Microsoft.WindowsAzure.*.*";
-$component_name = $client_library_namespace.Substring($client_library_namespace.LastIndexOf('.') + 1);
+$clientModelNameSpace = $clientNameSpace + '.Models';
+$is_hyak_mode = $clientNameSpace -like "Microsoft.WindowsAzure.*.*";
+$component_name = $clientNameSpace.Substring($clientNameSpace.LastIndexOf('.') + 1);
 
 $all_return_type_names = @();
 
@@ -85,25 +85,49 @@ Write-Verbose $BAR_LINE;
 Write-Verbose "Input Parameters:";
 Write-Verbose "DLL Folder            = $dllFolder";
 Write-Verbose "Out Folder            = $outFolder";
-Write-Verbose "Client NameSpace      = $client_library_namespace";
-Write-Verbose "Model NameSpace       = $client_model_namespace";
+Write-Verbose "Client NameSpace      = $clientNameSpace";
+Write-Verbose "Model NameSpace       = $clientModelNameSpace";
 Write-Verbose "Component Name        = $component_name";
 Write-Verbose "Base Cmdlet Full Name = $baseCmdletFullName";
-Write-Verbose "Base Client Name      = $base_class_client_field";
+Write-Verbose "Base Client Full Name = $baseClientFullName";
 Write-Verbose "Cmdlet Flavor         = $cmdletFlavor";
 Write-Verbose "Operation Name Filter = $operationNameFilter";
 Write-Verbose $BAR_LINE;
 Write-Verbose "${new_line_str}";
 
-$code_common_namespace = ($client_library_namespace.Replace('.Management.', '.Commands.')) + '.Automation';
-$code_model_namespace = ($client_library_namespace.Replace('.Management.', '.Commands.')) + '.Automation.Models';
+$code_common_namespace = ($clientNameSpace.Replace('.Management.', '.Commands.')) + '.Automation';
+$code_model_namespace = ($clientNameSpace.Replace('.Management.', '.Commands.')) + '.Automation.Models';
 
 function Get-SortedUsingsCode
 {
-    $list_of_usings = @() + $code_common_usings + $client_library_namespace + $client_model_namespace + $code_model_namespace;
+    $list_of_usings = @() + $code_common_usings + $clientNameSpace + $clientModelNameSpace + $code_model_namespace;
     $sorted_usings = $list_of_usings | Sort-Object -Unique | foreach { "using ${_};" };
     $text = [string]::Join($NEW_LINE, $sorted_usings);
     return $text;
 }
 
 $code_using_strs = Get-SortedUsingsCode;
+
+function Get-RomanNumeral
+{
+    param
+    (
+        [Parameter(Mandatory = $true)]
+        $number
+    )
+
+    if ($number -ge 1000) { return "M"  + (Get-RomanNumeral ($number - 1000)); }
+    if ($number -ge  900) { return "CM" + (Get-RomanNumeral ($number -  900)); }
+    if ($number -ge  500) { return "D"  + (Get-RomanNumeral ($number -  500)); }
+    if ($number -ge  400) { return "CD" + (Get-RomanNumeral ($number -  400)); }
+    if ($number -ge  100) { return "C"  + (Get-RomanNumeral ($number -  100)); }
+    if ($number -ge   90) { return "XC" + (Get-RomanNumeral ($number -   90)); }
+    if ($number -ge   50) { return "L"  + (Get-RomanNumeral ($number -   50)); }
+    if ($number -ge   40) { return "XL" + (Get-RomanNumeral ($number -   40)); }
+    if ($number -ge   10) { return "X"  + (Get-RomanNumeral ($number -   10)); }
+    if ($number -ge    9) { return "IX" + (Get-RomanNumeral ($number -    9)); }
+    if ($number -ge    5) { return "V"  + (Get-RomanNumeral ($number -    5)); }
+    if ($number -ge    4) { return "IV" + (Get-RomanNumeral ($number -    4)); }
+    if ($number -ge    1) { return "I"  + (Get-RomanNumeral ($number -    1)); }
+    return "";
+}
