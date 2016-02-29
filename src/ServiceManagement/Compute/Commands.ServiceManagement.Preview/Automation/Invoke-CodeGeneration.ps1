@@ -22,36 +22,91 @@
 # the above example would be 'Start-AzureVirtualMachine', but to keep it
 # simple and consistent, we would like to use the generic verb.
 
-[CmdletBinding()]
+[CmdletBinding(DefaultParameterSetName = "ByConfiguration")]
 param(
     # The path to the client library DLL file, along with all its dependency DLLs,
     # e.g. 'x:\y\z\Microsoft.Azure.Management.Compute.dll',
     # Note that dependency DLL files must be place at the same folder, for reflection:
     # e.g. 'x:\y\z\Newtonsoft.Json.dll', 
     #      'x:\y\z\...' ...
-    [Parameter(Mandatory = $true)]
+    [Parameter(Mandatory = $true, Position = 0)]
     [string]$dllFileFullPath,
 
     # The target output folder, and the generated files would be organized in
     # the sub-folder called 'Generated'.
-    [Parameter(Mandatory = $true)]
+    [Parameter(Mandatory = $true, Position = 1)]
     [string]$outFolder,
     
     # Cmdlet Code Generation Flavor
     # 1. Invoke (default) that uses Invoke as the verb, and Operation + Method (e.g. VirtualMachine + Get)
     # 2. Verb style that maps the method name to a certain common PS verb (e.g. CreateOrUpdate -> New)
-    [Parameter(Mandatory = $false)]
+    [Parameter(Mandatory = $false, ParameterSetName = "ByParameters", Position = 2)]
     [string]$cmdletFlavor = 'Invoke',
 
     # CLI Command Code Generation Flavor
-    [Parameter(Mandatory = $false)]
+    [Parameter(Mandatory = $false, ParameterSetName = "ByParameters", Position = 3)]
     [string[]]$cliCommandFlavor = 'Verb',
 
     # The filter of operation name for code generation
     # e.g. "VirtualMachineScaleSet","VirtualMachineScaleSetVM"
-    [Parameter(Mandatory = $false)]
-    [string[]]$operationNameFilter = $null
+    [Parameter(Mandatory = $false, ParameterSetName = "ByParameters", Position = 4)]
+    [string[]]$operationNameFilter = $null,
+
+    # Configuration JSON file path, instead of individual input parameters
+    [Parameter(Mandatory = $false, ParameterSetName = "ByParameters", Position = 5)]
+    [Parameter(Mandatory = $false, ParameterSetName = "ByConfiguration", Position = 2)]
+    $ConfigPath = $null
 )
+
+# Read Settings from Config Object
+if (-not [string]::IsNullOrEmpty($ConfigPath))
+{
+    $lines = Get-Content -Path $ConfigPath;
+    $configJsonObject = ConvertFrom-Json ([string]::Join('', $lines));
+
+    $operationSettings = @{};
+    $SKIP_VERB_NOUN_CMDLET_LIST = @('PowerOff', 'ListNext', 'ListAllNext', 'ListSkusNext', 'GetInstanceView', 'List', 'ListAll');
+    #$SKIP_VERB_NOUN_CMDLET_LIST = @('CreateOrUpdate', 'Get', 'Start', 'Restart');
+    if ($configJsonObject.operations -ne $null)
+    {
+        # The filter of operation name for code generation
+        # e.g. "VirtualMachineScaleSet","VirtualMachineScaleSetVM"
+        $operationNameFilter = @();
+        foreach ($operationItem in $configJsonObject.operations)
+        {
+            $operationNameFilter += $operationItem.name;
+            $operationSettings.Add($operationItem.name, @());
+            if ($operationItem.methods -ne $null)
+            {
+                foreach ($methodItem in $operationItem.methods)
+                {
+                    # Configure the List of Skipped Methods
+                    if ($methodItem.cmdlet -ne $null -and $methodItem.cmdlet.skip -eq $true)
+                    {
+                        $operationSettings[$operationItem.name] += $methodItem.name;
+                    }
+                }
+            }
+        }
+    }
+    
+    if ($configJsonObject.produces -ne $null)
+    {
+        $produces = $configJsonObject.produces;
+        foreach ($produceItem in $produces)
+        {
+            if ($produceItem.name -eq 'PowerShell' -and $produceItem.flavor -ne $null)
+            {
+                $cmdletFlavor = $produceItem.flavor;
+            }
+            
+            if ($produceItem.name -eq 'CLI' -and $produceItem.flavor -ne $null)
+            {
+                $cliCommandFlavor = $produceItem.flavor;
+            }
+        }
+    }
+}
 
 # Import functions and variables
 . "$PSScriptRoot\Import-AssemblyFunction.ps1";
@@ -80,7 +135,7 @@ else
     $opNameList = ($filtered_types | select -ExpandProperty Name);
     if ($opNameList -eq $null)
     {
-        Write-Verbose "No qualifed operations found. Exit.";
+        Write-Error "No qualifed operations found. Exit.";
         return -1;
     }
 
@@ -156,6 +211,13 @@ else
             continue;
         }
 
+        $SKIP_VERB_NOUN_CMDLET_LIST = $operationSettings[$operation_nomalized_name];
+        $methodAnnotationSuffix = '';
+        if ($SKIP_VERB_NOUN_CMDLET_LIST -contains $methodInfo.Name)
+        {
+            $methodAnnotationSuffix = ' *';
+        }
+
         $qualified_methods = @();
         $total_method_count = 0;
         [System.Collections.Hashtable]$friendMethodDict = @{};
@@ -173,7 +235,7 @@ else
             }
             else
             {
-                Write-Verbose $methodInfo.Name;
+                Write-Verbose ($methodInfo.Name + $methodAnnotationSuffix);
             }
 
             $qualified_methods += $mtItem;
@@ -218,7 +280,7 @@ else
                 $pageMethodDict.Add($mtItem.Name, $foundMethod);
             }
         }
-        
+
         $method_count = 0;
         foreach ($mtItem in $qualified_methods)
         {
@@ -271,10 +333,17 @@ else
                 }
             }
 
+            $opCmdletFlavor = $cmdletFlavor;
+            if ($SKIP_VERB_NOUN_CMDLET_LIST -contains $methodInfo.Name)
+            {
+                #Overwrite and skip these method's 'Verb' cmdlet flavor
+                $opCmdletFlavor = 'None';
+            }
+
             # Output Info for Method Signature
             Write-Verbose "";
             Write-Verbose $SEC_LINE;
-            $methodMessage = "${operation_type_count_roman_index}. ${method_count}/${total_method_count} " + $methodInfo.Name.Replace('Async', '');
+            $methodMessage = "${operation_type_count_roman_index}. ${method_count}/${total_method_count} " + $methodInfo.Name.Replace('Async', '') + $methodAnnotationSuffix;
             if (($friendMethodMessage -ne '') -or ($pageMethodMessage -ne ''))
             {
                 $methodMessage += ' {' + $friendMethodMessage;
@@ -302,13 +371,6 @@ else
                 Write-Verbose ("-" + $paramInfo.Name + " : " + $paramInfo.ParameterType);
             }
             Write-Verbose $SEC_LINE;
-
-            $opCmdletFlavor = $cmdletFlavor;
-            if ($SKIP_VERB_NOUN_CMDLET_LIST -contains $methodInfo.Name)
-            {
-                #Overwrite and skip these method's 'Verb' cmdlet flavor
-                $opCmdletFlavor = 'None';
-            }
             
             $outputs = (. $PSScriptRoot\Generate-FunctionCommand.ps1 -OperationName $opShortName `
                                                                      -MethodInfo $methodInfo `

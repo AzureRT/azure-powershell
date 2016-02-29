@@ -102,12 +102,11 @@ if ($clientNameSpace -eq "Microsoft.WindowsAzure.Management.${component_name}")
 # Initialize other variables
 $all_return_type_names = @();
 
-$SKIP_VERB_NOUN_CMDLET_LIST = @('PowerOff', 'ListNext', 'ListAllNext', 'ListSkusNext', 'GetInstanceView', 'List', 'ListAll');
-
 Write-Verbose $BAR_LINE;
 Write-Verbose "Input Parameters:";
 Write-Verbose "DLL File              = $dllFileFullPath";
 Write-Verbose "Out Folder            = $outFolder";
+Write-Verbose "Config Path           = $ConfigPath";
 Write-Verbose "Client NameSpace      = $clientNameSpace";
 Write-Verbose "Model NameSpace       = $clientModelNameSpace";
 Write-Verbose "Component Name        = $component_name";
