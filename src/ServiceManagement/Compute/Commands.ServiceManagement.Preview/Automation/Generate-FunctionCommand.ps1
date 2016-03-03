@@ -31,6 +31,9 @@ param
     [string]$FunctionCmdletFlavor = 'None',
 
     [Parameter(Mandatory = $false)]
+    [string]$CliOpCommandFlavor = 'Verb',
+
+    [Parameter(Mandatory = $false)]
     [System.Reflection.MethodInfo]$FriendMethodInfo = $null,
     
     [Parameter(Mandatory = $false)]
@@ -438,6 +441,12 @@ ${invoke_local_param_code_content}
         for ($i2 = 0; $i2 -lt $paramLocalNameList.Count - 1; $i2++)
         {
             $item2 = $paramLocalNameList[$i2];
+            
+            if ($item2 -eq 'vmName' -and $OperationName -eq 'VirtualMachines')
+            {
+                continue;
+            }
+            
             $paramLocalNameList2 += $item2;
         }
         $invoke_cmdlt_source_template =  "        protected void Execute${invoke_param_set_name}Method(object[] ${invoke_input_params_name})" + $NEW_LINE;
@@ -1124,9 +1133,28 @@ function Generate-CliFunctionCommandImpl
         $optionParamString = ([string]::Join(", ", $requireParamNormalizedNames)) + ", ";
     }
 
+    if ($xmlDocItems -ne $null)
+    {
+        $xmlHelpText = "";
+        foreach ($helpItem in $xmlDocItems)
+        {
+            $helpSearchStr = "M:${ClientNameSpace}.${OperationName}OperationsExtensions.${methodName}(*)";
+            if ($helpItem.name -like $helpSearchStr)
+            {
+                $helpLines = $helpItem.summary.Split("`r").Split("`n");
+                foreach ($helpLine in $helpLines)
+                {
+                    $xmlHelpText += (' ' + $helpLine.Trim());
+                }
+                $xmlHelpText = $xmlHelpText.Trim();
+                break;
+            }
+        }
+    }
 
     $code += "  ${cliCategoryVarName}.command('${cliMethodOption}${requireParamsString}')" + $NEW_LINE;
-    $code += "  .description(`$('Commands to manage your $cliOperationDescription by the ${cliMethodOption} method.'))" + $NEW_LINE;
+    #$code += "  .description(`$('Commands to manage your $cliOperationDescription by the ${cliMethodOption} method.${xmlHelpText}'))" + $NEW_LINE;
+    $code += "  .description(`$('${xmlHelpText}'))" + $NEW_LINE;
     $code += "  .usage('[options]${usageParamsString}')" + $NEW_LINE;
     for ($index = 0; $index -lt $methodParamNameList.Count; $index++)
     {
@@ -1276,9 +1304,28 @@ function Generate-CliFunctionCommandImpl
         $code += "      });" + $NEW_LINE;
         $code += "      nextPageLink = pageResult.nextPageLink;" + $NEW_LINE;
         $code += "    }" + $NEW_LINE;
+        $code += "" + $NEW_LINE;
     }
 
-    $code += "    cli.output.json(result);" + $NEW_LINE;
+    if ($PageMethodInfo -ne $null -and $methodName -ne 'ListSkus')
+    {
+        $code += "    if (cli.output.format().json) {" + $NEW_LINE;
+        $code += "      cli.output.json(result);" + $NEW_LINE;
+        $code += "    }" + $NEW_LINE;
+        $code += "    else {" + $NEW_LINE;
+        $code += "      cli.output.table(result, function (row, item) {" + $NEW_LINE;
+        $code += "        var rgName = item.id ? utils.parseResourceReferenceUri(item.id).resourceGroupName : null;" + $NEW_LINE;
+        $code += "        row.cell(`$('ResourceGroupName'), rgName);" + $NEW_LINE;
+        $code += "        row.cell(`$('Name'), item.name);" + $NEW_LINE;
+        $code += "        row.cell(`$('ProvisioningState'), item.provisioningState);" + $NEW_LINE;
+        $code += "        row.cell(`$('Location'), item.location);" + $NEW_LINE;
+        $code += "      });" + $NEW_LINE;
+        $code += "    }" + $NEW_LINE;
+    } 
+    else
+    {
+        $code += "    cli.output.json(result);" + $NEW_LINE;
+    }
     $code += "  });" + $NEW_LINE;
 
     # 3.3 Parameters
@@ -1384,4 +1431,9 @@ function Generate-CliFunctionCommandImpl
 Generate-PsFunctionCommandImpl $OperationName $MethodInfo $FileOutputFolder $FriendMethodInfo;
 
 # CLI Function Command Code
+$opItem = $cliOperationSettings[$OperationName];
+if ($opItem -contains $MethodInfo.Name)
+{
+    return $null;
+}
 Generate-CliFunctionCommandImpl $OperationName $MethodInfo $ModelClassNameSpace $FileOutputFolder;

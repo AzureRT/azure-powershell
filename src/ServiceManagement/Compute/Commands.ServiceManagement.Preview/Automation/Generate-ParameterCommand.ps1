@@ -209,7 +209,7 @@ function Generate-CliParameterCommandImpl
         }
 
         $code += "  .execute(function(options, _) {" + $NEW_LINE;
-        $code += "    cli.output.verbose(JSON.stringify(options));" + $NEW_LINE;
+        $code += "    cli.output.verbose(JSON.stringify(options), _);" + $NEW_LINE;
         $code += "    if (options.parse && options.value) {" + $NEW_LINE;
         $code += "      options.value = JSON.parse(options.value);" + $NEW_LINE;
         $code += "    }" + $NEW_LINE;
@@ -316,7 +316,7 @@ function Generate-CliParameterCommandImpl
 
     # 2.3 Function Definition
     $code += "  .execute(function(options, _) {" + $NEW_LINE;
-    $code += "    cli.output.verbose(JSON.stringify(options));" + $NEW_LINE;
+    $code += "    cli.output.verbose(JSON.stringify(options), _);" + $NEW_LINE;
     $code += "    cli.output.verbose(`'=====================================`');" + $NEW_LINE;
     $code += "    cli.output.verbose(`'Reading file content from: \`"`' + options.parameterFile + `'\`"`');" + $NEW_LINE;
     $code += "    cli.output.verbose(`'=====================================`');" + $NEW_LINE;
@@ -399,7 +399,7 @@ function Generate-CliParameterCommandImpl
     }
 
     $code += "  .execute(function(options, _) {" + $NEW_LINE;
-    $code += "    cli.output.verbose(JSON.stringify(options));" + $NEW_LINE;
+    $code += "    cli.output.verbose(JSON.stringify(options), _);" + $NEW_LINE;
     $code += "    if (options.parse && options.value) {" + $NEW_LINE;
     $code += "      options.value = JSON.parse(options.value);" + $NEW_LINE;
     $code += "    }" + $NEW_LINE;

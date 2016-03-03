@@ -180,7 +180,7 @@ exports.init = function (cli) {
   var virtualMachineScaleSetsCreateOrUpdate = cli.category('vmss')
   .description($('Commands to manage your virtual machine scale sets.  '));
   virtualMachineScaleSetsCreateOrUpdate.command('create-or-update [resource-group-name] [name] [parameters]')
-  .description($('Commands to manage your virtual machine scale sets by the create-or-update method.'))
+  .description($('The operation to create or update a virtual machine scale set.'))
   .usage('[options] <resource-group-name> <name> <parameters>')
   .option('-g, --resource-group-name <resource-group-name>', $('resource-group-name'))
   .option('-n, --name <name>', $('name'))
@@ -290,7 +290,7 @@ exports.init = function (cli) {
   .option('--location <location>', $('Set the location value.'))
   .option('--tags <tags>', $('Set the tags value.'))
   .execute(function(options, _) {
-    cli.output.verbose(JSON.stringify(options));
+    cli.output.verbose(JSON.stringify(options), _);
     if (options.parse && options.value) {
       options.value = JSON.parse(options.value);
     }
@@ -425,7 +425,7 @@ exports.init = function (cli) {
   .option('--location', $('Remove the location value.'))
   .option('--tags', $('Remove the tags value.'))
   .execute(function(options, _) {
-    cli.output.verbose(JSON.stringify(options));
+    cli.output.verbose(JSON.stringify(options), _);
     cli.output.verbose('=====================================');
     cli.output.verbose('Reading file content from: \"' + options.parameterFile + '\"');
     cli.output.verbose('=====================================');
@@ -512,7 +512,7 @@ exports.init = function (cli) {
   .option('--location <location>', $('Add the location value.'))
   .option('--tags <tags>', $('Add the tags value.'))
   .execute(function(options, _) {
-    cli.output.verbose(JSON.stringify(options));
+    cli.output.verbose(JSON.stringify(options), _);
     if (options.parse && options.value) {
       options.value = JSON.parse(options.value);
     }
@@ -644,7 +644,7 @@ exports.init = function (cli) {
   .option('--tier <tier>', $('Set the tier value.'))
   .option('--capacity <capacity>', $('Set the capacity value.'))
   .execute(function(options, _) {
-    cli.output.verbose(JSON.stringify(options));
+    cli.output.verbose(JSON.stringify(options), _);
     if (options.parse && options.value) {
       options.value = JSON.parse(options.value);
     }
@@ -714,7 +714,7 @@ exports.init = function (cli) {
   .option('--tier', $('Remove the tier value.'))
   .option('--capacity', $('Remove the capacity value.'))
   .execute(function(options, _) {
-    cli.output.verbose(JSON.stringify(options));
+    cli.output.verbose(JSON.stringify(options), _);
     cli.output.verbose('=====================================');
     cli.output.verbose('Reading file content from: \"' + options.parameterFile + '\"');
     cli.output.verbose('=====================================');
@@ -771,7 +771,7 @@ exports.init = function (cli) {
   .option('--tier <tier>', $('Add the tier value.'))
   .option('--capacity <capacity>', $('Add the capacity value.'))
   .execute(function(options, _) {
-    cli.output.verbose(JSON.stringify(options));
+    cli.output.verbose(JSON.stringify(options), _);
     if (options.parse && options.value) {
       options.value = JSON.parse(options.value);
     }
@@ -842,7 +842,7 @@ exports.init = function (cli) {
   .option('--parse', $('Parse the input value string to a JSON object.'))
   .option('--mode <mode>', $('Set the mode value.'))
   .execute(function(options, _) {
-    cli.output.verbose(JSON.stringify(options));
+    cli.output.verbose(JSON.stringify(options), _);
     if (options.parse && options.value) {
       options.value = JSON.parse(options.value);
     }
@@ -889,7 +889,7 @@ exports.init = function (cli) {
   .option('--parameter-file <parameter-file>', $('The parameter file path.'))
   .option('--mode', $('Remove the mode value.'))
   .execute(function(options, _) {
-    cli.output.verbose(JSON.stringify(options));
+    cli.output.verbose(JSON.stringify(options), _);
     cli.output.verbose('=====================================');
     cli.output.verbose('Reading file content from: \"' + options.parameterFile + '\"');
     cli.output.verbose('=====================================');
@@ -936,7 +936,7 @@ exports.init = function (cli) {
   .option('--parse', $('Parse the input value string to a JSON object.'))
   .option('--mode <mode>', $('Add the mode value.'))
   .execute(function(options, _) {
-    cli.output.verbose(JSON.stringify(options));
+    cli.output.verbose(JSON.stringify(options), _);
     if (options.parse && options.value) {
       options.value = JSON.parse(options.value);
     }
@@ -989,7 +989,7 @@ exports.init = function (cli) {
   .option('--network-profile <networkProfile>', $('Set the network-profile value.'))
   .option('--extension-profile <extensionProfile>', $('Set the extension-profile value.'))
   .execute(function(options, _) {
-    cli.output.verbose(JSON.stringify(options));
+    cli.output.verbose(JSON.stringify(options), _);
     if (options.parse && options.value) {
       options.value = JSON.parse(options.value);
     }
@@ -1069,7 +1069,7 @@ exports.init = function (cli) {
   .option('--network-profile', $('Remove the network-profile value.'))
   .option('--extension-profile', $('Remove the extension-profile value.'))
   .execute(function(options, _) {
-    cli.output.verbose(JSON.stringify(options));
+    cli.output.verbose(JSON.stringify(options), _);
     cli.output.verbose('=====================================');
     cli.output.verbose('Reading file content from: \"' + options.parameterFile + '\"');
     cli.output.verbose('=====================================');
@@ -1131,7 +1131,7 @@ exports.init = function (cli) {
   .option('--network-profile <networkProfile>', $('Add the network-profile value.'))
   .option('--extension-profile <extensionProfile>', $('Add the extension-profile value.'))
   .execute(function(options, _) {
-    cli.output.verbose(JSON.stringify(options));
+    cli.output.verbose(JSON.stringify(options), _);
     if (options.parse && options.value) {
       options.value = JSON.parse(options.value);
     }
@@ -1217,7 +1217,7 @@ exports.init = function (cli) {
   .option('--linux-configuration <linuxConfiguration>', $('Set the linux-configuration value.'))
   .option('--secrets <secrets>', $('Set the secrets value.'))
   .execute(function(options, _) {
-    cli.output.verbose(JSON.stringify(options));
+    cli.output.verbose(JSON.stringify(options), _);
     if (options.parse && options.value) {
       options.value = JSON.parse(options.value);
     }
@@ -1330,7 +1330,7 @@ exports.init = function (cli) {
   .option('--linux-configuration', $('Remove the linux-configuration value.'))
   .option('--secrets', $('Remove the secrets value.'))
   .execute(function(options, _) {
-    cli.output.verbose(JSON.stringify(options));
+    cli.output.verbose(JSON.stringify(options), _);
     cli.output.verbose('=====================================');
     cli.output.verbose('Reading file content from: \"' + options.parameterFile + '\"');
     cli.output.verbose('=====================================');
@@ -1407,7 +1407,7 @@ exports.init = function (cli) {
   .option('--linux-configuration <linuxConfiguration>', $('Add the linux-configuration value.'))
   .option('--secrets <secrets>', $('Add the secrets value.'))
   .execute(function(options, _) {
-    cli.output.verbose(JSON.stringify(options));
+    cli.output.verbose(JSON.stringify(options), _);
     if (options.parse && options.value) {
       options.value = JSON.parse(options.value);
     }
@@ -1521,7 +1521,7 @@ exports.init = function (cli) {
   .option('--additional-unattend-content <additionalUnattendContent>', $('Set the additional-unattend-content value.'))
   .option('--win-rm <winRM>', $('Set the win-rm value.'))
   .execute(function(options, _) {
-    cli.output.verbose(JSON.stringify(options));
+    cli.output.verbose(JSON.stringify(options), _);
     if (options.parse && options.value) {
       options.value = JSON.parse(options.value);
     }
@@ -1614,7 +1614,7 @@ exports.init = function (cli) {
   .option('--additional-unattend-content', $('Remove the additional-unattend-content value.'))
   .option('--win-rm', $('Remove the win-rm value.'))
   .execute(function(options, _) {
-    cli.output.verbose(JSON.stringify(options));
+    cli.output.verbose(JSON.stringify(options), _);
     cli.output.verbose('=====================================');
     cli.output.verbose('Reading file content from: \"' + options.parameterFile + '\"');
     cli.output.verbose('=====================================');
@@ -1681,7 +1681,7 @@ exports.init = function (cli) {
   .option('--additional-unattend-content <additionalUnattendContent>', $('Add the additional-unattend-content value.'))
   .option('--win-rm <winRM>', $('Add the win-rm value.'))
   .execute(function(options, _) {
-    cli.output.verbose(JSON.stringify(options));
+    cli.output.verbose(JSON.stringify(options), _);
     if (options.parse && options.value) {
       options.value = JSON.parse(options.value);
     }
@@ -1778,7 +1778,7 @@ exports.init = function (cli) {
   .option('--setting-name <settingName>', $('Set the setting-name value.'))
   .option('--content <content>', $('Set the content value.'))
   .execute(function(options, _) {
-    cli.output.verbose(JSON.stringify(options));
+    cli.output.verbose(JSON.stringify(options), _);
     if (options.parse && options.value) {
       options.value = JSON.parse(options.value);
     }
@@ -1862,7 +1862,7 @@ exports.init = function (cli) {
   .option('--setting-name', $('Remove the setting-name value.'))
   .option('--content', $('Remove the content value.'))
   .execute(function(options, _) {
-    cli.output.verbose(JSON.stringify(options));
+    cli.output.verbose(JSON.stringify(options), _);
     cli.output.verbose('=====================================');
     cli.output.verbose('Reading file content from: \"' + options.parameterFile + '\"');
     cli.output.verbose('=====================================');
@@ -1924,7 +1924,7 @@ exports.init = function (cli) {
   .option('--setting-name <settingName>', $('Add the setting-name value.'))
   .option('--content <content>', $('Add the content value.'))
   .execute(function(options, _) {
-    cli.output.verbose(JSON.stringify(options));
+    cli.output.verbose(JSON.stringify(options), _);
     if (options.parse && options.value) {
       options.value = JSON.parse(options.value);
     }
@@ -2004,7 +2004,7 @@ exports.init = function (cli) {
   .option('--parse', $('Parse the input value string to a JSON object.'))
   .option('--listeners <listeners>', $('Set the listeners value.'))
   .execute(function(options, _) {
-    cli.output.verbose(JSON.stringify(options));
+    cli.output.verbose(JSON.stringify(options), _);
     if (options.parse && options.value) {
       options.value = JSON.parse(options.value);
     }
@@ -2051,7 +2051,7 @@ exports.init = function (cli) {
   .option('--parameter-file <parameter-file>', $('The parameter file path.'))
   .option('--listeners', $('Remove the listeners value.'))
   .execute(function(options, _) {
-    cli.output.verbose(JSON.stringify(options));
+    cli.output.verbose(JSON.stringify(options), _);
     cli.output.verbose('=====================================');
     cli.output.verbose('Reading file content from: \"' + options.parameterFile + '\"');
     cli.output.verbose('=====================================');
@@ -2098,7 +2098,7 @@ exports.init = function (cli) {
   .option('--parse', $('Parse the input value string to a JSON object.'))
   .option('--listeners <listeners>', $('Add the listeners value.'))
   .execute(function(options, _) {
-    cli.output.verbose(JSON.stringify(options));
+    cli.output.verbose(JSON.stringify(options), _);
     if (options.parse && options.value) {
       options.value = JSON.parse(options.value);
     }
@@ -2151,7 +2151,7 @@ exports.init = function (cli) {
   .option('--protocol <protocol>', $('Set the protocol value.'))
   .option('--certificate-url <certificateUrl>', $('Set the certificate-url value.'))
   .execute(function(options, _) {
-    cli.output.verbose(JSON.stringify(options));
+    cli.output.verbose(JSON.stringify(options), _);
     if (options.parse && options.value) {
       options.value = JSON.parse(options.value);
     }
@@ -2213,7 +2213,7 @@ exports.init = function (cli) {
   .option('--protocol', $('Remove the protocol value.'))
   .option('--certificate-url', $('Remove the certificate-url value.'))
   .execute(function(options, _) {
-    cli.output.verbose(JSON.stringify(options));
+    cli.output.verbose(JSON.stringify(options), _);
     cli.output.verbose('=====================================');
     cli.output.verbose('Reading file content from: \"' + options.parameterFile + '\"');
     cli.output.verbose('=====================================');
@@ -2265,7 +2265,7 @@ exports.init = function (cli) {
   .option('--protocol <protocol>', $('Add the protocol value.'))
   .option('--certificate-url <certificateUrl>', $('Add the certificate-url value.'))
   .execute(function(options, _) {
-    cli.output.verbose(JSON.stringify(options));
+    cli.output.verbose(JSON.stringify(options), _);
     if (options.parse && options.value) {
       options.value = JSON.parse(options.value);
     }
@@ -2326,7 +2326,7 @@ exports.init = function (cli) {
   .option('--disable-password-authentication <disablePasswordAuthentication>', $('Set the disable-password-authentication value.'))
   .option('--ssh <ssh>', $('Set the ssh value.'))
   .execute(function(options, _) {
-    cli.output.verbose(JSON.stringify(options));
+    cli.output.verbose(JSON.stringify(options), _);
     if (options.parse && options.value) {
       options.value = JSON.parse(options.value);
     }
@@ -2385,7 +2385,7 @@ exports.init = function (cli) {
   .option('--disable-password-authentication', $('Remove the disable-password-authentication value.'))
   .option('--ssh', $('Remove the ssh value.'))
   .execute(function(options, _) {
-    cli.output.verbose(JSON.stringify(options));
+    cli.output.verbose(JSON.stringify(options), _);
     cli.output.verbose('=====================================');
     cli.output.verbose('Reading file content from: \"' + options.parameterFile + '\"');
     cli.output.verbose('=====================================');
@@ -2437,7 +2437,7 @@ exports.init = function (cli) {
   .option('--disable-password-authentication <disablePasswordAuthentication>', $('Add the disable-password-authentication value.'))
   .option('--ssh <ssh>', $('Add the ssh value.'))
   .execute(function(options, _) {
-    cli.output.verbose(JSON.stringify(options));
+    cli.output.verbose(JSON.stringify(options), _);
     if (options.parse && options.value) {
       options.value = JSON.parse(options.value);
     }
@@ -2498,7 +2498,7 @@ exports.init = function (cli) {
   .option('--parse', $('Parse the input value string to a JSON object.'))
   .option('--public-keys <publicKeys>', $('Set the public-keys value.'))
   .execute(function(options, _) {
-    cli.output.verbose(JSON.stringify(options));
+    cli.output.verbose(JSON.stringify(options), _);
     if (options.parse && options.value) {
       options.value = JSON.parse(options.value);
     }
@@ -2545,7 +2545,7 @@ exports.init = function (cli) {
   .option('--parameter-file <parameter-file>', $('The parameter file path.'))
   .option('--public-keys', $('Remove the public-keys value.'))
   .execute(function(options, _) {
-    cli.output.verbose(JSON.stringify(options));
+    cli.output.verbose(JSON.stringify(options), _);
     cli.output.verbose('=====================================');
     cli.output.verbose('Reading file content from: \"' + options.parameterFile + '\"');
     cli.output.verbose('=====================================');
@@ -2592,7 +2592,7 @@ exports.init = function (cli) {
   .option('--parse', $('Parse the input value string to a JSON object.'))
   .option('--public-keys <publicKeys>', $('Add the public-keys value.'))
   .execute(function(options, _) {
-    cli.output.verbose(JSON.stringify(options));
+    cli.output.verbose(JSON.stringify(options), _);
     if (options.parse && options.value) {
       options.value = JSON.parse(options.value);
     }
@@ -2645,7 +2645,7 @@ exports.init = function (cli) {
   .option('--path <path>', $('Set the path value.'))
   .option('--key-data <keyData>', $('Set the key-data value.'))
   .execute(function(options, _) {
-    cli.output.verbose(JSON.stringify(options));
+    cli.output.verbose(JSON.stringify(options), _);
     if (options.parse && options.value) {
       options.value = JSON.parse(options.value);
     }
@@ -2707,7 +2707,7 @@ exports.init = function (cli) {
   .option('--path', $('Remove the path value.'))
   .option('--key-data', $('Remove the key-data value.'))
   .execute(function(options, _) {
-    cli.output.verbose(JSON.stringify(options));
+    cli.output.verbose(JSON.stringify(options), _);
     cli.output.verbose('=====================================');
     cli.output.verbose('Reading file content from: \"' + options.parameterFile + '\"');
     cli.output.verbose('=====================================');
@@ -2759,7 +2759,7 @@ exports.init = function (cli) {
   .option('--path <path>', $('Add the path value.'))
   .option('--key-data <keyData>', $('Add the key-data value.'))
   .execute(function(options, _) {
-    cli.output.verbose(JSON.stringify(options));
+    cli.output.verbose(JSON.stringify(options), _);
     if (options.parse && options.value) {
       options.value = JSON.parse(options.value);
     }
@@ -2822,7 +2822,7 @@ exports.init = function (cli) {
   .option('--source-vault <sourceVault>', $('Set the source-vault value.'))
   .option('--vault-certificates <vaultCertificates>', $('Set the vault-certificates value.'))
   .execute(function(options, _) {
-    cli.output.verbose(JSON.stringify(options));
+    cli.output.verbose(JSON.stringify(options), _);
     if (options.parse && options.value) {
       options.value = JSON.parse(options.value);
     }
@@ -2884,7 +2884,7 @@ exports.init = function (cli) {
   .option('--source-vault', $('Remove the source-vault value.'))
   .option('--vault-certificates', $('Remove the vault-certificates value.'))
   .execute(function(options, _) {
-    cli.output.verbose(JSON.stringify(options));
+    cli.output.verbose(JSON.stringify(options), _);
     cli.output.verbose('=====================================');
     cli.output.verbose('Reading file content from: \"' + options.parameterFile + '\"');
     cli.output.verbose('=====================================');
@@ -2936,7 +2936,7 @@ exports.init = function (cli) {
   .option('--source-vault <sourceVault>', $('Add the source-vault value.'))
   .option('--vault-certificates <vaultCertificates>', $('Add the vault-certificates value.'))
   .execute(function(options, _) {
-    cli.output.verbose(JSON.stringify(options));
+    cli.output.verbose(JSON.stringify(options), _);
     if (options.parse && options.value) {
       options.value = JSON.parse(options.value);
     }
@@ -2997,7 +2997,7 @@ exports.init = function (cli) {
   .option('--parse', $('Parse the input value string to a JSON object.'))
   .option('--id <id>', $('Set the id value.'))
   .execute(function(options, _) {
-    cli.output.verbose(JSON.stringify(options));
+    cli.output.verbose(JSON.stringify(options), _);
     if (options.parse && options.value) {
       options.value = JSON.parse(options.value);
     }
@@ -3045,7 +3045,7 @@ exports.init = function (cli) {
   .option('--secrets-index <secrets-index>', $('Indexer: secrets-index.'))
   .option('--id', $('Remove the id value.'))
   .execute(function(options, _) {
-    cli.output.verbose(JSON.stringify(options));
+    cli.output.verbose(JSON.stringify(options), _);
     cli.output.verbose('=====================================');
     cli.output.verbose('Reading file content from: \"' + options.parameterFile + '\"');
     cli.output.verbose('=====================================');
@@ -3092,7 +3092,7 @@ exports.init = function (cli) {
   .option('--parse', $('Parse the input value string to a JSON object.'))
   .option('--id <id>', $('Add the id value.'))
   .execute(function(options, _) {
-    cli.output.verbose(JSON.stringify(options));
+    cli.output.verbose(JSON.stringify(options), _);
     if (options.parse && options.value) {
       options.value = JSON.parse(options.value);
     }
@@ -3146,7 +3146,7 @@ exports.init = function (cli) {
   .option('--certificate-url <certificateUrl>', $('Set the certificate-url value.'))
   .option('--certificate-store <certificateStore>', $('Set the certificate-store value.'))
   .execute(function(options, _) {
-    cli.output.verbose(JSON.stringify(options));
+    cli.output.verbose(JSON.stringify(options), _);
     if (options.parse && options.value) {
       options.value = JSON.parse(options.value);
     }
@@ -3209,7 +3209,7 @@ exports.init = function (cli) {
   .option('--certificate-url', $('Remove the certificate-url value.'))
   .option('--certificate-store', $('Remove the certificate-store value.'))
   .execute(function(options, _) {
-    cli.output.verbose(JSON.stringify(options));
+    cli.output.verbose(JSON.stringify(options), _);
     cli.output.verbose('=====================================');
     cli.output.verbose('Reading file content from: \"' + options.parameterFile + '\"');
     cli.output.verbose('=====================================');
@@ -3261,7 +3261,7 @@ exports.init = function (cli) {
   .option('--certificate-url <certificateUrl>', $('Add the certificate-url value.'))
   .option('--certificate-store <certificateStore>', $('Add the certificate-store value.'))
   .execute(function(options, _) {
-    cli.output.verbose(JSON.stringify(options));
+    cli.output.verbose(JSON.stringify(options), _);
     if (options.parse && options.value) {
       options.value = JSON.parse(options.value);
     }
@@ -3322,7 +3322,7 @@ exports.init = function (cli) {
   .option('--image-reference <imageReference>', $('Set the image-reference value.'))
   .option('--os-disk <osDisk>', $('Set the os-disk value.'))
   .execute(function(options, _) {
-    cli.output.verbose(JSON.stringify(options));
+    cli.output.verbose(JSON.stringify(options), _);
     if (options.parse && options.value) {
       options.value = JSON.parse(options.value);
     }
@@ -3380,7 +3380,7 @@ exports.init = function (cli) {
   .option('--image-reference', $('Remove the image-reference value.'))
   .option('--os-disk', $('Remove the os-disk value.'))
   .execute(function(options, _) {
-    cli.output.verbose(JSON.stringify(options));
+    cli.output.verbose(JSON.stringify(options), _);
     cli.output.verbose('=====================================');
     cli.output.verbose('Reading file content from: \"' + options.parameterFile + '\"');
     cli.output.verbose('=====================================');
@@ -3432,7 +3432,7 @@ exports.init = function (cli) {
   .option('--image-reference <imageReference>', $('Add the image-reference value.'))
   .option('--os-disk <osDisk>', $('Add the os-disk value.'))
   .execute(function(options, _) {
-    cli.output.verbose(JSON.stringify(options));
+    cli.output.verbose(JSON.stringify(options), _);
     if (options.parse && options.value) {
       options.value = JSON.parse(options.value);
     }
@@ -3495,7 +3495,7 @@ exports.init = function (cli) {
   .option('--sku <sku>', $('Set the sku value.'))
   .option('--version <version>', $('Set the version value.'))
   .execute(function(options, _) {
-    cli.output.verbose(JSON.stringify(options));
+    cli.output.verbose(JSON.stringify(options), _);
     if (options.parse && options.value) {
       options.value = JSON.parse(options.value);
     }
@@ -3575,7 +3575,7 @@ exports.init = function (cli) {
   .option('--sku', $('Remove the sku value.'))
   .option('--version', $('Remove the version value.'))
   .execute(function(options, _) {
-    cli.output.verbose(JSON.stringify(options));
+    cli.output.verbose(JSON.stringify(options), _);
     cli.output.verbose('=====================================');
     cli.output.verbose('Reading file content from: \"' + options.parameterFile + '\"');
     cli.output.verbose('=====================================');
@@ -3637,7 +3637,7 @@ exports.init = function (cli) {
   .option('--sku <sku>', $('Add the sku value.'))
   .option('--version <version>', $('Add the version value.'))
   .execute(function(options, _) {
-    cli.output.verbose(JSON.stringify(options));
+    cli.output.verbose(JSON.stringify(options), _);
     if (options.parse && options.value) {
       options.value = JSON.parse(options.value);
     }
@@ -3722,7 +3722,7 @@ exports.init = function (cli) {
   .option('--image <image>', $('Set the image value.'))
   .option('--vhd-containers <vhdContainers>', $('Set the vhd-containers value.'))
   .execute(function(options, _) {
-    cli.output.verbose(JSON.stringify(options));
+    cli.output.verbose(JSON.stringify(options), _);
     if (options.parse && options.value) {
       options.value = JSON.parse(options.value);
     }
@@ -3824,7 +3824,7 @@ exports.init = function (cli) {
   .option('--image', $('Remove the image value.'))
   .option('--vhd-containers', $('Remove the vhd-containers value.'))
   .execute(function(options, _) {
-    cli.output.verbose(JSON.stringify(options));
+    cli.output.verbose(JSON.stringify(options), _);
     cli.output.verbose('=====================================');
     cli.output.verbose('Reading file content from: \"' + options.parameterFile + '\"');
     cli.output.verbose('=====================================');
@@ -3896,7 +3896,7 @@ exports.init = function (cli) {
   .option('--image <image>', $('Add the image value.'))
   .option('--vhd-containers <vhdContainers>', $('Add the vhd-containers value.'))
   .execute(function(options, _) {
-    cli.output.verbose(JSON.stringify(options));
+    cli.output.verbose(JSON.stringify(options), _);
     if (options.parse && options.value) {
       options.value = JSON.parse(options.value);
     }
@@ -3996,7 +3996,7 @@ exports.init = function (cli) {
   .option('--parse', $('Parse the input value string to a JSON object.'))
   .option('--uri <uri>', $('Set the uri value.'))
   .execute(function(options, _) {
-    cli.output.verbose(JSON.stringify(options));
+    cli.output.verbose(JSON.stringify(options), _);
     if (options.parse && options.value) {
       options.value = JSON.parse(options.value);
     }
@@ -4043,7 +4043,7 @@ exports.init = function (cli) {
   .option('--parameter-file <parameter-file>', $('The parameter file path.'))
   .option('--uri', $('Remove the uri value.'))
   .execute(function(options, _) {
-    cli.output.verbose(JSON.stringify(options));
+    cli.output.verbose(JSON.stringify(options), _);
     cli.output.verbose('=====================================');
     cli.output.verbose('Reading file content from: \"' + options.parameterFile + '\"');
     cli.output.verbose('=====================================');
@@ -4090,7 +4090,7 @@ exports.init = function (cli) {
   .option('--parse', $('Parse the input value string to a JSON object.'))
   .option('--uri <uri>', $('Add the uri value.'))
   .execute(function(options, _) {
-    cli.output.verbose(JSON.stringify(options));
+    cli.output.verbose(JSON.stringify(options), _);
     if (options.parse && options.value) {
       options.value = JSON.parse(options.value);
     }
@@ -4141,7 +4141,7 @@ exports.init = function (cli) {
   .option('--value <value>', $('The input string value for the indexed item.'))
   .option('--parse', $('Parse the input value string to a JSON object.'))
   .execute(function(options, _) {
-    cli.output.verbose(JSON.stringify(options));
+    cli.output.verbose(JSON.stringify(options), _);
     if (options.parse && options.value) {
       options.value = JSON.parse(options.value);
     }
@@ -4181,7 +4181,7 @@ exports.init = function (cli) {
   .option('--parameter-file <parameter-file>', $('The parameter file path.'))
   .option('--index <index>', $('Indexer: index.'))
   .execute(function(options, _) {
-    cli.output.verbose(JSON.stringify(options));
+    cli.output.verbose(JSON.stringify(options), _);
     cli.output.verbose('=====================================');
     cli.output.verbose('Reading file content from: \"' + options.parameterFile + '\"');
     cli.output.verbose('=====================================');
@@ -4217,7 +4217,7 @@ exports.init = function (cli) {
   .option('--value <value>', $('The JSON value.'))
   .option('--parse', $('Parse the input value string to a JSON object.'))
   .execute(function(options, _) {
-    cli.output.verbose(JSON.stringify(options));
+    cli.output.verbose(JSON.stringify(options), _);
     if (options.parse && options.value) {
       options.value = JSON.parse(options.value);
     }
@@ -4257,7 +4257,7 @@ exports.init = function (cli) {
   .option('--parse', $('Parse the input value string to a JSON object.'))
   .option('--network-interface-configurations <networkInterfaceConfigurations>', $('Set the network-interface-configurations value.'))
   .execute(function(options, _) {
-    cli.output.verbose(JSON.stringify(options));
+    cli.output.verbose(JSON.stringify(options), _);
     if (options.parse && options.value) {
       options.value = JSON.parse(options.value);
     }
@@ -4304,7 +4304,7 @@ exports.init = function (cli) {
   .option('--parameter-file <parameter-file>', $('The parameter file path.'))
   .option('--network-interface-configurations', $('Remove the network-interface-configurations value.'))
   .execute(function(options, _) {
-    cli.output.verbose(JSON.stringify(options));
+    cli.output.verbose(JSON.stringify(options), _);
     cli.output.verbose('=====================================');
     cli.output.verbose('Reading file content from: \"' + options.parameterFile + '\"');
     cli.output.verbose('=====================================');
@@ -4351,7 +4351,7 @@ exports.init = function (cli) {
   .option('--parse', $('Parse the input value string to a JSON object.'))
   .option('--network-interface-configurations <networkInterfaceConfigurations>', $('Add the network-interface-configurations value.'))
   .execute(function(options, _) {
-    cli.output.verbose(JSON.stringify(options));
+    cli.output.verbose(JSON.stringify(options), _);
     if (options.parse && options.value) {
       options.value = JSON.parse(options.value);
     }
@@ -4406,7 +4406,7 @@ exports.init = function (cli) {
   .option('--ip-configurations <ipConfigurations>', $('Set the ip-configurations value.'))
   .option('--id <id>', $('Set the id value.'))
   .execute(function(options, _) {
-    cli.output.verbose(JSON.stringify(options));
+    cli.output.verbose(JSON.stringify(options), _);
     if (options.parse && options.value) {
       options.value = JSON.parse(options.value);
     }
@@ -4491,7 +4491,7 @@ exports.init = function (cli) {
   .option('--ip-configurations', $('Remove the ip-configurations value.'))
   .option('--id', $('Remove the id value.'))
   .execute(function(options, _) {
-    cli.output.verbose(JSON.stringify(options));
+    cli.output.verbose(JSON.stringify(options), _);
     cli.output.verbose('=====================================');
     cli.output.verbose('Reading file content from: \"' + options.parameterFile + '\"');
     cli.output.verbose('=====================================');
@@ -4553,7 +4553,7 @@ exports.init = function (cli) {
   .option('--ip-configurations <ipConfigurations>', $('Add the ip-configurations value.'))
   .option('--id <id>', $('Add the id value.'))
   .execute(function(options, _) {
-    cli.output.verbose(JSON.stringify(options));
+    cli.output.verbose(JSON.stringify(options), _);
     if (options.parse && options.value) {
       options.value = JSON.parse(options.value);
     }
@@ -4641,7 +4641,7 @@ exports.init = function (cli) {
   .option('--load-balancer-inbound-nat-pools <loadBalancerInboundNatPools>', $('Set the load-balancer-inbound-nat-pools value.'))
   .option('--id <id>', $('Set the id value.'))
   .execute(function(options, _) {
-    cli.output.verbose(JSON.stringify(options));
+    cli.output.verbose(JSON.stringify(options), _);
     if (options.parse && options.value) {
       options.value = JSON.parse(options.value);
     }
@@ -4737,7 +4737,7 @@ exports.init = function (cli) {
   .option('--load-balancer-inbound-nat-pools', $('Remove the load-balancer-inbound-nat-pools value.'))
   .option('--id', $('Remove the id value.'))
   .execute(function(options, _) {
-    cli.output.verbose(JSON.stringify(options));
+    cli.output.verbose(JSON.stringify(options), _);
     cli.output.verbose('=====================================');
     cli.output.verbose('Reading file content from: \"' + options.parameterFile + '\"');
     cli.output.verbose('=====================================');
@@ -4804,7 +4804,7 @@ exports.init = function (cli) {
   .option('--load-balancer-inbound-nat-pools <loadBalancerInboundNatPools>', $('Add the load-balancer-inbound-nat-pools value.'))
   .option('--id <id>', $('Add the id value.'))
   .execute(function(options, _) {
-    cli.output.verbose(JSON.stringify(options));
+    cli.output.verbose(JSON.stringify(options), _);
     if (options.parse && options.value) {
       options.value = JSON.parse(options.value);
     }
@@ -4896,7 +4896,7 @@ exports.init = function (cli) {
   .option('--parse', $('Parse the input value string to a JSON object.'))
   .option('--id <id>', $('Set the id value.'))
   .execute(function(options, _) {
-    cli.output.verbose(JSON.stringify(options));
+    cli.output.verbose(JSON.stringify(options), _);
     if (options.parse && options.value) {
       options.value = JSON.parse(options.value);
     }
@@ -4945,7 +4945,7 @@ exports.init = function (cli) {
   .option('--network-interface-configurations-index <network-interface-configurations-index>', $('Indexer: network-interface-configurations-index.'))
   .option('--id', $('Remove the id value.'))
   .execute(function(options, _) {
-    cli.output.verbose(JSON.stringify(options));
+    cli.output.verbose(JSON.stringify(options), _);
     cli.output.verbose('=====================================');
     cli.output.verbose('Reading file content from: \"' + options.parameterFile + '\"');
     cli.output.verbose('=====================================');
@@ -4992,7 +4992,7 @@ exports.init = function (cli) {
   .option('--parse', $('Parse the input value string to a JSON object.'))
   .option('--id <id>', $('Add the id value.'))
   .execute(function(options, _) {
-    cli.output.verbose(JSON.stringify(options));
+    cli.output.verbose(JSON.stringify(options), _);
     if (options.parse && options.value) {
       options.value = JSON.parse(options.value);
     }
@@ -5046,7 +5046,7 @@ exports.init = function (cli) {
   .option('--parse', $('Parse the input value string to a JSON object.'))
   .option('--id <id>', $('Set the id value.'))
   .execute(function(options, _) {
-    cli.output.verbose(JSON.stringify(options));
+    cli.output.verbose(JSON.stringify(options), _);
     if (options.parse && options.value) {
       options.value = JSON.parse(options.value);
     }
@@ -5099,7 +5099,7 @@ exports.init = function (cli) {
   .option('--network-interface-configurations-index <network-interface-configurations-index>', $('Indexer: network-interface-configurations-index.'))
   .option('--id', $('Remove the id value.'))
   .execute(function(options, _) {
-    cli.output.verbose(JSON.stringify(options));
+    cli.output.verbose(JSON.stringify(options), _);
     cli.output.verbose('=====================================');
     cli.output.verbose('Reading file content from: \"' + options.parameterFile + '\"');
     cli.output.verbose('=====================================');
@@ -5146,7 +5146,7 @@ exports.init = function (cli) {
   .option('--parse', $('Parse the input value string to a JSON object.'))
   .option('--id <id>', $('Add the id value.'))
   .execute(function(options, _) {
-    cli.output.verbose(JSON.stringify(options));
+    cli.output.verbose(JSON.stringify(options), _);
     if (options.parse && options.value) {
       options.value = JSON.parse(options.value);
     }
@@ -5200,7 +5200,7 @@ exports.init = function (cli) {
   .option('--parse', $('Parse the input value string to a JSON object.'))
   .option('--id <id>', $('Set the id value.'))
   .execute(function(options, _) {
-    cli.output.verbose(JSON.stringify(options));
+    cli.output.verbose(JSON.stringify(options), _);
     if (options.parse && options.value) {
       options.value = JSON.parse(options.value);
     }
@@ -5253,7 +5253,7 @@ exports.init = function (cli) {
   .option('--network-interface-configurations-index <network-interface-configurations-index>', $('Indexer: network-interface-configurations-index.'))
   .option('--id', $('Remove the id value.'))
   .execute(function(options, _) {
-    cli.output.verbose(JSON.stringify(options));
+    cli.output.verbose(JSON.stringify(options), _);
     cli.output.verbose('=====================================');
     cli.output.verbose('Reading file content from: \"' + options.parameterFile + '\"');
     cli.output.verbose('=====================================');
@@ -5300,7 +5300,7 @@ exports.init = function (cli) {
   .option('--parse', $('Parse the input value string to a JSON object.'))
   .option('--id <id>', $('Add the id value.'))
   .execute(function(options, _) {
-    cli.output.verbose(JSON.stringify(options));
+    cli.output.verbose(JSON.stringify(options), _);
     if (options.parse && options.value) {
       options.value = JSON.parse(options.value);
     }
@@ -5350,7 +5350,7 @@ exports.init = function (cli) {
   .option('--parse', $('Parse the input value string to a JSON object.'))
   .option('--extensions <extensions>', $('Set the extensions value.'))
   .execute(function(options, _) {
-    cli.output.verbose(JSON.stringify(options));
+    cli.output.verbose(JSON.stringify(options), _);
     if (options.parse && options.value) {
       options.value = JSON.parse(options.value);
     }
@@ -5397,7 +5397,7 @@ exports.init = function (cli) {
   .option('--parameter-file <parameter-file>', $('The parameter file path.'))
   .option('--extensions', $('Remove the extensions value.'))
   .execute(function(options, _) {
-    cli.output.verbose(JSON.stringify(options));
+    cli.output.verbose(JSON.stringify(options), _);
     cli.output.verbose('=====================================');
     cli.output.verbose('Reading file content from: \"' + options.parameterFile + '\"');
     cli.output.verbose('=====================================');
@@ -5444,7 +5444,7 @@ exports.init = function (cli) {
   .option('--parse', $('Parse the input value string to a JSON object.'))
   .option('--extensions <extensions>', $('Add the extensions value.'))
   .execute(function(options, _) {
-    cli.output.verbose(JSON.stringify(options));
+    cli.output.verbose(JSON.stringify(options), _);
     if (options.parse && options.value) {
       options.value = JSON.parse(options.value);
     }
@@ -5504,7 +5504,7 @@ exports.init = function (cli) {
   .option('--provisioning-state <provisioningState>', $('Set the provisioning-state value.'))
   .option('--id <id>', $('Set the id value.'))
   .execute(function(options, _) {
-    cli.output.verbose(JSON.stringify(options));
+    cli.output.verbose(JSON.stringify(options), _);
     if (options.parse && options.value) {
       options.value = JSON.parse(options.value);
     }
@@ -5644,7 +5644,7 @@ exports.init = function (cli) {
   .option('--provisioning-state', $('Remove the provisioning-state value.'))
   .option('--id', $('Remove the id value.'))
   .execute(function(options, _) {
-    cli.output.verbose(JSON.stringify(options));
+    cli.output.verbose(JSON.stringify(options), _);
     cli.output.verbose('=====================================');
     cli.output.verbose('Reading file content from: \"' + options.parameterFile + '\"');
     cli.output.verbose('=====================================');
@@ -5731,7 +5731,7 @@ exports.init = function (cli) {
   .option('--provisioning-state <provisioningState>', $('Add the provisioning-state value.'))
   .option('--id <id>', $('Add the id value.'))
   .execute(function(options, _) {
-    cli.output.verbose(JSON.stringify(options));
+    cli.output.verbose(JSON.stringify(options), _);
     if (options.parse && options.value) {
       options.value = JSON.parse(options.value);
     }
@@ -5859,7 +5859,7 @@ exports.init = function (cli) {
   var virtualMachineScaleSetsDeallocate = cli.category('vmss')
   .description($('Commands to manage your virtual machine scale sets.  '));
   virtualMachineScaleSetsDeallocate.command('deallocate [resource-group-name] [vm-scale-set-name] [instance-ids]')
-  .description($('Commands to manage your virtual machine scale sets by the deallocate method.'))
+  .description($('The operation to deallocate virtual machines in a virtual machine scale set.'))
   .usage('[options] <resource-group-name> <vm-scale-set-name> <instance-ids>')
   .option('-g, --resource-group-name <resource-group-name>', $('resource-group-name'))
   .option('-n, --vm-scale-set-name <vm-scale-set-name>', $('vm-scale-set-name'))
@@ -5898,7 +5898,7 @@ exports.init = function (cli) {
   var virtualMachineScaleSetsDelete = cli.category('vmss')
   .description($('Commands to manage your virtual machine scale sets.  '));
   virtualMachineScaleSetsDelete.command('delete [resource-group-name] [vm-scale-set-name]')
-  .description($('Commands to manage your virtual machine scale sets by the delete method.'))
+  .description($('The operation to delete a virtual machine scale set.'))
   .usage('[options] <resource-group-name> <vm-scale-set-name>')
   .option('-g, --resource-group-name <resource-group-name>', $('resource-group-name'))
   .option('-n, --vm-scale-set-name <vm-scale-set-name>', $('vm-scale-set-name'))
@@ -5921,7 +5921,7 @@ exports.init = function (cli) {
   var virtualMachineScaleSetsDeleteInstances = cli.category('vmss')
   .description($('Commands to manage your virtual machine scale sets.  '));
   virtualMachineScaleSetsDeleteInstances.command('delete-instances [resource-group-name] [vm-scale-set-name] [instance-ids]')
-  .description($('Commands to manage your virtual machine scale sets by the delete-instances method.'))
+  .description($('The operation to delete virtual machines in a virtual machine scale set.'))
   .usage('[options] <resource-group-name> <vm-scale-set-name> <instance-ids>')
   .option('-g, --resource-group-name <resource-group-name>', $('resource-group-name'))
   .option('-n, --vm-scale-set-name <vm-scale-set-name>', $('vm-scale-set-name'))
@@ -5960,7 +5960,7 @@ exports.init = function (cli) {
   var virtualMachineScaleSetsGet = cli.category('vmss')
   .description($('Commands to manage your virtual machine scale sets.  '));
   virtualMachineScaleSetsGet.command('get [resource-group-name] [vm-scale-set-name]')
-  .description($('Commands to manage your virtual machine scale sets by the get method.'))
+  .description($('The operation to get a virtual machine scale set.'))
   .usage('[options] <resource-group-name> <vm-scale-set-name>')
   .option('-g, --resource-group-name <resource-group-name>', $('resource-group-name'))
   .option('-n, --vm-scale-set-name <vm-scale-set-name>', $('vm-scale-set-name'))
@@ -5982,7 +5982,7 @@ exports.init = function (cli) {
   var virtualMachineScaleSetsGetInstanceView = cli.category('vmss')
   .description($('Commands to manage your virtual machine scale sets.  '));
   virtualMachineScaleSetsGetInstanceView.command('get-instance-view [resource-group-name] [vm-scale-set-name]')
-  .description($('Commands to manage your virtual machine scale sets by the get-instance-view method.'))
+  .description($('The operation to get a virtual machine scale set instance view.'))
   .usage('[options] <resource-group-name> <vm-scale-set-name>')
   .option('-g, --resource-group-name <resource-group-name>', $('resource-group-name'))
   .option('-n, --vm-scale-set-name <vm-scale-set-name>', $('vm-scale-set-name'))
@@ -6003,7 +6003,7 @@ exports.init = function (cli) {
   var virtualMachineScaleSetsList = cli.category('vmss')
   .description($('Commands to manage your virtual machine scale sets.  '));
   virtualMachineScaleSetsList.command('list [resource-group-name]')
-  .description($('Commands to manage your virtual machine scale sets by the list method.'))
+  .description($('The operation to list virtual machine scale sets under a resource group.'))
   .usage('[options] <resource-group-name>')
   .option('-g, --resource-group-name <resource-group-name>', $('resource-group-name'))
   .option('--parameter-file <parameter-file>', $('the input parameter file'))
@@ -6021,7 +6021,19 @@ exports.init = function (cli) {
       });
       nextPageLink = pageResult.nextPageLink;
     }
-    cli.output.json(result);
+
+    if (cli.output.format().json) {
+      cli.output.json(result);
+    }
+    else {
+      cli.output.table(result, function (row, item) {
+        var rgName = item.id ? utils.parseResourceReferenceUri(item.id).resourceGroupName : null;
+        row.cell($('ResourceGroupName'), rgName);
+        row.cell($('Name'), item.name);
+        row.cell($('ProvisioningState'), item.provisioningState);
+        row.cell($('Location'), item.location);
+      });
+    }
   });
 /*
   VirtualMachineScaleSets ListAll
@@ -6029,7 +6041,7 @@ exports.init = function (cli) {
   var virtualMachineScaleSetsListAll = cli.category('vmss')
   .description($('Commands to manage your virtual machine scale sets.  '));
   virtualMachineScaleSetsListAll.command('list-all')
-  .description($('Commands to manage your virtual machine scale sets by the list-all method.'))
+  .description($('Gets the list of Virtual Machine Scale Sets in the subscription. Use nextLink property in the response to get the next page of Virtual Machine Scale Sets. Do this till nextLink is not null to fetch all the Virtual Machine Scale Sets.'))
   .usage('[options]')
   .option('--parameter-file <parameter-file>', $('the input parameter file'))
   .option('-s, --subscription <subscription>', $('the subscription identifier'))
@@ -6045,7 +6057,19 @@ exports.init = function (cli) {
       });
       nextPageLink = pageResult.nextPageLink;
     }
-    cli.output.json(result);
+
+    if (cli.output.format().json) {
+      cli.output.json(result);
+    }
+    else {
+      cli.output.table(result, function (row, item) {
+        var rgName = item.id ? utils.parseResourceReferenceUri(item.id).resourceGroupName : null;
+        row.cell($('ResourceGroupName'), rgName);
+        row.cell($('Name'), item.name);
+        row.cell($('ProvisioningState'), item.provisioningState);
+        row.cell($('Location'), item.location);
+      });
+    }
   });
 /*
   VirtualMachineScaleSets ListSkus
@@ -6055,7 +6079,7 @@ exports.init = function (cli) {
   var virtualMachineScaleSetsListSkus = cli.category('vmss')
   .description($('Commands to manage your virtual machine scale sets.  '));
   virtualMachineScaleSetsListSkus.command('list-skus [resource-group-name] [vm-scale-set-name]')
-  .description($('Commands to manage your virtual machine scale sets by the list-skus method.'))
+  .description($('The operation to list available skus for a virtual machine scale set.'))
   .usage('[options] <resource-group-name> <vm-scale-set-name>')
   .option('-g, --resource-group-name <resource-group-name>', $('resource-group-name'))
   .option('-n, --vm-scale-set-name <vm-scale-set-name>', $('vm-scale-set-name'))
@@ -6075,6 +6099,7 @@ exports.init = function (cli) {
       });
       nextPageLink = pageResult.nextPageLink;
     }
+
     cli.output.json(result);
   });
 /*
@@ -6086,7 +6111,7 @@ exports.init = function (cli) {
   var virtualMachineScaleSetsPowerOff = cli.category('vmss')
   .description($('Commands to manage your virtual machine scale sets.  '));
   virtualMachineScaleSetsPowerOff.command('power-off [resource-group-name] [vm-scale-set-name] [instance-ids]')
-  .description($('Commands to manage your virtual machine scale sets by the power-off method.'))
+  .description($('The operation to power off (stop) virtual machines in a virtual machine scale set.'))
   .usage('[options] <resource-group-name> <vm-scale-set-name> <instance-ids>')
   .option('-g, --resource-group-name <resource-group-name>', $('resource-group-name'))
   .option('-n, --vm-scale-set-name <vm-scale-set-name>', $('vm-scale-set-name'))
@@ -6125,7 +6150,7 @@ exports.init = function (cli) {
   var virtualMachineScaleSetsReimage = cli.category('vmss')
   .description($('Commands to manage your virtual machine scale sets.  '));
   virtualMachineScaleSetsReimage.command('reimage [resource-group-name] [vm-scale-set-name]')
-  .description($('Commands to manage your virtual machine scale sets by the reimage method.'))
+  .description($('The operation to re-image virtual machines in a virtual machine scale set.'))
   .usage('[options] <resource-group-name> <vm-scale-set-name>')
   .option('-g, --resource-group-name <resource-group-name>', $('resource-group-name'))
   .option('-n, --vm-scale-set-name <vm-scale-set-name>', $('vm-scale-set-name'))
@@ -6148,7 +6173,7 @@ exports.init = function (cli) {
   var virtualMachineScaleSetsRestart = cli.category('vmss')
   .description($('Commands to manage your virtual machine scale sets.  '));
   virtualMachineScaleSetsRestart.command('restart [resource-group-name] [vm-scale-set-name] [instance-ids]')
-  .description($('Commands to manage your virtual machine scale sets by the restart method.'))
+  .description($('The operation to restart virtual machines in a virtual machine scale set.'))
   .usage('[options] <resource-group-name> <vm-scale-set-name> <instance-ids>')
   .option('-g, --resource-group-name <resource-group-name>', $('resource-group-name'))
   .option('-n, --vm-scale-set-name <vm-scale-set-name>', $('vm-scale-set-name'))
@@ -6188,7 +6213,7 @@ exports.init = function (cli) {
   var virtualMachineScaleSetsStart = cli.category('vmss')
   .description($('Commands to manage your virtual machine scale sets.  '));
   virtualMachineScaleSetsStart.command('start [resource-group-name] [vm-scale-set-name] [instance-ids]')
-  .description($('Commands to manage your virtual machine scale sets by the start method.'))
+  .description($('The operation to start virtual machines in a virtual machine scale set.'))
   .usage('[options] <resource-group-name> <vm-scale-set-name> <instance-ids>')
   .option('-g, --resource-group-name <resource-group-name>', $('resource-group-name'))
   .option('-n, --vm-scale-set-name <vm-scale-set-name>', $('vm-scale-set-name'))
@@ -6228,7 +6253,7 @@ exports.init = function (cli) {
   var virtualMachineScaleSetsUpdateInstances = cli.category('vmss')
   .description($('Commands to manage your virtual machine scale sets.  '));
   virtualMachineScaleSetsUpdateInstances.command('update-instances [resource-group-name] [vm-scale-set-name] [instance-ids]')
-  .description($('Commands to manage your virtual machine scale sets by the update-instances method.'))
+  .description($('The operation to manually upgrade virtual machines in a virtual machine scale set.'))
   .usage('[options] <resource-group-name> <vm-scale-set-name> <instance-ids>')
   .option('-g, --resource-group-name <resource-group-name>', $('resource-group-name'))
   .option('-n, --vm-scale-set-name <vm-scale-set-name>', $('vm-scale-set-name'))
@@ -6268,7 +6293,7 @@ exports.init = function (cli) {
   var virtualMachineScaleSetVMsDeallocate = cli.category('vmssvm')
   .description($('Commands to manage your virtual machine scale set vm.  '));
   virtualMachineScaleSetVMsDeallocate.command('deallocate [resource-group-name] [vm-scale-set-name] [instance-id]')
-  .description($('Commands to manage your virtual machine scale set vm by the deallocate method.'))
+  .description($('The operation to deallocate a virtual machine scale set.'))
   .usage('[options] <resource-group-name> <vm-scale-set-name> <instance-id>')
   .option('-g, --resource-group-name <resource-group-name>', $('resource-group-name'))
   .option('-n, --vm-scale-set-name <vm-scale-set-name>', $('vm-scale-set-name'))
@@ -6293,7 +6318,7 @@ exports.init = function (cli) {
   var virtualMachineScaleSetVMsDelete = cli.category('vmssvm')
   .description($('Commands to manage your virtual machine scale set vm.  '));
   virtualMachineScaleSetVMsDelete.command('delete [resource-group-name] [vm-scale-set-name] [instance-id]')
-  .description($('Commands to manage your virtual machine scale set vm by the delete method.'))
+  .description($('The operation to delete a virtual machine scale set.'))
   .usage('[options] <resource-group-name> <vm-scale-set-name> <instance-id>')
   .option('-g, --resource-group-name <resource-group-name>', $('resource-group-name'))
   .option('-n, --vm-scale-set-name <vm-scale-set-name>', $('vm-scale-set-name'))
@@ -6318,7 +6343,7 @@ exports.init = function (cli) {
   var virtualMachineScaleSetVMsGet = cli.category('vmssvm')
   .description($('Commands to manage your virtual machine scale set vm.  '));
   virtualMachineScaleSetVMsGet.command('get [resource-group-name] [vm-scale-set-name] [instance-id]')
-  .description($('Commands to manage your virtual machine scale set vm by the get method.'))
+  .description($('The operation to get a virtual machine scale set virtual machine.'))
   .usage('[options] <resource-group-name> <vm-scale-set-name> <instance-id>')
   .option('-g, --resource-group-name <resource-group-name>', $('resource-group-name'))
   .option('-n, --vm-scale-set-name <vm-scale-set-name>', $('vm-scale-set-name'))
@@ -6343,7 +6368,7 @@ exports.init = function (cli) {
   var virtualMachineScaleSetVMsGetInstanceView = cli.category('vmssvm')
   .description($('Commands to manage your virtual machine scale set vm.  '));
   virtualMachineScaleSetVMsGetInstanceView.command('get-instance-view [resource-group-name] [vm-scale-set-name] [instance-id]')
-  .description($('Commands to manage your virtual machine scale set vm by the get-instance-view method.'))
+  .description($('The operation to get a virtual machine scale set virtual machine.'))
   .usage('[options] <resource-group-name> <vm-scale-set-name> <instance-id>')
   .option('-g, --resource-group-name <resource-group-name>', $('resource-group-name'))
   .option('-n, --vm-scale-set-name <vm-scale-set-name>', $('vm-scale-set-name'))
@@ -6367,7 +6392,7 @@ exports.init = function (cli) {
   var virtualMachineScaleSetVMsList = cli.category('vmssvm')
   .description($('Commands to manage your virtual machine scale set vm.  '));
   virtualMachineScaleSetVMsList.command('list [resource-group-name] [virtual-machine-scale-set-name]')
-  .description($('Commands to manage your virtual machine scale set vm by the list method.'))
+  .description($('The operation to list virtual machine scale sets VMs.'))
   .usage('[options] <resource-group-name> <virtual-machine-scale-set-name>')
   .option('-g, --resource-group-name <resource-group-name>', $('resource-group-name'))
   .option('-n, --virtual-machine-scale-set-name <virtual-machine-scale-set-name>', $('virtual-machine-scale-set-name'))
@@ -6387,7 +6412,19 @@ exports.init = function (cli) {
       });
       nextPageLink = pageResult.nextPageLink;
     }
-    cli.output.json(result);
+
+    if (cli.output.format().json) {
+      cli.output.json(result);
+    }
+    else {
+      cli.output.table(result, function (row, item) {
+        var rgName = item.id ? utils.parseResourceReferenceUri(item.id).resourceGroupName : null;
+        row.cell($('ResourceGroupName'), rgName);
+        row.cell($('Name'), item.name);
+        row.cell($('ProvisioningState'), item.provisioningState);
+        row.cell($('Location'), item.location);
+      });
+    }
   });
 /*
   VirtualMachineScaleSetVMs PowerOff
@@ -6398,7 +6435,7 @@ exports.init = function (cli) {
   var virtualMachineScaleSetVMsPowerOff = cli.category('vmssvm')
   .description($('Commands to manage your virtual machine scale set vm.  '));
   virtualMachineScaleSetVMsPowerOff.command('power-off [resource-group-name] [vm-scale-set-name] [instance-id]')
-  .description($('Commands to manage your virtual machine scale set vm by the power-off method.'))
+  .description($('The operation to power off (stop) a virtual machine scale set.'))
   .usage('[options] <resource-group-name> <vm-scale-set-name> <instance-id>')
   .option('-g, --resource-group-name <resource-group-name>', $('resource-group-name'))
   .option('-n, --vm-scale-set-name <vm-scale-set-name>', $('vm-scale-set-name'))
@@ -6423,7 +6460,7 @@ exports.init = function (cli) {
   var virtualMachineScaleSetVMsReimage = cli.category('vmssvm')
   .description($('Commands to manage your virtual machine scale set vm.  '));
   virtualMachineScaleSetVMsReimage.command('reimage [resource-group-name] [vm-scale-set-name] [instance-id]')
-  .description($('Commands to manage your virtual machine scale set vm by the reimage method.'))
+  .description($('The operation to re-image a virtual machine scale set instance.'))
   .usage('[options] <resource-group-name> <vm-scale-set-name> <instance-id>')
   .option('-g, --resource-group-name <resource-group-name>', $('resource-group-name'))
   .option('-n, --vm-scale-set-name <vm-scale-set-name>', $('vm-scale-set-name'))
@@ -6448,7 +6485,7 @@ exports.init = function (cli) {
   var virtualMachineScaleSetVMsRestart = cli.category('vmssvm')
   .description($('Commands to manage your virtual machine scale set vm.  '));
   virtualMachineScaleSetVMsRestart.command('restart [resource-group-name] [vm-scale-set-name] [instance-id]')
-  .description($('Commands to manage your virtual machine scale set vm by the restart method.'))
+  .description($('The operation to restart a virtual machine scale set.'))
   .usage('[options] <resource-group-name> <vm-scale-set-name> <instance-id>')
   .option('-g, --resource-group-name <resource-group-name>', $('resource-group-name'))
   .option('-n, --vm-scale-set-name <vm-scale-set-name>', $('vm-scale-set-name'))
@@ -6473,7 +6510,7 @@ exports.init = function (cli) {
   var virtualMachineScaleSetVMsStart = cli.category('vmssvm')
   .description($('Commands to manage your virtual machine scale set vm.  '));
   virtualMachineScaleSetVMsStart.command('start [resource-group-name] [vm-scale-set-name] [instance-id]')
-  .description($('Commands to manage your virtual machine scale set vm by the start method.'))
+  .description($('The operation to start a virtual machine scale set.'))
   .usage('[options] <resource-group-name> <vm-scale-set-name> <instance-id>')
   .option('-g, --resource-group-name <resource-group-name>', $('resource-group-name'))
   .option('-n, --vm-scale-set-name <vm-scale-set-name>', $('vm-scale-set-name'))
@@ -6487,6 +6524,28 @@ exports.init = function (cli) {
     var subscription = profile.current.getSubscription(options.subscription);
     var computeManagementClient = utils.createComputeManagementClient(subscription);
     var result = computeManagementClient.virtualMachineScaleSetVMs.start(resourceGroupName, vMScaleSetName, instanceId, _);
+    cli.output.json(result);
+  });
+/*
+  VirtualMachines Redeploy
+  --resource-group-name
+  --vm-name
+*/
+  var virtualMachinesRedeploy = cli.category('vm')
+  .description($('Commands to manage your virtual machines.  '));
+  virtualMachinesRedeploy.command('redeploy [resource-group-name] [vm-name]')
+  .description($('The operation to redeploy a virtual machine.'))
+  .usage('[options] <resource-group-name> <vm-name>')
+  .option('-g, --resource-group-name <resource-group-name>', $('resource-group-name'))
+  .option('-n, --vm-name <vm-name>', $('vm-name'))
+  .option('--parameter-file <parameter-file>', $('the input parameter file'))
+  .option('-s, --subscription <subscription>', $('the subscription identifier'))
+  .execute(function(resourceGroupName, vMName, options, _) {
+    cli.output.verbose('resourceGroupName = ' + resourceGroupName);
+    cli.output.verbose('vMName = ' + vMName);
+    var subscription = profile.current.getSubscription(options.subscription);
+    var computeManagementClient = utils.createComputeManagementClient(subscription);
+    var result = computeManagementClient.virtualMachines.redeploy(resourceGroupName, vMName, _);
     cli.output.json(result);
   });
 
