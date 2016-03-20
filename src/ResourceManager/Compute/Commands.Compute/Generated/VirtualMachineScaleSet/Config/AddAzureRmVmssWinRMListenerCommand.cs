@@ -28,9 +28,9 @@ using System.Management.Automation;
 
 namespace Microsoft.Azure.Commands.Compute.Automation
 {
-    [Cmdlet("Remove", "AzureRmVmssListener")]
+    [Cmdlet("Add", "AzureRmVmssWinRMListener")]
     [OutputType(typeof(VirtualMachineScaleSet))]
-    public class RemoveAzureRmVmssListenerCommand : Microsoft.Azure.Commands.ResourceManager.Common.AzureRMCmdlet
+    public class AddAzureRmVmssWinRMListenerCommand : Microsoft.Azure.Commands.ResourceManager.Common.AzureRMCmdlet
     {
         [Parameter(
             Mandatory = false,
@@ -43,7 +43,7 @@ namespace Microsoft.Azure.Commands.Compute.Automation
             Mandatory = false,
             Position = 1,
             ValueFromPipelineByPropertyName = true)]
-        public string Protocol { get; set; }
+        public ProtocolTypes? Protocol { get; set; }
 
         [Parameter(
             Mandatory = false,
@@ -56,52 +56,38 @@ namespace Microsoft.Azure.Commands.Compute.Automation
             // VirtualMachineProfile
             if (this.VirtualMachineScaleSet.VirtualMachineProfile == null)
             {
-                WriteObject(this.VirtualMachineScaleSet);
-                return;
+                this.VirtualMachineScaleSet.VirtualMachineProfile = new Microsoft.Azure.Management.Compute.Models.VirtualMachineScaleSetVMProfile();
             }
 
             // OsProfile
             if (this.VirtualMachineScaleSet.VirtualMachineProfile.OsProfile == null)
             {
-                WriteObject(this.VirtualMachineScaleSet);
-                return;
+                this.VirtualMachineScaleSet.VirtualMachineProfile.OsProfile = new Microsoft.Azure.Management.Compute.Models.VirtualMachineScaleSetOSProfile();
             }
 
             // WindowsConfiguration
             if (this.VirtualMachineScaleSet.VirtualMachineProfile.OsProfile.WindowsConfiguration == null)
             {
-                WriteObject(this.VirtualMachineScaleSet);
-                return;
+                this.VirtualMachineScaleSet.VirtualMachineProfile.OsProfile.WindowsConfiguration = new Microsoft.Azure.Management.Compute.Models.WindowsConfiguration();
             }
 
             // WinRM
             if (this.VirtualMachineScaleSet.VirtualMachineProfile.OsProfile.WindowsConfiguration.WinRM == null)
             {
-                WriteObject(this.VirtualMachineScaleSet);
-                return;
+                this.VirtualMachineScaleSet.VirtualMachineProfile.OsProfile.WindowsConfiguration.WinRM = new Microsoft.Azure.Management.Compute.Models.WinRMConfiguration();
             }
 
             // Listeners
             if (this.VirtualMachineScaleSet.VirtualMachineProfile.OsProfile.WindowsConfiguration.WinRM.Listeners == null)
             {
-                WriteObject(this.VirtualMachineScaleSet);
-                return;
-            }
-            var vListeners = this.VirtualMachineScaleSet.VirtualMachineProfile.OsProfile.WindowsConfiguration.WinRM.Listeners.First
-                (e =>
-                    (this.Protocol == null || e.Protocol == this.Protocol)
-                    && (this.CertificateUrl == null || e.CertificateUrl == this.CertificateUrl)
-                );
-
-            if (vListeners != null)
-            {
-                this.VirtualMachineScaleSet.VirtualMachineProfile.OsProfile.WindowsConfiguration.WinRM.Listeners.Remove(vListeners);
+                this.VirtualMachineScaleSet.VirtualMachineProfile.OsProfile.WindowsConfiguration.WinRM.Listeners = new List<Microsoft.Azure.Management.Compute.Models.WinRMListener>();
             }
 
-            if (this.VirtualMachineScaleSet.VirtualMachineProfile.OsProfile.WindowsConfiguration.WinRM.Listeners.Count == 0)
-            {
-                this.VirtualMachineScaleSet.VirtualMachineProfile.OsProfile.WindowsConfiguration.WinRM.Listeners = null;
-            }
+            var vListeners = new Microsoft.Azure.Management.Compute.Models.WinRMListener();
+
+            vListeners.Protocol = this.Protocol;
+            vListeners.CertificateUrl = this.CertificateUrl;
+            this.VirtualMachineScaleSet.VirtualMachineProfile.OsProfile.WindowsConfiguration.WinRM.Listeners.Add(vListeners);
             WriteObject(this.VirtualMachineScaleSet);
         }
     }
