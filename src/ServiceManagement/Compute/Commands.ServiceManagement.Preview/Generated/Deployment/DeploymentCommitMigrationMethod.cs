@@ -32,20 +32,32 @@ namespace Microsoft.WindowsAzure.Commands.Compute.Automation
 {
     public partial class InvokeAzureComputeMethodCmdlet : ComputeAutomationBaseCmdlet
     {
-        protected object CreateVirtualMachineDiskCreateDiskDynamicParameters()
+        protected object CreateDeploymentCommitMigrationDynamicParameters()
         {
             dynamicParameters = new RuntimeDefinedParameterDictionary();
-            var pParameters = new RuntimeDefinedParameter();
-            pParameters.Name = "VirtualMachineDiskCreateDiskParameter";
-            pParameters.ParameterType = typeof(VirtualMachineDiskCreateParameters);
-            pParameters.Attributes.Add(new ParameterAttribute
+            var pServiceName = new RuntimeDefinedParameter();
+            pServiceName.Name = "ServiceName";
+            pServiceName.ParameterType = typeof(string);
+            pServiceName.Attributes.Add(new ParameterAttribute
             {
                 ParameterSetName = "InvokeByDynamicParameters",
                 Position = 1,
                 Mandatory = true
             });
-            pParameters.Attributes.Add(new AllowNullAttribute());
-            dynamicParameters.Add("VirtualMachineDiskCreateDiskParameter", pParameters);
+            pServiceName.Attributes.Add(new AllowNullAttribute());
+            dynamicParameters.Add("ServiceName", pServiceName);
+
+            var pDeploymentName = new RuntimeDefinedParameter();
+            pDeploymentName.Name = "DeploymentName";
+            pDeploymentName.ParameterType = typeof(string);
+            pDeploymentName.Attributes.Add(new ParameterAttribute
+            {
+                ParameterSetName = "InvokeByDynamicParameters",
+                Position = 2,
+                Mandatory = true
+            });
+            pDeploymentName.Attributes.Add(new AllowNullAttribute());
+            dynamicParameters.Add("DeploymentName", pDeploymentName);
 
             var pArgumentList = new RuntimeDefinedParameter();
             pArgumentList.Name = "ArgumentList";
@@ -53,7 +65,7 @@ namespace Microsoft.WindowsAzure.Commands.Compute.Automation
             pArgumentList.Attributes.Add(new ParameterAttribute
             {
                 ParameterSetName = "InvokeByStaticParameters",
-                Position = 2,
+                Position = 3,
                 Mandatory = true
             });
             pArgumentList.Attributes.Add(new AllowNullAttribute());
@@ -62,24 +74,26 @@ namespace Microsoft.WindowsAzure.Commands.Compute.Automation
             return dynamicParameters;
         }
 
-        protected void ExecuteVirtualMachineDiskCreateDiskMethod(object[] invokeMethodInputParameters)
+        protected void ExecuteDeploymentCommitMigrationMethod(object[] invokeMethodInputParameters)
         {
-            VirtualMachineDiskCreateParameters parameters = (VirtualMachineDiskCreateParameters)ParseParameter(invokeMethodInputParameters[0]);
+            string serviceName = (string)ParseParameter(invokeMethodInputParameters[0]);
+            string deploymentName = (string)ParseParameter(invokeMethodInputParameters[1]);
 
-            var result = VirtualMachineDiskClient.CreateDisk(parameters);
+            var result = DeploymentClient.CommitMigration(serviceName, deploymentName);
             WriteObject(result);
         }
     }
 
     public partial class NewAzureComputeArgumentListCmdlet : ComputeAutomationBaseCmdlet
     {
-        protected PSArgument[] CreateVirtualMachineDiskCreateDiskParameters()
+        protected PSArgument[] CreateDeploymentCommitMigrationParameters()
         {
-            VirtualMachineDiskCreateParameters parameters = new VirtualMachineDiskCreateParameters();
+            string serviceName = string.Empty;
+            string deploymentName = string.Empty;
 
             return ConvertFromObjectsToArguments(
-                 new string[] { "Parameters" },
-                 new object[] { parameters });
+                 new string[] { "ServiceName", "DeploymentName" },
+                 new object[] { serviceName, deploymentName });
         }
     }
 }

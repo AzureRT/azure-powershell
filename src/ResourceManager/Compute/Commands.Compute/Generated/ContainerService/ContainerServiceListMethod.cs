@@ -32,7 +32,7 @@ namespace Microsoft.Azure.Commands.Compute.Automation
 {
     public partial class InvokeAzureComputeMethodCmdlet : ComputeAutomationBaseCmdlet
     {
-        protected object CreateContainerServiceListByResourceGroupDynamicParameters()
+        protected object CreateContainerServiceListDynamicParameters()
         {
             dynamicParameters = new RuntimeDefinedParameterDictionary();
             var pResourceGroupName = new RuntimeDefinedParameter();
@@ -42,7 +42,7 @@ namespace Microsoft.Azure.Commands.Compute.Automation
             {
                 ParameterSetName = "InvokeByDynamicParameters",
                 Position = 1,
-                Mandatory = false
+                Mandatory = true
             });
             pResourceGroupName.Attributes.Add(new AllowNullAttribute());
             dynamicParameters.Add("ResourceGroupName", pResourceGroupName);
@@ -62,70 +62,24 @@ namespace Microsoft.Azure.Commands.Compute.Automation
             return dynamicParameters;
         }
 
-        protected void ExecuteContainerServiceListByResourceGroupMethod(object[] invokeMethodInputParameters)
+        protected void ExecuteContainerServiceListMethod(object[] invokeMethodInputParameters)
         {
             string resourceGroupName = (string)ParseParameter(invokeMethodInputParameters[0]);
 
-            var result = ContainerServiceClient.ListByResourceGroup(resourceGroupName);
+            var result = ContainerServiceClient.List(resourceGroupName);
             WriteObject(result);
         }
     }
 
     public partial class NewAzureComputeArgumentListCmdlet : ComputeAutomationBaseCmdlet
     {
-        protected PSArgument[] CreateContainerServiceListByResourceGroupParameters()
+        protected PSArgument[] CreateContainerServiceListParameters()
         {
             string resourceGroupName = string.Empty;
 
             return ConvertFromObjectsToArguments(
                  new string[] { "ResourceGroupName" },
                  new object[] { resourceGroupName });
-        }
-    }
-
-    [Cmdlet("Get", "AzureRmcontainerByResourceGroupList", DefaultParameterSetName = "InvokeByDynamicParameters")]
-    public partial class GetAzureRmcontainerByResourceGroupList : InvokeAzureComputeMethodCmdlet
-    {
-        public GetAzureRmcontainerByResourceGroupList()
-        {
-        }
-
-        public override string MethodName { get; set; }
-
-        protected override void ProcessRecord()
-        {
-            this.MethodName = "ContainerServiceListByResourceGroup";
-            base.ProcessRecord();
-        }
-
-        public override object GetDynamicParameters()
-        {
-            dynamicParameters = new RuntimeDefinedParameterDictionary();
-            var pResourceGroupName = new RuntimeDefinedParameter();
-            pResourceGroupName.Name = "ResourceGroupName";
-            pResourceGroupName.ParameterType = typeof(string);
-            pResourceGroupName.Attributes.Add(new ParameterAttribute
-            {
-                ParameterSetName = "InvokeByDynamicParameters",
-                Position = 1,
-                Mandatory = false
-            });
-            pResourceGroupName.Attributes.Add(new AllowNullAttribute());
-            dynamicParameters.Add("ResourceGroupName", pResourceGroupName);
-
-            var pArgumentList = new RuntimeDefinedParameter();
-            pArgumentList.Name = "ArgumentList";
-            pArgumentList.ParameterType = typeof(object[]);
-            pArgumentList.Attributes.Add(new ParameterAttribute
-            {
-                ParameterSetName = "InvokeByStaticParameters",
-                Position = 2,
-                Mandatory = true
-            });
-            pArgumentList.Attributes.Add(new AllowNullAttribute());
-            dynamicParameters.Add("ArgumentList", pArgumentList);
-
-            return dynamicParameters;
         }
     }
 }

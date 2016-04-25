@@ -32,7 +32,7 @@ namespace Microsoft.WindowsAzure.Commands.Compute.Automation
 {
     public partial class InvokeAzureComputeMethodCmdlet : ComputeAutomationBaseCmdlet
     {
-        protected object CreateVirtualMachineDiskDeleteDataDiskDynamicParameters()
+        protected object CreateDeploymentPrepareMigrationDynamicParameters()
         {
             dynamicParameters = new RuntimeDefinedParameterDictionary();
             var pServiceName = new RuntimeDefinedParameter();
@@ -59,41 +59,53 @@ namespace Microsoft.WindowsAzure.Commands.Compute.Automation
             pDeploymentName.Attributes.Add(new AllowNullAttribute());
             dynamicParameters.Add("DeploymentName", pDeploymentName);
 
-            var pRoleName = new RuntimeDefinedParameter();
-            pRoleName.Name = "RoleName";
-            pRoleName.ParameterType = typeof(string);
-            pRoleName.Attributes.Add(new ParameterAttribute
+            var pDestinationVirtualNetwork = new RuntimeDefinedParameter();
+            pDestinationVirtualNetwork.Name = "DestinationVirtualNetwork";
+            pDestinationVirtualNetwork.ParameterType = typeof(string);
+            pDestinationVirtualNetwork.Attributes.Add(new ParameterAttribute
             {
                 ParameterSetName = "InvokeByDynamicParameters",
                 Position = 3,
-                Mandatory = true
+                Mandatory = false
             });
-            pRoleName.Attributes.Add(new AllowNullAttribute());
-            dynamicParameters.Add("RoleName", pRoleName);
+            pDestinationVirtualNetwork.Attributes.Add(new AllowNullAttribute());
+            dynamicParameters.Add("DestinationVirtualNetwork", pDestinationVirtualNetwork);
 
-            var pLogicalUnitNumber = new RuntimeDefinedParameter();
-            pLogicalUnitNumber.Name = "LogicalUnitNumber";
-            pLogicalUnitNumber.ParameterType = typeof(int);
-            pLogicalUnitNumber.Attributes.Add(new ParameterAttribute
+            var pResourceGroupName = new RuntimeDefinedParameter();
+            pResourceGroupName.Name = "ResourceGroupName";
+            pResourceGroupName.ParameterType = typeof(string);
+            pResourceGroupName.Attributes.Add(new ParameterAttribute
             {
                 ParameterSetName = "InvokeByDynamicParameters",
                 Position = 4,
-                Mandatory = true
+                Mandatory = false
             });
-            pLogicalUnitNumber.Attributes.Add(new AllowNullAttribute());
-            dynamicParameters.Add("LogicalUnitNumber", pLogicalUnitNumber);
+            pResourceGroupName.Attributes.Add(new AllowNullAttribute());
+            dynamicParameters.Add("ResourceGroupName", pResourceGroupName);
 
-            var pDeleteFromStorage = new RuntimeDefinedParameter();
-            pDeleteFromStorage.Name = "DeleteFromStorage";
-            pDeleteFromStorage.ParameterType = typeof(bool);
-            pDeleteFromStorage.Attributes.Add(new ParameterAttribute
+            var pSubNetName = new RuntimeDefinedParameter();
+            pSubNetName.Name = "SubNetName";
+            pSubNetName.ParameterType = typeof(string);
+            pSubNetName.Attributes.Add(new ParameterAttribute
             {
                 ParameterSetName = "InvokeByDynamicParameters",
                 Position = 5,
-                Mandatory = true
+                Mandatory = false
             });
-            pDeleteFromStorage.Attributes.Add(new AllowNullAttribute());
-            dynamicParameters.Add("DeleteFromStorage", pDeleteFromStorage);
+            pSubNetName.Attributes.Add(new AllowNullAttribute());
+            dynamicParameters.Add("SubNetName", pSubNetName);
+
+            var pVirtualNetworkName = new RuntimeDefinedParameter();
+            pVirtualNetworkName.Name = "VirtualNetworkName";
+            pVirtualNetworkName.ParameterType = typeof(string);
+            pVirtualNetworkName.Attributes.Add(new ParameterAttribute
+            {
+                ParameterSetName = "InvokeByDynamicParameters",
+                Position = 6,
+                Mandatory = false
+            });
+            pVirtualNetworkName.Attributes.Add(new AllowNullAttribute());
+            dynamicParameters.Add("VirtualNetworkName", pVirtualNetworkName);
 
             var pArgumentList = new RuntimeDefinedParameter();
             pArgumentList.Name = "ArgumentList";
@@ -101,7 +113,7 @@ namespace Microsoft.WindowsAzure.Commands.Compute.Automation
             pArgumentList.Attributes.Add(new ParameterAttribute
             {
                 ParameterSetName = "InvokeByStaticParameters",
-                Position = 6,
+                Position = 7,
                 Mandatory = true
             });
             pArgumentList.Attributes.Add(new AllowNullAttribute());
@@ -110,32 +122,39 @@ namespace Microsoft.WindowsAzure.Commands.Compute.Automation
             return dynamicParameters;
         }
 
-        protected void ExecuteVirtualMachineDiskDeleteDataDiskMethod(object[] invokeMethodInputParameters)
+        protected void ExecuteDeploymentPrepareMigrationMethod(object[] invokeMethodInputParameters)
         {
             string serviceName = (string)ParseParameter(invokeMethodInputParameters[0]);
             string deploymentName = (string)ParseParameter(invokeMethodInputParameters[1]);
-            string roleName = (string)ParseParameter(invokeMethodInputParameters[2]);
-            int logicalUnitNumber = (int)ParseParameter(invokeMethodInputParameters[3]);
-            bool deleteFromStorage = (bool)ParseParameter(invokeMethodInputParameters[4]);
+            var parameters = new PrepareDeploymentMigrationParameters();
+            var pDestinationVirtualNetwork = (string) ParseParameter(invokeMethodInputParameters[2]);
+            parameters.DestinationVirtualNetwork = string.IsNullOrEmpty(pDestinationVirtualNetwork) ? null : pDestinationVirtualNetwork;
+            var pResourceGroupName = (string) ParseParameter(invokeMethodInputParameters[3]);
+            parameters.ResourceGroupName = string.IsNullOrEmpty(pResourceGroupName) ? null : pResourceGroupName;
+            var pSubNetName = (string) ParseParameter(invokeMethodInputParameters[4]);
+            parameters.SubNetName = string.IsNullOrEmpty(pSubNetName) ? null : pSubNetName;
+            var pVirtualNetworkName = (string) ParseParameter(invokeMethodInputParameters[5]);
+            parameters.VirtualNetworkName = string.IsNullOrEmpty(pVirtualNetworkName) ? null : pVirtualNetworkName;
 
-            var result = VirtualMachineDiskClient.DeleteDataDisk(serviceName, deploymentName, roleName, logicalUnitNumber, deleteFromStorage);
+            var result = DeploymentClient.PrepareMigration(serviceName, deploymentName, parameters);
             WriteObject(result);
         }
     }
 
     public partial class NewAzureComputeArgumentListCmdlet : ComputeAutomationBaseCmdlet
     {
-        protected PSArgument[] CreateVirtualMachineDiskDeleteDataDiskParameters()
+        protected PSArgument[] CreateDeploymentPrepareMigrationParameters()
         {
             string serviceName = string.Empty;
             string deploymentName = string.Empty;
-            string roleName = string.Empty;
-            int logicalUnitNumber = new int();
-            bool deleteFromStorage = new bool();
+            var pDestinationVirtualNetwork = string.Empty;
+            var pResourceGroupName = string.Empty;
+            var pSubNetName = string.Empty;
+            var pVirtualNetworkName = string.Empty;
 
             return ConvertFromObjectsToArguments(
-                 new string[] { "ServiceName", "DeploymentName", "RoleName", "LogicalUnitNumber", "DeleteFromStorage" },
-                 new object[] { serviceName, deploymentName, roleName, logicalUnitNumber, deleteFromStorage });
+                 new string[] { "ServiceName", "DeploymentName", "DestinationVirtualNetwork", "ResourceGroupName", "SubNetName", "VirtualNetworkName" },
+                 new object[] { serviceName, deploymentName, pDestinationVirtualNetwork, pResourceGroupName, pSubNetName, pVirtualNetworkName });
         }
     }
 }

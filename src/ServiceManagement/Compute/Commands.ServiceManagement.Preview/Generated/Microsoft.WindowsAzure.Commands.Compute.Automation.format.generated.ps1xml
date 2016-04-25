@@ -1143,12 +1143,24 @@
                 <PropertyName>DefaultWinRmCertificateThumbprint</PropertyName>
               </ListItem>
               <ListItem>
+                <Label>LicenseType</Label>
+                <PropertyName>LicenseType</PropertyName>
+              </ListItem>
+              <ListItem>
+                <Label>MigrationState</Label>
+                <PropertyName>MigrationState</PropertyName>
+              </ListItem>
+              <ListItem>
                 <Label>OsVersion</Label>
                 <PropertyName>OsVersion</PropertyName>
               </ListItem>
               <ListItem>
                 <Label>OSVirtualHardDisk</Label>
                 <ScriptBlock>[Newtonsoft.Json.JsonConvert]::SerializeObject($_.OSVirtualHardDisk,  [Newtonsoft.Json.Formatting]::Indented)</ScriptBlock>
+              </ListItem>
+              <ListItem>
+                <Label>ProvisionGuestAgent</Label>
+                <PropertyName>ProvisionGuestAgent</PropertyName>
               </ListItem>
               <ListItem>
                 <Label>RoleName</Label>
