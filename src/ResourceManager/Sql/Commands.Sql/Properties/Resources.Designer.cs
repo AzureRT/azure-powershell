@@ -88,6 +88,15 @@ namespace Microsoft.Azure.Commands.Sql.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to In order to enable Threat Detection, please enable database auditing..
+        /// </summary>
+        internal static string AuditingIsTurnedOff {
+            get {
+                return ResourceManager.GetString("AuditingIsTurnedOff", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Database with name: &apos;{0}&apos; already exists in server &apos;{1}&apos;..
         /// </summary>
         internal static string DatabaseNameExists {
@@ -142,6 +151,15 @@ namespace Microsoft.Azure.Commands.Sql.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to One or more of the email addresses you entered are not valid..
+        /// </summary>
+        internal static string EmailsAreNotValid {
+            get {
+                return ResourceManager.GetString("EmailsAreNotValid", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to {your_password_here}.
         /// </summary>
         internal static string EnterPassword {
@@ -178,6 +196,15 @@ namespace Microsoft.Azure.Commands.Sql.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Cannot use the &apos;{0}&apos; option with other excluded detection types..
+        /// </summary>
+        internal static string InvalidExcludedDetectionTypeSet {
+            get {
+                return ResourceManager.GetString("InvalidExcludedDetectionTypeSet", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Please use Set-AzureRmEnvironment to set a valid GraphEndpoint for the current AzureEnvironment..
         /// </summary>
         internal static string InvalidGraphEndpoint {
@@ -201,6 +228,15 @@ namespace Microsoft.Azure.Commands.Sql.Properties {
         internal static string InvalidTenantId {
             get {
                 return ResourceManager.GetString("InvalidTenantId", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to You need to provide at least one email address or set EmailAdmins to True..
+        /// </summary>
+        internal static string NeedToProvideEmail {
+            get {
+                return ResourceManager.GetString("NeedToProvideEmail", resourceCulture);
             }
         }
         
@@ -295,11 +331,47 @@ namespace Microsoft.Azure.Commands.Sql.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Permanently removing Azure Sql Server communication link &apos;{0}&apos; on server &apos;{1}&apos;..
+        /// </summary>
+        internal static string RemoveAzureSqlServerCommunicationLinkDescription {
+            get {
+                return ResourceManager.GetString("RemoveAzureSqlServerCommunicationLinkDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Are you sure you want to remove the Azure Sql Server communication link &apos;{0}&apos; on server &apos;{1}&apos;?.
+        /// </summary>
+        internal static string RemoveAzureSqlServerCommunicationLinkWarning {
+            get {
+                return ResourceManager.GetString("RemoveAzureSqlServerCommunicationLinkWarning", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Permanently removing Azure Sql Database Server &apos;{0}&apos;..
         /// </summary>
         internal static string RemoveAzureSqlServerDescription {
             get {
                 return ResourceManager.GetString("RemoveAzureSqlServerDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Permanently removing Azure Sql Disaster Recovery Configuration &apos;{0}&apos; on server &apos;{1}&apos;..
+        /// </summary>
+        internal static string RemoveAzureSqlServerDisasterRecoveryConfigurationDescription {
+            get {
+                return ResourceManager.GetString("RemoveAzureSqlServerDisasterRecoveryConfigurationDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Are you sure you want to remove the Azure Sql Disaster Recovery Configuration &apos;{0}&apos; on server &apos;{1}&apos;?.
+        /// </summary>
+        internal static string RemoveAzureSqlServerDisasterRecoveryConfigurationWarning {
+            get {
+                return ResourceManager.GetString("RemoveAzureSqlServerDisasterRecoveryConfigurationWarning", resourceCulture);
             }
         }
         
@@ -349,6 +421,24 @@ namespace Microsoft.Azure.Commands.Sql.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Server communication link with name: &apos;{0}&apos; already exists in server &apos;{1}&apos;..
+        /// </summary>
+        internal static string ServerCommunicationLinkNameExists {
+            get {
+                return ResourceManager.GetString("ServerCommunicationLinkNameExists", resourceCulture);
+            }
+        }        
+
+        /// <summary>
+        ///   Looks up a localized string similar to Server Disaster Recovery Configuration already exists in server &apos;{1}&apos;..
+        /// </summary>
+        internal static string ServerDisasterRecoveryConfigurationNameExists {
+            get {
+                return ResourceManager.GetString("ServerDisasterRecoveryConfigurationNameExists", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Firewall Rule with name: &apos;{0}&apos; already exists for server &apos;{1}&apos;..
         /// </summary>
         internal static string ServerFirewallRuleNameExists {
@@ -376,6 +466,15 @@ namespace Microsoft.Azure.Commands.Sql.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Threat detection is only available for the latest SQL Database Update (V12). Please upgrade to set it up on your database..
+        /// </summary>
+        internal static string ServerNotApplicableForThreatDetection {
+            get {
+                return ResourceManager.GetString("ServerNotApplicableForThreatDetection", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Request for upgrade of server &apos;{0}&apos; already exists..
         /// </summary>
         internal static string ServerUpgradeExists {
@@ -393,6 +492,16 @@ namespace Microsoft.Azure.Commands.Sql.Properties {
             }
         }
         
+        /// <summary>
+        ///   Looks up a localized string similar to No Set Options were provided.
+        /// </summary>
+        internal static string SetDisasterRecoveryConfigurationNoOptionProvided
+        {
+            get {
+                return ResourceManager.GetString("SetDisasterRecoveryConfigurationNoOptionProvided", resourceCulture);
+            }
+        }
+
         /// <summary>
         ///   Looks up a localized string similar to No Set Options were provided.
         /// </summary>

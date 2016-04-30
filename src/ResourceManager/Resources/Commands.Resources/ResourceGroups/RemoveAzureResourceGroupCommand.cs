@@ -37,7 +37,7 @@ namespace Microsoft.Azure.Commands.Resources
         internal const string ResourceGroupIdParameterSet = "Lists the resource group based in the Id.";
 
         [Alias("ResourceGroupName")]
-        [Parameter(Mandatory = true, ParameterSetName = ResourceGroupNameParameterSet, ValueFromPipelineByPropertyName = true, HelpMessage = "The name of the resource group.")]
+        [Parameter(Position=0, Mandatory = true, ParameterSetName = ResourceGroupNameParameterSet, ValueFromPipelineByPropertyName = true, HelpMessage = "The name of the resource group.")]
         [ValidateNotNullOrEmpty]
         public string Name {get; set;}
 
@@ -49,7 +49,7 @@ namespace Microsoft.Azure.Commands.Resources
         [Parameter(Mandatory = false, HelpMessage = "Do not ask for confirmation.")]
         public SwitchParameter Force { get; set; }
         
-        protected override void ProcessRecord()
+        public override void ExecuteCmdlet()
         {
             Name = Name ?? ResourceIdentifier.FromResourceGroupIdentifier(this.Id).ResourceGroupName;
 

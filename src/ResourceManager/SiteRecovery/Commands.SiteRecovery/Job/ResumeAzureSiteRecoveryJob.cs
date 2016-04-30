@@ -51,25 +51,20 @@ namespace Microsoft.Azure.Commands.SiteRecovery
         /// <summary>
         /// ProcessRecord of the command.
         /// </summary>
-        protected override void ProcessRecord()
+        public override void ExecuteSiteRecoveryCmdlet()
         {
-            try
-            {
-                switch (this.ParameterSetName)
-                {
-                    case ASRParameterSets.ByObject:
-                        this.Name = this.Job.Name;
-                        this.ResumesByName();
-                        break;
+            base.ExecuteSiteRecoveryCmdlet();
 
-                    case ASRParameterSets.ByName:
-                        this.ResumesByName();
-                        break;
-                }
-            }
-            catch (Exception exception)
+            switch (this.ParameterSetName)
             {
-                this.HandleException(exception);
+                case ASRParameterSets.ByObject:
+                    this.Name = this.Job.Name;
+                    this.ResumesByName();
+                    break;
+
+                case ASRParameterSets.ByName:
+                    this.ResumesByName();
+                    break;
             }
         }
 
@@ -84,7 +79,8 @@ namespace Microsoft.Azure.Commands.SiteRecovery
                 this.Comments = " ";
             }
 
-            resumeJobParams.Comments = this.Comments;
+            resumeJobParams.Properties = new ResumeJobParamsProperties();
+            resumeJobParams.Properties.Comments = this.Comments;
 
             LongRunningOperationResponse response = RecoveryServicesClient.ResumeAzureSiteRecoveryJob(this.Name, resumeJobParams);
 

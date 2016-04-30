@@ -30,7 +30,7 @@ namespace Microsoft.Azure.Commands.SiteRecovery
     {
         #region Parameters
         /// <summary>
-        /// Gets or sets Name of the Protection Entity.
+        /// Gets or sets Name of the Replicated Protected Item.
         /// </summary>
         [Parameter(ParameterSetName = ASRParameterSets.ByObjectWithName, Mandatory = true)]
         [ValidateNotNullOrEmpty]
@@ -47,8 +47,8 @@ namespace Microsoft.Azure.Commands.SiteRecovery
         /// Gets or sets Server Object.
         /// </summary>
         [Parameter(ParameterSetName = ASRParameterSets.ByObject, Mandatory = true, ValueFromPipeline = true)]
-        [Parameter(ParameterSetName = ASRParameterSets.ByObjectWithName, Mandatory = true)]
-        [Parameter(ParameterSetName = ASRParameterSets.ByObjectWithFriendlyName, Mandatory = true)]
+        [Parameter(ParameterSetName = ASRParameterSets.ByObjectWithName, Mandatory = true, ValueFromPipeline = true)]
+        [Parameter(ParameterSetName = ASRParameterSets.ByObjectWithFriendlyName, Mandatory = true, ValueFromPipeline = true)]
         [ValidateNotNullOrEmpty]
         public ASRProtectionContainer ProtectionContainer { get; set; }
         #endregion Parameters
@@ -56,26 +56,21 @@ namespace Microsoft.Azure.Commands.SiteRecovery
         /// <summary>
         /// ProcessRecord of the command.
         /// </summary>
-        protected override void ProcessRecord()
+        public override void ExecuteSiteRecoveryCmdlet()
         {
-            try
+            base.ExecuteSiteRecoveryCmdlet();
+
+            switch (this.ParameterSetName)
             {
-                switch (this.ParameterSetName)
-                {
-                    case ASRParameterSets.ByObject:
-                        this.GetAll();
-                        break;
-                    case ASRParameterSets.ByObjectWithName:
-                        this.GetByName();
-                        break;
-                    case ASRParameterSets.ByObjectWithFriendlyName:
-                        this.GetByFriendlyName();
-                        break;
-                }
-            }
-            catch (Exception exception)
-            {
-                this.HandleException(exception);
+                case ASRParameterSets.ByObject:
+                    this.GetAll();
+                    break;
+                case ASRParameterSets.ByObjectWithName:
+                    this.GetByName();
+                    break;
+                case ASRParameterSets.ByObjectWithFriendlyName:
+                    this.GetByFriendlyName();
+                    break;
             }
         }
 
@@ -84,18 +79,22 @@ namespace Microsoft.Azure.Commands.SiteRecovery
         /// </summary>
         private void GetByFriendlyName()
         {
-            ProtectionEntityListResponse protectionEntityListResponse =
-                RecoveryServicesClient.GetAzureSiteRecoveryProtectionEntity(
-                this.ProtectionContainer.Name);
-
             bool found = false;
-            foreach (ProtectionEntity pe in protectionEntityListResponse.ProtectionEntities)
+
+            ProtectableItemListResponse protectableItemListResponse = RecoveryServicesClient.GetAzureSiteRecoveryProtectableItem(
+                Utilities.GetValueFromArmId(this.ProtectionContainer.ID, ARMResourceTypeConstants.ReplicationFabrics),
+                this.ProtectionContainer.Name);
+            ProtectableItem protectableItem = protectableItemListResponse.ProtectableItems.SingleOrDefault(t => string.Compare(t.Properties.FriendlyName, this.FriendlyName, StringComparison.OrdinalIgnoreCase) == 0);
+
+            if (protectableItem != null)
             {
-                if (0 == string.Compare(this.FriendlyName, pe.Properties.FriendlyName, true))
-                {
-                    this.WriteProtectionEntity(pe);
-                    found = true;
-                }
+                ProtectableItemResponse protectableItemResponse = RecoveryServicesClient.GetAzureSiteRecoveryProtectableItem(
+                    Utilities.GetValueFromArmId(this.ProtectionContainer.ID, ARMResourceTypeConstants.ReplicationFabrics),
+                    this.ProtectionContainer.Name,
+                    protectableItem.Name);
+                WriteProtectionEntity(protectableItemResponse.ProtectableItem);
+
+                found = true;
             }
 
             if (!found)
@@ -113,29 +112,22 @@ namespace Microsoft.Azure.Commands.SiteRecovery
         /// </summary>
         private void GetByName()
         {
-            // Commenting below code as Get PE by Name is faiing for somereason in service.
-            // Taking alternate route
-
-            //ProtectionEntityResponse protectionEntityResponse =
-            //    RecoveryServicesClient.GetAzureSiteRecoveryProtectionEntity(
-            //    this.ProtectionContainer.Name,
-            //    this.Name);
-
-            //this.WriteProtectionEntity(protectionEntityResponse.ProtectionEntity);
-
-            ProtectionEntityListResponse protectionEntityListResponse =
-                RecoveryServicesClient.GetAzureSiteRecoveryProtectionEntity(
-                this.ProtectionContainer.Name);
-
             bool found = false;
-            foreach (ProtectionEntity pe in protectionEntityListResponse.ProtectionEntities)
+
+            ProtectableItemListResponse protectableItemListResponse = RecoveryServicesClient.GetAzureSiteRecoveryProtectableItem(
+                Utilities.GetValueFromArmId(this.ProtectionContainer.ID, ARMResourceTypeConstants.ReplicationFabrics),
+                this.ProtectionContainer.Name);
+            ProtectableItem protectableItem = protectableItemListResponse.ProtectableItems.SingleOrDefault(t => string.Compare(t.Name, this.Name, StringComparison.OrdinalIgnoreCase) == 0);
+
+            if (protectableItem != null)
             {
-                if (0 == string.Compare(this.Name, pe.Name, true))
-                {
-                    this.WriteProtectionEntity(pe);
-                    found = true;
-                    break;
-                }
+                ProtectableItemResponse protectableItemResponse = RecoveryServicesClient.GetAzureSiteRecoveryProtectableItem(
+                    Utilities.GetValueFromArmId(this.ProtectionContainer.ID, ARMResourceTypeConstants.ReplicationFabrics),
+                    this.ProtectionContainer.Name,
+                    protectableItem.Name);
+                WriteProtectionEntity(protectableItemResponse.ProtectableItem);
+
+                found = true;
             }
 
             if (!found)
@@ -153,29 +145,34 @@ namespace Microsoft.Azure.Commands.SiteRecovery
         /// </summary>
         private void GetAll()
         {
-            ProtectionEntityListResponse protectionEntityListResponse =
-                RecoveryServicesClient.GetAzureSiteRecoveryProtectionEntity(
+            ProtectableItemListResponse protectableItemListResponse = RecoveryServicesClient.GetAzureSiteRecoveryProtectableItem(
+                Utilities.GetValueFromArmId(this.ProtectionContainer.ID, ARMResourceTypeConstants.ReplicationFabrics),
                 this.ProtectionContainer.Name);
 
-            this.WriteProtectionEntities(protectionEntityListResponse.ProtectionEntities);
+            WriteProtectionEntities(protectableItemListResponse.ProtectableItems);
         }
 
         /// <summary>
-        /// Writes Protection Entities.
+        /// Write Protection Entities
         /// </summary>
-        /// <param name="protectionEntities">Protection Entities</param>
-        private void WriteProtectionEntities(IList<ProtectionEntity> protectionEntities)
+        /// <param name="protectableItems">List of protectable items</param>
+        private void WriteProtectionEntities(IList<ProtectableItem> protectableItems)
         {
-            this.WriteObject(protectionEntities.Select(pe => new ASRProtectionEntity(pe)), true);
+            List<ASRProtectionEntity> asrProtectionEntityList = RecoveryServicesClient.FetchProtectionEntitiesData<ASRProtectionEntity>(
+                protectableItems, this.ProtectionContainer.ID, this.ProtectionContainer.Name);
+
+            this.WriteObject(asrProtectionEntityList, true);
         }
 
         /// <summary>
-        /// Writes Protection Entity.
+        /// Write Protection Entity
         /// </summary>
-        /// <param name="pe">Protection Entity</param>
-        private void WriteProtectionEntity(ProtectionEntity pe)
+        /// <param name="protectableItem"></param>
+        private void WriteProtectionEntity(ProtectableItem protectableItem)
         {
-            this.WriteObject(new ASRProtectionEntity(pe));
+            ASRProtectionEntity entity = RecoveryServicesClient.FetchProtectionEntityData<ASRProtectionEntity>(
+                protectableItem, this.ProtectionContainer.ID, this.ProtectionContainer.Name);
+            this.WriteObject(entity);
         }
     }
 }

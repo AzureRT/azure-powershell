@@ -19,6 +19,8 @@ using System;
 using System.Management.Automation;
 using Newtonsoft.Json;
 using System.Globalization;
+using Microsoft.Azure.Management.Compute.Models;
+using System.Linq;
 
 namespace Microsoft.Azure.Commands.Compute
 {
@@ -57,13 +59,26 @@ namespace Microsoft.Azure.Commands.Compute
         [ValidateNotNullOrEmpty]
         public string Name { get; set; }
 
-        protected override void ProcessRecord()
+        public override void ExecuteCmdlet()
         {
-            base.ProcessRecord();
+            base.ExecuteCmdlet();
 
             if (String.IsNullOrEmpty(Name))
             {
-                Name = VirtualMachineSqlServerExtensionContext.ExtensionPublishedNamespace + "." + VirtualMachineSqlServerExtensionContext.ExtensionPublishedName;
+                VirtualMachine vm = ComputeClient.ComputeManagementClient.VirtualMachines.Get(this.ResourceGroupName, this.VMName);
+                if (vm != null)
+                {
+                    VirtualMachineExtension virtualMachineExtension = vm.Resources.Where(x => x.Publisher.Equals(VirtualMachineSqlServerExtensionContext.ExtensionPublishedNamespace)).FirstOrDefault();
+                    if (virtualMachineExtension != null)
+                    {
+                        this.Name = virtualMachineExtension.Name;
+                    }
+                }
+
+                if (String.IsNullOrEmpty(Name))
+                {
+                    Name = VirtualMachineSqlServerExtensionContext.ExtensionPublishedNamespace + "." + VirtualMachineSqlServerExtensionContext.ExtensionPublishedName;
+                }
             }
 
             var result = VirtualMachineExtensionClient.GetWithInstanceView(ResourceGroupName, VMName, Name);

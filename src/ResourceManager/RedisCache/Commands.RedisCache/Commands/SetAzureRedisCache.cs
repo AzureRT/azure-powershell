@@ -20,7 +20,6 @@ namespace Microsoft.Azure.Commands.RedisCache
     using System.Collections;
     using System.Management.Automation;
     using SkuStrings = Microsoft.Azure.Management.Redis.Models.SkuName;
-    using Hyak.Common;
     using System;
         
     [Cmdlet(VerbsCommon.Set, "AzureRmRedisCache", DefaultParameterSetName = MaxMemoryParameterSetName), OutputType(typeof(RedisCacheAttributesWithAccessKeys))]
@@ -61,14 +60,14 @@ namespace Microsoft.Azure.Commands.RedisCache
         [Parameter(ValueFromPipelineByPropertyName = true, Mandatory = false, HelpMessage = "The number of shards to create on a Premium Cluster Cache.")]
         public int? ShardCount { get; set; }
 
-        protected override void ProcessRecord()
+        public override void ExecuteCmdlet()
         {
             if (!string.IsNullOrEmpty(MaxMemoryPolicy))
             {
                 throw new ArgumentException(Resources.MaxMemoryPolicyException);
             }
 
-            RedisGetResponse response = CacheClient.GetCache(ResourceGroupName, Name);
+            RedisResource response = CacheClient.GetCache(ResourceGroupName, Name);
 
             string skuName;
             string skuFamily;
@@ -76,7 +75,7 @@ namespace Microsoft.Azure.Commands.RedisCache
 
             if (string.IsNullOrEmpty(Sku))
             {
-                skuName = response.Resource.Properties.Sku.Name;
+                skuName = response.Sku.Name;
             }
             else
             {
@@ -85,8 +84,8 @@ namespace Microsoft.Azure.Commands.RedisCache
 
             if (string.IsNullOrEmpty(Size))
             {
-                skuFamily = response.Resource.Properties.Sku.Family;
-                skuCapacity = response.Resource.Properties.Sku.Capacity;
+                skuFamily = response.Sku.Family;
+                skuCapacity = response.Sku.Capacity;
             }
             else
             {
@@ -94,11 +93,16 @@ namespace Microsoft.Azure.Commands.RedisCache
                 skuFamily = Size.Substring(0, 1);
                 int.TryParse(Size.Substring(1), out skuCapacity);
             }
+
+            if (!ShardCount.HasValue && response.ShardCount.HasValue)
+            {
+                ShardCount = response.ShardCount;
+            }
             
             
             WriteObject(new RedisCacheAttributesWithAccessKeys(
-                CacheClient.CreateOrUpdateCache(ResourceGroupName, Name, response.Resource.Location, skuFamily, skuCapacity, skuName, RedisConfiguration, EnableNonSslPort, 
-                    TenantSettings, ShardCount, response.Resource.Properties.VirtualNetwork, response.Resource.Properties.Subnet, response.Resource.Properties.StaticIP), 
+                CacheClient.CreateOrUpdateCache(ResourceGroupName, Name, response.Location, skuFamily, skuCapacity, skuName, RedisConfiguration, EnableNonSslPort, 
+                    TenantSettings, ShardCount, response.VirtualNetwork, response.Subnet, response.StaticIP), 
                 ResourceGroupName));
         }
     }

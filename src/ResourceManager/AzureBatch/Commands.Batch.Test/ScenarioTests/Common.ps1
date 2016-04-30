@@ -14,6 +14,18 @@
 
 <#
 .SYNOPSIS
+Sleeps but only during recording.
+#>
+function Start-TestSleep($milliseconds)
+{
+    if ([Microsoft.Azure.Test.HttpRecorder.HttpMockServer]::Mode -ne [Microsoft.Azure.Test.HttpRecorder.HttpRecorderMode]::Playback)
+    {
+        Start-Sleep -Milliseconds $milliseconds
+    }
+}
+
+<#
+.SYNOPSIS
 Gets a Batch account name for testing.
 #>
 function Get-BatchAccountName

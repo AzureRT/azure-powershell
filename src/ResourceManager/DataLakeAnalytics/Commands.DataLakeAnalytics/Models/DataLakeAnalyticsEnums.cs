@@ -24,13 +24,24 @@ namespace Microsoft.Azure.Commands.DataLakeAnalytics.Models
             Table,
             TableValuedFunction,
             TableStatistics,
-            ExternalDataSource
+            ExternalDataSource,
+            View,
+            Procedure,
+            Secret,
+            Credential,
+            Types
         }
 
         // TODO: once we support creating other catalog types, move this up into CatalogItemType
         public enum CreatableCatalogItemType
         {
             Secret
+        }
+
+        public enum DataSourceType
+        {
+            DataLakeStore,
+            Blob
         }
 
         public enum ExtendedJobData

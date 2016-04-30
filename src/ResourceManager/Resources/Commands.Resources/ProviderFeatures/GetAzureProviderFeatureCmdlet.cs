@@ -57,8 +57,9 @@ namespace Microsoft.Azure.Commands.Resources.ProviderFeatures
         [Parameter(Mandatory = false, ValueFromPipelineByPropertyName = false, HelpMessage = "When set, lists all available features including those not registered with the current subscription.", ParameterSetName = GetAzureProviderFeatureCmdlet.ListAvailableParameterSet)]
         public SwitchParameter ListAvailable { get; set; }
 
-        protected override void ProcessRecord()
+        public override void ExecuteCmdlet()
         {
+            WriteWarning("The output object type of this cmdlet will be modified in a future release.");
             var parameterSetName = this.DetermineParameterSetName();
 
             switch (parameterSetName)

@@ -12,12 +12,11 @@
 // limitations under the License.
 // ----------------------------------------------------------------------------------
 
-using System;
 using System.Management.Automation;
-using Hyak.Common;
 using Microsoft.Azure.Commands.DataLakeStore.Models;
 using Microsoft.Azure.Commands.DataLakeStore.Properties;
-using Microsoft.Azure.Management.DataLake.StoreFileSystem.Models;
+using Microsoft.Azure.Management.DataLake.Store.Models;
+using Microsoft.Rest.Azure;
 
 namespace Microsoft.Azure.Commands.DataLakeStore
 {
@@ -44,7 +43,7 @@ namespace Microsoft.Azure.Commands.DataLakeStore
             HelpMessage = "Indicates that, if the file or folder exists, it should be overwritten")]
         public SwitchParameter Force { get; set; }
 
-        protected override void ProcessRecord()
+        public override void ExecuteCmdlet()
         {
             // We will let this throw itself if the path they give us is invalid
             // TODO: perhaps in the future catch this and throw a cmdlet specific exception
@@ -52,13 +51,13 @@ namespace Microsoft.Azure.Commands.DataLakeStore
 
             FileType type;
 
-            if (!DataLakeStoreFileSystemClient.TestFileOrFolderExistence(Path.Path, Account, out type) ||
-                type != FileType.File)
+            if (!DataLakeStoreFileSystemClient.TestFileOrFolderExistence(Path.TransformedPath, Account, out type) ||
+                type != FileType.FILE)
             {
-                throw new CloudException(string.Format(Resources.InvalidExportPathType, Path.Path));
+                throw new CloudException(string.Format(Resources.InvalidExportPathType, Path.TransformedPath));
             }
 
-            DataLakeStoreFileSystemClient.DownloadFile(Path.Path, Account, powerShellReadyPath, CmdletCancellationToken,
+            DataLakeStoreFileSystemClient.DownloadFile(Path.TransformedPath, Account, powerShellReadyPath, CmdletCancellationToken,
                 Force, this);
 
             WriteObject(powerShellReadyPath);

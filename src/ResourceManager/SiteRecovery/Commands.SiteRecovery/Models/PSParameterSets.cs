@@ -22,12 +22,27 @@ namespace Microsoft.Azure.Commands.SiteRecovery
         /// <summary>
         /// When only RP Object is passed to the command.
         /// </summary>
+        internal const string ForSite = "ForSite";
+
+        /// <summary>
+        /// When only RP Object is passed to the command.
+        /// </summary>
         internal const string ByRPObject = "ByRPObject";
+
+        /// <summary>
+        /// When only RP File is passed to the command.
+        /// </summary>
+        internal const string ByRPFile = "ByRPFile";
 
         /// <summary>
         /// When only Object is passed to the command.
         /// </summary>
         internal const string ByObject = "ByObject";
+
+        /// <summary>
+        /// When only Server Object is passed to the command.
+        /// </summary>
+        internal const string ByServerObject = "ByServerObject";
 
         /// <summary>
         /// When only PE Object is passed to the command.
@@ -80,6 +95,11 @@ namespace Microsoft.Azure.Commands.SiteRecovery
         internal const string ByRPIdWithVMNetwork = "ByRPIdWithVMNetwork";
 
         /// <summary>
+        /// When only RP Object is passed along with Azure VM Network Id to the command.
+        /// </summary>
+        internal const string ByRPObjectWithAzureVMNetworkId = "ByRPObjectWithAzureVMNetworkId";
+
+        /// <summary>
         /// When only PE Object is passed along with VM network ID to the command.
         /// </summary>
         internal const string ByPEObjectWithVMNetworkID = "ByPEObjectWithVMNetworkID";
@@ -88,6 +108,16 @@ namespace Microsoft.Azure.Commands.SiteRecovery
         /// When only PE Object is passed along with VM network to the command.
         /// </summary>
         internal const string ByPEObjectWithVMNetwork = "ByPEObjectWithVMNetwork";
+
+        /// <summary>
+        /// When only PE Object is passed along with Logical VM network to the command.
+        /// </summary>
+        internal const string ByPEObjectWithLogicalVMNetwork = "ByPEObjectWithLogicalVMNetwork";
+
+        /// <summary>
+        /// When only PE Object is passed along with Logical VM network to the command.
+        /// </summary>
+        internal const string ByPEObjectWithAzureVMNetworkId = "ByPEObjectWithAzureVMNetworkId";
 
         /// <summary>
         /// When only PC and PE ids are passed to the command.
@@ -190,6 +220,16 @@ namespace Microsoft.Azure.Commands.SiteRecovery
         internal const string EnterpriseToAzure = "EnterpriseToAzure";
 
         /// <summary>
+        /// Mapping between HyperV Site to Azure.
+        /// </summary>
+        internal const string HyperVSiteToAzure = "HyperVSiteToAzure";
+
+        /// <summary>
+        /// Disable DR
+        /// </summary>
+        internal const string DisableDR = "DisableDR";
+
+        /// <summary>
         /// Mapping between Enterprise to Enterprise San.
         /// </summary>
         internal const string EnterpriseToEnterpriseSan = "EnterpriseToEnterpriseSan";
@@ -203,5 +243,35 @@ namespace Microsoft.Azure.Commands.SiteRecovery
         /// For Disable replication group parameter set.
         /// </summary>
         internal const string DisableReplicationGroup = "DisableReplicationGroup";
+
+        /// <summary>
+        /// To append group to RP.
+        /// </summary>
+        internal const string AppendGroup = "AppendGroup";
+
+        /// <summary>
+        /// To remove group from RP
+        /// </summary>
+        internal const string RemoveGroup = "RemoveGroup";
+
+        /// <summary>
+        /// Add protected entities to RP
+        /// </summary>
+        internal const string AddProtectedEntities = "AddProtectedEntities";
+
+        /// <summary>
+        /// Remove protected entities from RP
+        /// </summary>
+        internal const string RemoveProtectedEntities = "RemoveProtectedEntities";
+
+	/// </summary>
+        /// Handle ASR Vault.
+        /// </summary>
+        internal const string ASRVault = "AzureSiteRecoveryVault";
+
+        /// <summary>
+        /// Handle ARS Vault.
+        /// </summary>
+        internal const string ARSVault = "AzureRecoveryServicesVault";
     }
 }

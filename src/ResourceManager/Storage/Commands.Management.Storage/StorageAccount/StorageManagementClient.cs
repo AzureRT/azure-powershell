@@ -13,8 +13,8 @@
 // ----------------------------------------------------------------------------------
 
 using System;
-using Microsoft.Azure.Common.Authentication;
-using Microsoft.Azure.Common.Authentication.Models;
+using Microsoft.Azure.Commands.Common.Authentication;
+using Microsoft.Azure.Commands.Common.Authentication.Models;
 using Microsoft.Azure.Management.Storage;
 
 namespace Microsoft.Azure.Commands.Management.Storage
@@ -28,7 +28,7 @@ namespace Microsoft.Azure.Commands.Management.Storage
         public Action<string> ErrorLogger { get; set; }
 
         public StorageManagementClientWrapper(AzureContext context)
-            : this(AzureSession.ClientFactory.CreateClient<StorageManagementClient>(context, AzureEnvironment.Endpoint.ResourceManager))
+            : this(AzureSession.ClientFactory.CreateArmClient<StorageManagementClient>(context, AzureEnvironment.Endpoint.ResourceManager))
         {
         }
 

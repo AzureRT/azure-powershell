@@ -58,8 +58,9 @@ namespace Microsoft.Azure.Commands.Providers
         /// <summary>
         /// Executes the cmdlet
         /// </summary>
-        protected override void ProcessRecord()
+        public override void ExecuteCmdlet()
         {
+            WriteWarning("The output object type of this cmdlet will be modified in a future release.");
             var providers = this.ResourcesClient.ListPSResourceProviders(providerName: this.ProviderNamespace, listAvailable: this.ListAvailable, location: this.Location);
 
             if (!string.IsNullOrEmpty(this.ProviderNamespace))

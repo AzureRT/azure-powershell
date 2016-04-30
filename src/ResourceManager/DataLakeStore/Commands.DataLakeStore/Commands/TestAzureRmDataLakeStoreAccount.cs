@@ -14,8 +14,8 @@
 
 using System.Management.Automation;
 using System.Net;
-using Hyak.Common;
 using Microsoft.Azure.Commands.DataLakeStore.Models;
+using Microsoft.Rest.Azure;
 
 namespace Microsoft.Azure.Commands.DataLakeStore
 {
@@ -32,24 +32,9 @@ namespace Microsoft.Azure.Commands.DataLakeStore
         [ValidateNotNullOrEmpty]
         public string ResourceGroupName { get; set; }
 
-        protected override void ProcessRecord()
+        public override void ExecuteCmdlet()
         {
-            try
-            {
-                DataLakeStoreClient.GetAccount(ResourceGroupName, Name);
-                WriteObject(true);
-            }
-            catch (CloudException e)
-            {
-                if (e.Response.StatusCode == HttpStatusCode.NotFound)
-                {
-                    WriteObject(false);
-                }
-                else
-                {
-                    throw;
-                }
-            }
+            WriteObject(DataLakeStoreClient.TestAccount(ResourceGroupName, Name));
         }
     }
 }

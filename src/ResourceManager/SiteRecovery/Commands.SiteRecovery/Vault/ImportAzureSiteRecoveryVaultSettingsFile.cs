@@ -35,9 +35,9 @@ namespace Microsoft.Azure.Commands.SiteRecovery
         /// downloaded from Azure site recovery Vault portal and stored locally.
         /// </summary>
         [Parameter(
-            Position = 0, 
-            Mandatory = true, 
-            HelpMessage = "AzureSiteRecovery vault settings file path", 
+            Position = 0,
+            Mandatory = true,
+            HelpMessage = "AzureSiteRecovery vault settings file path",
             ValueFromPipelineByPropertyName = true)]
         [ValidateNotNullOrEmpty]
         public string Path { get; set; }
@@ -46,11 +46,14 @@ namespace Microsoft.Azure.Commands.SiteRecovery
         /// <summary>
         /// ProcessRecord of the command.
         /// </summary>
-        protected override void ProcessRecord()
+        public override void ExecuteSiteRecoveryCmdlet()
         {
+            base.ExecuteSiteRecoveryCmdlet();
+
             this.WriteVerbose("Vault Settings File path: " + this.Path);
 
             ASRVaultCreds asrVaultCreds = null;
+
             if (File.Exists(this.Path))
             {
                 try
@@ -98,21 +101,13 @@ namespace Microsoft.Azure.Commands.SiteRecovery
                     asrVaultCreds.ResourceGroupName);
             }
 
-            try
-            {
-                RecoveryServicesClient.ValidateVaultSettings(
-                    asrVaultCreds.ResourceName,
-                    asrVaultCreds.ResourceGroupName);
+            Utilities.UpdateCurrentVaultContext(asrVaultCreds);
 
-                Utilities.UpdateVaultSettings(asrVaultCreds);
-                this.WriteObject(new ASRVaultSettings(
-                    asrVaultCreds.ResourceName,
-                    asrVaultCreds.ResourceGroupName));
-            }
-            catch (Exception exception)
-            {
-                this.HandleException(exception);
-            }
+            RecoveryServicesClient.ValidateVaultSettings(
+                asrVaultCreds.ResourceName,
+                asrVaultCreds.ResourceGroupName);
+
+            this.WriteObject(new ASRVaultSettings(asrVaultCreds));
         }
     }
 }

@@ -37,7 +37,7 @@ namespace Microsoft.Azure.Commands.RedisCache
         [Parameter(Mandatory = false, HelpMessage = "Do not ask for confirmation.")]
         public SwitchParameter Force { get; set; }
 
-        protected override void ProcessRecord()
+        public override void ExecuteCmdlet()
         {
             RedisKeyType keyTypeToRegenerated = RedisKeyType.Primary;
             if (KeyType.Equals("Secondary"))
@@ -60,7 +60,7 @@ namespace Microsoft.Azure.Commands.RedisCache
                 CacheClient.RegenerateAccessKeys(ResourceGroupName, Name, keyTypeToRegenerated);
             }
 
-            RedisListKeysResponse keysResponse = CacheClient.GetAccessKeys(ResourceGroupName, Name);
+            RedisListKeysResult keysResponse = CacheClient.GetAccessKeys(ResourceGroupName, Name);
             WriteObject(new RedisAccessKeys()
             {
                 PrimaryKey = keysResponse.PrimaryKey,

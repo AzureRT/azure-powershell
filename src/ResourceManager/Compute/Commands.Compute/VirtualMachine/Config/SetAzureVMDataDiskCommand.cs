@@ -67,9 +67,7 @@ namespace Microsoft.Azure.Commands.Compute
             Position = 2,
             ValueFromPipelineByPropertyName = true,
             HelpMessage = HelpMessages.VMDataDiskCaching)]
-        [ValidateNotNullOrEmpty]
-        [ValidateSet(ValidateSetValues.ReadOnly, ValidateSetValues.ReadWrite, ValidateSetValues.None)]
-        public string Caching { get; set; }
+        public CachingTypes? Caching { get; set; }
 
         [Parameter(
             Mandatory = false,
@@ -79,7 +77,7 @@ namespace Microsoft.Azure.Commands.Compute
         [AllowNull]
         public int? DiskSizeInGB { get; set; }
 
-        protected override void ProcessRecord()
+        public override void ExecuteCmdlet()
         {            
             var storageProfile = this.VM.StorageProfile;            
 
@@ -98,7 +96,7 @@ namespace Microsoft.Azure.Commands.Compute
             }
             else
             {
-                if (! string.IsNullOrWhiteSpace(this.Caching))
+                if (this.Caching != null)
                 {
                     dataDisk.Caching = this.Caching;
                 }

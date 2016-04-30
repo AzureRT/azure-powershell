@@ -14,7 +14,7 @@
 
 using System.Management.Automation;
 using Microsoft.Azure.Commands.DataLakeStore.Models;
-using Microsoft.Azure.Management.DataLake.StoreFileSystem.Models;
+using Microsoft.Azure.Management.DataLake.Store.Models;
 
 namespace Microsoft.Azure.Commands.DataLakeStore
 {
@@ -38,20 +38,20 @@ namespace Microsoft.Azure.Commands.DataLakeStore
             HelpMessage = "Indicates the type of path expected when testing. Valid values are Any, File or Folder.")]
         public DataLakeStoreEnums.PathType PathType { get; set; }
 
-        protected override void ProcessRecord()
+        public override void ExecuteCmdlet()
         {
             FileType fileType;
-            if (DataLakeStoreFileSystemClient.TestFileOrFolderExistence(Path.Path, Account, out fileType))
+            if (DataLakeStoreFileSystemClient.TestFileOrFolderExistence(Path.TransformedPath, Account, out fileType))
             {
                 if (PathType == DataLakeStoreEnums.PathType.Any)
                 {
                     WriteObject(true);
                 }
-                else if (PathType == DataLakeStoreEnums.PathType.File && fileType == FileType.File)
+                else if (PathType == DataLakeStoreEnums.PathType.File && fileType == FileType.FILE)
                 {
                     WriteObject(true);
                 }
-                else if (PathType == DataLakeStoreEnums.PathType.Folder && fileType == FileType.Directory)
+                else if (PathType == DataLakeStoreEnums.PathType.Folder && fileType == FileType.DIRECTORY)
                 {
                     WriteObject(true);
                 }

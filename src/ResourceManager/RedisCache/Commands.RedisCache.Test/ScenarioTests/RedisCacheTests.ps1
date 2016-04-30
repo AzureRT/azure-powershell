@@ -6,7 +6,7 @@ function Test-RedisCache
 {
     # Setup
     # resource group should exists
-    $resourceGroupName = "MyResourceGroup"
+    $resourceGroupName = "SunnyAAPT6"
     $cacheName = "powershelltest"
     $location = "North Central US"
 
@@ -31,7 +31,7 @@ function Test-RedisCache
     # In loop to check if cache exists
     for ($i = 0; $i -le 60; $i++)
     {
-        [Microsoft.WindowsAzure.Commands.Utilities.Common.TestMockSupport]::Delay(30000)
+        Start-TestSleep 30000
         $cacheGet = Get-AzureRmRedisCache -ResourceGroupName $resourceGroupName -Name $cacheName
         if ([string]::Compare("succeeded", $cacheGet[0].ProvisioningState, $True) -eq 0)
         {
@@ -145,7 +145,7 @@ function Test-SetNonExistingRedisCacheTest
 {
     # Setup
     # resource group should exists
-    $resourceGroupName = "MyResourceGroup"
+    $resourceGroupName = "SunnyAAPT6"
     $cacheName = "NonExistingRedisCache"
     $location = "North Central US"
 
@@ -161,7 +161,7 @@ function Test-RedisCachePipeline
 {
     # Setup
     # resource group should exists
-    $resourceGroupName = "MyResourceGroup"
+    $resourceGroupName = "SunnyAAPT6"
     $cacheName = "powershelltestpipe"
     $location = "North Central US"
 
@@ -187,7 +187,7 @@ function Test-RedisCachePipeline
     # In loop to check if cache exists
     for ($i = 0; $i -le 60; $i++)
     {
-        [Microsoft.WindowsAzure.Commands.Utilities.Common.TestMockSupport]::Delay(30000)
+        Start-TestSleep 30000
         $cacheGet = Get-AzureRmRedisCache -ResourceGroupName $resourceGroupName -Name $cacheName
         if ([string]::Compare("succeeded", $cacheGet[0].ProvisioningState, $True) -eq 0)
         {
@@ -247,7 +247,7 @@ function Test-SetRedisCacheBugFixTest
 {
     # Setup
     # resource group should exists
-    $resourceGroupName = "siddharth"
+    $resourceGroupName = "SunnyAAPT6"
     $cacheName = "siddharthchatrola"
     $location = "North Central US"
 
@@ -284,7 +284,7 @@ function Test-RedisCacheClustering
 {
     # Setup
     # resource group should exists
-    $resourceGroupName = "MyResourceGroup"
+    $resourceGroupName = "SunnyAAPT6"
     $cacheName = "powershellcluster"
     $location = "East US"
 
@@ -306,7 +306,7 @@ function Test-RedisCacheClustering
     # In loop to check if cache exists
     for ($i = 0; $i -le 60; $i++)
     {
-        [Microsoft.WindowsAzure.Commands.Utilities.Common.TestMockSupport]::Delay(30000)
+        Start-TestSleep 30000
         $cacheGet = Get-AzureRmRedisCache -ResourceGroupName $resourceGroupName -Name $cacheName
         if ([string]::Compare("succeeded", $cacheGet[0].ProvisioningState, $True) -eq 0)
         {
@@ -393,4 +393,46 @@ function Test-RedisCacheClustering
 
     # Delete cache
     Assert-True {Remove-AzureRmRedisCache -ResourceGroupName $resourceGroupName -Name $cacheName -Force -PassThru} "Remove cache failed."
+}
+
+<#
+.SYNOPSIS
+Tests SetAzureRedisCacheDiagnostics
+#>
+function Test-SetAzureRedisCacheDiagnostics
+{
+    # Setup
+    # resource group should exists
+    $resourceGroupName = "SunnyAAPT6"
+    $cacheName = "sunnycache"
+    
+    # Set Diagnostics
+    Set-AzureRmRedisCacheDiagnostics -ResourceGroupName $resourceGroupName -Name $cacheName -StorageAccountId "/subscriptions/f8f8f139-2fd5-4d86-afca-21f21f35806e/resourceGroups/SunnyAAPT6/providers/Microsoft.ClassicStorage/storageAccounts/sunnystoragenew"
+}
+
+<#
+.SYNOPSIS
+Tests RemoveAzureRedisCacheDiagnostics
+#>
+function Test-RemoveAzureRedisCacheDiagnostics
+{
+    # Setup
+    # resource group should exists
+    $resourceGroupName = "SunnyAAPT6"
+    $cacheName = "sunnycache"
+    
+    # Set Diagnostics
+    Remove-AzureRmRedisCacheDiagnostics -ResourceGroupName $resourceGroupName -Name $cacheName -Force
+}
+
+<#
+.SYNOPSIS
+Sleeps but only during recording.
+#>
+function Start-TestSleep($milliseconds)
+{
+    if ([Microsoft.Azure.Test.HttpRecorder.HttpMockServer]::Mode -ne [Microsoft.Azure.Test.HttpRecorder.HttpRecorderMode]::Playback)
+    {
+        Start-Sleep -Milliseconds $milliseconds
+    }
 }

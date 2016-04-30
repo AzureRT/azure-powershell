@@ -26,19 +26,17 @@ namespace Microsoft.Azure.Commands.Batch.Test.ScenarioTests
 {
     public class ComputeNodeTests : WindowsAzure.Commands.Test.Utilities.Common.RMTestBase
     {
-        private const string accountName = ScenarioTestHelpers.SharedAccount;
         private const string poolId = ScenarioTestHelpers.SharedPool;
+        private const string iaasPoolId = ScenarioTestHelpers.SharedIaasPool;
 
         [Fact]
-        [Trait(Category.AcceptanceType, Category.CheckIn)]
         public void TestGetComputeNodeById()
         {
             BatchController controller = BatchController.NewInstance;
-            controller.RunPsTest(string.Format("Test-GetComputeNodeById '{0}' '{1}'", accountName, poolId));
+            controller.RunPsTest(string.Format("Test-GetComputeNodeById '{0}'", poolId));
         }
 
         [Fact]
-        [Trait(Category.AcceptanceType, Category.CheckIn)]
         public void TestListComputeNodesByFilter()
         {
             BatchController controller = BatchController.NewInstance;
@@ -46,10 +44,10 @@ namespace Microsoft.Azure.Commands.Batch.Test.ScenarioTests
             string state = "idle";
             int matches = 0;
             controller.RunPsTestWorkflow(
-                () => { return new string[] { string.Format("Test-ListComputeNodesByFilter '{0}' '{1}' '{2}' '{3}'", accountName, poolId, state, matches) }; },
+                () => { return new string[] { string.Format("Test-ListComputeNodesByFilter '{0}' '{1}' '{2}'", poolId, state, matches) }; },
                 () =>
                 {
-                    context = ScenarioTestHelpers.GetBatchAccountContextWithKeys(controller, accountName);
+                    context = new ScenarioTestContext();
                     matches = ScenarioTestHelpers.GetPoolCurrentDedicated(controller, context, poolId);
                 },
                 null,
@@ -65,10 +63,10 @@ namespace Microsoft.Azure.Commands.Batch.Test.ScenarioTests
             BatchAccountContext context = null;
             string computeNodeId = null;
             controller.RunPsTestWorkflow(
-                () => { return new string[] { string.Format("Test-GetAndListComputeNodesWithSelect '{0}' '{1}' '{2}'", accountName, poolId, computeNodeId) }; },
+                () => { return new string[] { string.Format("Test-GetAndListComputeNodesWithSelect '{0}' '{1}'", poolId, computeNodeId) }; },
                 () =>
                 {
-                    context = ScenarioTestHelpers.GetBatchAccountContextWithKeys(controller, accountName);
+                    context = new ScenarioTestContext();
                     computeNodeId = ScenarioTestHelpers.GetComputeNodeId(controller, context, poolId);
                 },
                 null,
@@ -77,26 +75,24 @@ namespace Microsoft.Azure.Commands.Batch.Test.ScenarioTests
         }
 
         [Fact]
-        [Trait(Category.AcceptanceType, Category.CheckIn)]
         public void TestListComputeNodesWithMaxCount()
         {
             BatchController controller = BatchController.NewInstance;
             int maxCount = 1;
-            controller.RunPsTest(string.Format("Test-ListComputeNodesWithMaxCount '{0}' '{1}' '{2}'", accountName, poolId, maxCount));
+            controller.RunPsTest(string.Format("Test-ListComputeNodesWithMaxCount '{0}' '{1}'", poolId, maxCount));
         }
 
         [Fact]
-        [Trait(Category.AcceptanceType, Category.CheckIn)]
         public void TestListAllComputeNodes()
         {
             BatchController controller = BatchController.NewInstance;
             BatchAccountContext context = null;
             int computeNodeCount = 0;
             controller.RunPsTestWorkflow(
-                () => { return new string[] { string.Format("Test-ListAllComputeNodes '{0}' '{1}' '{2}'", accountName, poolId, computeNodeCount) }; },
+                () => { return new string[] { string.Format("Test-ListAllComputeNodes '{0}' '{1}'", poolId, computeNodeCount) }; },
                 () =>
                 {
-                    context = ScenarioTestHelpers.GetBatchAccountContextWithKeys(controller, accountName);
+                    context = new ScenarioTestContext();
                     computeNodeCount = ScenarioTestHelpers.GetPoolCurrentDedicated(controller, context, poolId);
                 },
                 null,
@@ -105,17 +101,16 @@ namespace Microsoft.Azure.Commands.Batch.Test.ScenarioTests
         }
 
         [Fact]
-        [Trait(Category.AcceptanceType, Category.CheckIn)]
         public void TestListComputeNodePipeline()
         {
             BatchController controller = BatchController.NewInstance;
             BatchAccountContext context = null;
             int computeNodeCount = 0;
             controller.RunPsTestWorkflow(
-                () => { return new string[] { string.Format("Test-ListComputeNodePipeline '{0}' '{1}' '{2}'", accountName, poolId, computeNodeCount) }; },
+                () => { return new string[] { string.Format("Test-ListComputeNodePipeline '{0}' '{1}'", poolId, computeNodeCount) }; },
                 () =>
                 {
-                    context = ScenarioTestHelpers.GetBatchAccountContextWithKeys(controller, accountName);
+                    context = new ScenarioTestContext();
                     computeNodeCount = ScenarioTestHelpers.GetPoolCurrentDedicated(controller, context, poolId);
                 },
                 null,
@@ -124,98 +119,188 @@ namespace Microsoft.Azure.Commands.Batch.Test.ScenarioTests
         }
 
         [Fact]
+        public void TestRemoveComputeNodeById()
+        {
+            TestRemoveComputeNode(usePipeline: false, testMethodName: TestUtilities.GetCurrentMethodName());
+        }
+
+        [Fact]
         [Trait(Category.AcceptanceType, Category.CheckIn)]
+        public void TestRemoveComputeNodePipeline()
+        {
+            TestRemoveComputeNode(usePipeline: true, testMethodName: TestUtilities.GetCurrentMethodName());
+        }
+
+        [Fact]
+        public void TestRemoveMultipleComputeNodes()
+        {
+            BatchController controller = BatchController.NewInstance;
+            BatchAccountContext context = null;
+            string computeNodeId = null;
+            string computeNodeId2 = null;
+            int originalDedicated = 3;
+            controller.RunPsTestWorkflow(
+                () => { return new string[] { string.Format("Test-RemoveMultipleComputeNodes '{0}' '{1}' '{2}'", poolId, computeNodeId, computeNodeId2) }; },
+                () =>
+                {
+                    context = new ScenarioTestContext();
+                    originalDedicated = ScenarioTestHelpers.GetPoolCurrentDedicated(controller, context, poolId);
+                    ScenarioTestHelpers.WaitForSteadyPoolAllocation(controller, context, poolId);
+                    ScenarioTestHelpers.ResizePool(controller, context, poolId, originalDedicated + 2);
+                    ScenarioTestHelpers.WaitForSteadyPoolAllocation(controller, context, poolId);
+                    computeNodeId = ScenarioTestHelpers.GetComputeNodeId(controller, context, poolId);
+                    ScenarioTestHelpers.WaitForIdleComputeNode(controller, context, poolId, computeNodeId);
+                    computeNodeId2 = ScenarioTestHelpers.GetComputeNodeId(controller, context, poolId, 1);
+                    ScenarioTestHelpers.WaitForIdleComputeNode(controller, context, poolId, computeNodeId2);
+                },
+                null,
+                TestUtilities.GetCallingClass(),
+                TestUtilities.GetCurrentMethodName());
+        }
+
+        [Fact]
         public void TestRebootComputeNodeById()
         {
-            TestRebootComputeNode(false);
+            TestRebootComputeNode(usePipeline: false, testMethodName: TestUtilities.GetCurrentMethodName());
         }
 
         [Fact]
-        [Trait(Category.AcceptanceType, Category.CheckIn)]
         public void TestRebootComputeNodePipeline()
         {
-            TestRebootComputeNode(true);
+            TestRebootComputeNode(usePipeline: true, testMethodName: TestUtilities.GetCurrentMethodName());
         }
 
         [Fact]
-        [Trait(Category.AcceptanceType, Category.CheckIn)]
         public void TestReimageComputeNodeById()
         {
-            TestReimageComputeNode(false);
+            TestReimageComputeNode(usePipeline: false, testMethodName: TestUtilities.GetCurrentMethodName());
         }
 
         [Fact]
-        [Trait(Category.AcceptanceType, Category.CheckIn)]
         public void TestReimageComputeNodePipeline()
         {
-            TestReimageComputeNode(true);
+            TestReimageComputeNode(usePipeline: true, testMethodName: TestUtilities.GetCurrentMethodName());
         }
 
-        private void TestRebootComputeNode(bool usePipeline)
+        [Fact]
+        public void TestDisableAndEnableComputeNodeSchedulingById()
+        {
+            TestDisableAndEnableComputeNodeScheduling(usePipeline: false, testMethodName: TestUtilities.GetCurrentMethodName());
+        }
+
+        [Fact]
+        public void TestDisableAndEnableComputeNodeSchedulingPipeline()
+        {
+            TestDisableAndEnableComputeNodeScheduling(usePipeline: true, testMethodName: TestUtilities.GetCurrentMethodName());
+        }
+
+        [Fact]
+        public void TestGetComputeNodeRemoteLoginSettingsById()
+        {
+            TestGetComputeNodeRemoteLoginSettings(usePipeline: false, testMethodName: TestUtilities.GetCurrentMethodName());
+        }
+
+        [Fact]
+        public void TestGetComputeNodeRemoteLoginSettingsPipeline()
+        {
+            TestGetComputeNodeRemoteLoginSettings(usePipeline: true, testMethodName: TestUtilities.GetCurrentMethodName());
+        }
+
+        private void TestRemoveComputeNode(bool usePipeline, string testMethodName)
+        {
+            BatchController controller = BatchController.NewInstance;
+            BatchAccountContext context = null;
+            string computeNodeId = null;
+            int originalDedicated = 3;
+            controller.RunPsTestWorkflow(
+                () => { return new string[] { string.Format("Test-RemoveComputeNode '{0}' '{1}' '{2}'", poolId, computeNodeId, usePipeline ? 1 : 0) }; },
+                () =>
+                {
+                    context = new ScenarioTestContext();
+                    originalDedicated = ScenarioTestHelpers.GetPoolCurrentDedicated(controller, context, poolId);
+                    ScenarioTestHelpers.WaitForSteadyPoolAllocation(controller, context, poolId);
+                    computeNodeId = ScenarioTestHelpers.GetComputeNodeId(controller, context, poolId);
+                    ScenarioTestHelpers.WaitForIdleComputeNode(controller, context, poolId, computeNodeId);
+                },
+                () =>
+                {
+                    ScenarioTestHelpers.WaitForSteadyPoolAllocation(controller, context, poolId);
+                    ScenarioTestHelpers.ResizePool(controller, context, poolId, originalDedicated);
+                },
+                TestUtilities.GetCallingClass(),
+                testMethodName);
+        }
+
+        private void TestRebootComputeNode(bool usePipeline, string testMethodName)
         {
             BatchController controller = BatchController.NewInstance;
             BatchAccountContext context = null;
             string computeNodeId = null;
             controller.RunPsTestWorkflow(
-                () => { return new string[] { string.Format("Test-RebootComputeNode '{0}' '{1}' '{2}' '{3}'", accountName, poolId, computeNodeId, usePipeline ? 1 : 0) }; },
+                () => { return new string[] { string.Format("Test-RebootComputeNode '{0}' '{1}' '{2}'", poolId, computeNodeId, usePipeline ? 1 : 0) }; },
                 () =>
                 {
-                    context = ScenarioTestHelpers.GetBatchAccountContextWithKeys(controller, accountName);
+                    context = new ScenarioTestContext();
                     computeNodeId = ScenarioTestHelpers.GetComputeNodeId(controller, context, poolId);
                     ScenarioTestHelpers.WaitForIdleComputeNode(controller, context, poolId, computeNodeId);
                 },
                 null,
                 TestUtilities.GetCallingClass(),
-                usePipeline ? "TestRebootComputeNodePipeline" : "TestRebootComputeNodeById");
+                testMethodName);
         }
 
-        private void TestReimageComputeNode(bool usePipeline)
+        private void TestReimageComputeNode(bool usePipeline, string testMethodName)
         {
             BatchController controller = BatchController.NewInstance;
             BatchAccountContext context = null;
             string computeNodeId = null;
             controller.RunPsTestWorkflow(
-                () => { return new string[] { string.Format("Test-ReimageComputeNode '{0}' '{1}' '{2}' '{3}'", accountName, poolId, computeNodeId, usePipeline ? 1 : 0) }; },
+                () => { return new string[] { string.Format("Test-ReimageComputeNode '{0}' '{1}' '{2}'", poolId, computeNodeId, usePipeline ? 1 : 0) }; },
                 () =>
                 {
-                    context = ScenarioTestHelpers.GetBatchAccountContextWithKeys(controller, accountName);
+                    context = new ScenarioTestContext();
                     computeNodeId = ScenarioTestHelpers.GetComputeNodeId(controller, context, poolId);
                     ScenarioTestHelpers.WaitForIdleComputeNode(controller, context, poolId, computeNodeId);
                 },
                 null,
                 TestUtilities.GetCallingClass(),
-                usePipeline ? "TestReimageComputeNodePipeline" : "TestReimageComputeNodeById");
+                testMethodName);
         }
-    }
 
-    // Cmdlets that use the HTTP Recorder interceptor for use with scenario tests
-    [Cmdlet(VerbsCommon.Get, "AzureBatchComputeNode_ST", DefaultParameterSetName = Constants.ODataFilterParameterSet)]
-    public class GetBatchComputeNodeScenarioTestCommand : GetBatchComputeNodeCommand
-    {
-        protected override void ProcessRecord()
+        private void TestDisableAndEnableComputeNodeScheduling(bool usePipeline, string testMethodName)
         {
-            AdditionalBehaviors = new List<BatchClientBehavior>() { ScenarioTestHelpers.CreateHttpRecordingInterceptor() };
-            base.ProcessRecord();
+            BatchController controller = BatchController.NewInstance;
+            BatchAccountContext context = null;
+            string computeNodeId = null;
+            controller.RunPsTestWorkflow(
+                () => { return new string[] { string.Format("Test-DisableAndEnableComputeNodeScheduling '{0}' '{1}' '{2}'", poolId, computeNodeId, usePipeline ? 1 : 0) }; },
+                () =>
+                {
+                    context = new ScenarioTestContext();
+                    computeNodeId = ScenarioTestHelpers.GetComputeNodeId(controller, context, poolId);
+                    ScenarioTestHelpers.WaitForIdleComputeNode(controller, context, poolId, computeNodeId);
+                },
+                null,
+                TestUtilities.GetCallingClass(),
+                testMethodName);
         }
-    }
 
-    [Cmdlet(VerbsLifecycle.Restart, "AzureBatchComputeNode_ST", DefaultParameterSetName = Constants.IdParameterSet)]
-    public class RestartBatchComputeNodeScenarioTestCommand : RestartBatchComputeNodeCommand
-    {
-        protected override void ProcessRecord()
+        private void TestGetComputeNodeRemoteLoginSettings(bool usePipeline, string testMethodName)
         {
-            AdditionalBehaviors = new List<BatchClientBehavior>() { ScenarioTestHelpers.CreateHttpRecordingInterceptor() };
-            base.ProcessRecord();
-        }
-    }
+            BatchController controller = BatchController.NewInstance;
+            BatchAccountContext context = null;
+            string computeNodeId = null;
 
-    [Cmdlet(VerbsCommon.Reset, "AzureBatchComputeNode_ST", DefaultParameterSetName = Constants.IdParameterSet)]
-    public class ResetBatchComputeNodeScenarioTestCommand : ResetBatchComputeNodeCommand
-    {
-        protected override void ProcessRecord()
-        {
-            AdditionalBehaviors = new List<BatchClientBehavior>() { ScenarioTestHelpers.CreateHttpRecordingInterceptor() };
-            base.ProcessRecord();
+            controller.RunPsTestWorkflow(
+                () => { return new string[] { string.Format("Test-GetRemoteLoginSettings '{0}' '{1}' '{2}'", iaasPoolId, computeNodeId, usePipeline ? 1 : 0) }; },
+                () =>
+                {
+                    context = new ScenarioTestContext();
+                    computeNodeId = ScenarioTestHelpers.GetComputeNodeId(controller, context, iaasPoolId);
+                },
+                null,
+                TestUtilities.GetCallingClass(),
+                testMethodName);
         }
     }
 }

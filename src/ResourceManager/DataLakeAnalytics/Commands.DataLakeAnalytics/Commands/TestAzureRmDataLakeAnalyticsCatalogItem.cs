@@ -12,10 +12,8 @@
 // limitations under the License.
 // ----------------------------------------------------------------------------------
 
-using System;
 using System.Management.Automation;
 using Microsoft.Azure.Commands.DataLakeAnalytics.Models;
-using Microsoft.Azure.Commands.DataLakeAnalytics.Properties;
 
 namespace Microsoft.Azure.Commands.DataLakeAnalytics
 {
@@ -40,28 +38,9 @@ namespace Microsoft.Azure.Commands.DataLakeAnalytics
         [ValidateNotNullOrEmpty]
         public CatalogPathInstance Path { get; set; }
 
-        [Parameter(ValueFromPipelineByPropertyName = true, Position = 3, Mandatory = false,
-            HelpMessage = "Name of resource group under which the Data Lake Analytics account and catalog exists.")]
-        [ValidateNotNullOrEmpty]
-        public string ResourceGroupName { get; set; }
-
-        protected override void ProcessRecord()
+        public override void ExecuteCmdlet()
         {
-            try
-            {
-                DataLakeAnalyticsClient.GetCatalogItem(ResourceGroupName, Account, Path, ItemType);
-                WriteObject(true);
-            }
-            catch (Exception e)
-            {
-                if (e.Message.Equals(string.Format(Resources.InvalidCatalogPath, Path.FullCatalogItemPath),
-                    StringComparison.CurrentCultureIgnoreCase))
-                {
-                    throw;
-                }
-
-                WriteObject(false);
-            }
+            WriteObject(DataLakeAnalyticsClient.TestCatalogItem(Account, Path, ItemType));
         }
     }
 }

@@ -30,11 +30,11 @@ namespace Microsoft.Azure.Commands.SiteRecovery
         /// <summary>
         /// ProcessRecord of the command.
         /// </summary>
-        protected override void ProcessRecord()
+        public override void ExecuteSiteRecoveryCmdlet()
         {
-            this.WriteObject(new ASRVaultSettings(
-                PSRecoveryServicesClient.asrVaultCreds.ResourceName,
-                PSRecoveryServicesClient.asrVaultCreds.ResourceGroupName));
+            base.ExecuteSiteRecoveryCmdlet();
+
+            this.WriteObject(new ASRVaultSettings(PSRecoveryServicesClient.asrVaultCreds));
         }
     }
 }

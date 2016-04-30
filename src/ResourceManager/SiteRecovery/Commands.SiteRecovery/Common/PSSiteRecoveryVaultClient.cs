@@ -13,8 +13,8 @@
 // ----------------------------------------------------------------------------------
 
 using System.Threading.Tasks;
-using Microsoft.Azure.Management.RecoveryServices;
-using Microsoft.Azure.Management.RecoveryServices.Models;
+using Microsoft.Azure.Management.SiteRecoveryVault;
+using Microsoft.Azure.Management.SiteRecoveryVault.Models;
 
 namespace Microsoft.Azure.Commands.SiteRecovery
 {
@@ -43,6 +43,17 @@ namespace Microsoft.Azure.Commands.SiteRecovery
         public VaultCreateResponse CreateVault(string resouceGroupName, string vaultName, VaultCreateArgs vaultCreateInput)
         {
             return this.recoveryServicesClient.Vaults.BeginCreating(resouceGroupName, vaultName, vaultCreateInput);
+        }
+
+        /// <summary>
+        /// Method to delete Azure Site Recovery Vault
+        /// </summary>
+        /// <param name="resouceGroupName">name of the resouce group</param>
+        /// <param name="vaultName">name of the vault</param>
+        /// <returns>creation response object.</returns>
+        public RecoveryServicesOperationStatusResponse DeleteVault(string resouceGroupName, string vaultName)
+        {
+            return this.recoveryServicesClient.Vaults.BeginDeleting(resouceGroupName, vaultName);
         }
 
         /// <summary>

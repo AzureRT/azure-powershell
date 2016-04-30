@@ -55,6 +55,13 @@ namespace Microsoft.Azure.Commands.HDInsight
             set { job.Command = value; }
         }
 
+        [Parameter(HelpMessage = "The directory where the libjar can be found for the Sqoop job.")]
+        public string LibDir
+        {
+            get { return job.LibDir; }
+            set { job.LibDir = value; }
+        }
+
         #endregion
 
         public NewAzureHDInsightSqoopJobDefinitionCommand()
@@ -63,7 +70,7 @@ namespace Microsoft.Azure.Commands.HDInsight
             job = new AzureHDInsightSqoopJobDefinition();
         }
 
-        protected override void ProcessRecord()
+        public override void ExecuteCmdlet()
         {
             var sqoopJob = GetSqoopJob();
 

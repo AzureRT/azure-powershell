@@ -12,9 +12,10 @@
 //  See the License for the specific language governing permissions and
 //  limitations under the License.
 
+using Microsoft.Azure.Commands.Common.Authentication;
+
 namespace Microsoft.Azure.Commands.ApiManagement.ServiceManagement.Test.ScenarioTests
 {
-    using Microsoft.Azure.Common.Authentication;
     using Microsoft.Azure.Gallery;
     using Microsoft.Azure.Management.ApiManagement;
     using Microsoft.Azure.Management.Authorization;
@@ -26,16 +27,16 @@ namespace Microsoft.Azure.Commands.ApiManagement.ServiceManagement.Test.Scenario
     using Microsoft.WindowsAzure.Management.Storage;
     using Xunit;
 
-    public class ApiManagementTests : RMTestBase, IUseFixture<ApiManagementTestsFixture>
+    public class ApiManagementTests : RMTestBase, IClassFixture<ApiManagementTestsFixture>
     {
         private readonly EnvironmentSetupHelper _helper;
         private ApiManagementTestsFixture _fixture;
 
-        public ApiManagementTests()
+        public ApiManagementTests(ApiManagementTestsFixture fixture)
         {
+            _fixture = fixture;
             _helper = new EnvironmentSetupHelper();
         }
-
 
         protected void SetupManagementClients()
         {
@@ -161,6 +162,34 @@ namespace Microsoft.Azure.Commands.ApiManagement.ServiceManagement.Test.Scenario
             RunPowerShellTest("AuthorizationServer-CrudTest");
         }
 
+        [Fact]
+        [Trait(Category.AcceptanceType, Category.CheckIn)]
+        public void LoggerCrudTest()
+        {
+            RunPowerShellTest("Logger-CrudTest");
+        }
+
+        [Fact]
+        [Trait(Category.AcceptanceType, Category.CheckIn)]
+        public void PropertiesCrudTest()
+        {
+            RunPowerShellTest("Properties-CrudTest");
+        }
+
+        [Fact]
+        [Trait(Category.AcceptanceType, Category.CheckIn)]
+        public void OpenIdConnectProviderCrudTest()
+        {
+            RunPowerShellTest("OpenIdConnectProvider-CrudTest");
+        }
+
+        [Fact]
+        [Trait(Category.AcceptanceType, Category.CheckIn)]
+        public void TenantGitConfigurationCrudTest()
+        {
+            RunPowerShellTest("TenantGitConfiguration-CrudTest");
+        }
+
         private void RunPowerShellTest(params string[] scripts)
         {
             for (int i = 0; i < scripts.Length; i++)
@@ -183,11 +212,6 @@ namespace Microsoft.Azure.Commands.ApiManagement.ServiceManagement.Test.Scenario
 
                 _helper.RunPowerShellTest(scripts);
             }
-        }
-
-        public void SetFixture(ApiManagementTestsFixture data)
-        {
-            this._fixture = data;
         }
     }
 }

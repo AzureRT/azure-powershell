@@ -23,22 +23,29 @@ using Microsoft.Azure.Commands.HDInsight.Models;
 using Microsoft.Azure.Commands.HDInsight.Models.Management;
 using Microsoft.Azure.Management.HDInsight.Models;
 using Microsoft.WindowsAzure.Commands.Common;
-using Microsoft.Azure.Common.Authentication.Models;
+using Microsoft.Azure.ServiceManagemenet.Common.Models;
 using Microsoft.Azure.Graph.RBAC;
 using Microsoft.Azure.Graph.RBAC.Models;
-using Microsoft.Azure.Common.Authentication;
+using Microsoft.Azure.ServiceManagemenet.Common;
 using System.Diagnostics;
+using Microsoft.Azure.Commands.Common.Authentication;
+using Microsoft.Azure.Commands.Common.Authentication.Models;
 
 namespace Microsoft.Azure.Commands.HDInsight
 {
     [Cmdlet(
         VerbsCommon.New,
-        Constants.CommandNames.AzureHDInsightCluster),
+        Constants.CommandNames.AzureHDInsightCluster,
+        DefaultParameterSetName = DefaultParameterSet),
     OutputType(
         typeof(AzureHDInsightCluster))]
     public class NewAzureHDInsightClusterCommand : HDInsightCmdletBase
     {
         private ClusterCreateParameters parameters;
+        private const string CertificateFilePathSet = "CertificateFilePath";
+        private const string CertificateFileContentsSet = "CertificateFileContents";
+        private const string DefaultParameterSet = "Default";
+
         #region Input Parameter Definitions
 
         [Parameter(
@@ -97,6 +104,87 @@ namespace Microsoft.Azure.Commands.HDInsight
             set { parameters.DefaultStorageAccountKey = value; }
         }
 
+        [Parameter(ValueFromPipeline = true,
+            HelpMessage = "The HDInsight cluster configuration to use when creating the new cluster.")]
+        public AzureHDInsightConfig Config
+        {
+            get
+            {
+                var result = new AzureHDInsightConfig
+                {
+                    ClusterType = parameters.ClusterType,
+                    ClusterTier = parameters.ClusterTier,
+                    DefaultStorageAccountName = parameters.DefaultStorageAccountName,
+                    DefaultStorageAccountKey = parameters.DefaultStorageAccountKey,
+                    WorkerNodeSize = parameters.WorkerNodeSize,
+                    HeadNodeSize = parameters.HeadNodeSize,
+                    ZookeeperNodeSize = parameters.ZookeeperNodeSize,
+                    HiveMetastore = HiveMetastore,
+                    OozieMetastore = OozieMetastore,
+                    ObjectId = ObjectId,
+                    AADTenantId = AadTenantId,
+                    CertificateFileContents = CertificateFileContents,
+                    CertificateFilePath = CertificateFilePath,
+                    CertificatePassword = CertificatePassword
+                };
+                foreach (
+                    var storageAccount in
+                        parameters.AdditionalStorageAccounts.Where(
+                            storageAccount => !result.AdditionalStorageAccounts.ContainsKey(storageAccount.Key)))
+                {
+                    result.AdditionalStorageAccounts.Add(storageAccount.Key, storageAccount.Value);
+                }
+                foreach (var val in parameters.Configurations.Where(val => !result.Configurations.ContainsKey(val.Key)))
+                {
+                    result.Configurations.Add(val.Key, DictionaryToHashtable(val.Value));
+                }
+                foreach (var action in parameters.ScriptActions.Where(action => !result.ScriptActions.ContainsKey(action.Key)))
+                {
+                    result.ScriptActions.Add(action.Key, action.Value.Select(a => new AzureHDInsightScriptAction(a)).ToList());
+                }
+                return result;
+            }
+            set
+            {
+                parameters.ClusterType = value.ClusterType;
+                parameters.ClusterTier = value.ClusterTier;
+                if (parameters.DefaultStorageAccountName == null)
+                {
+                    parameters.DefaultStorageAccountName = value.DefaultStorageAccountName;
+                }
+                if (parameters.DefaultStorageAccountKey == null)
+                {
+                    parameters.DefaultStorageAccountKey = value.DefaultStorageAccountKey;
+                }
+                parameters.WorkerNodeSize = value.WorkerNodeSize;
+                parameters.HeadNodeSize = value.HeadNodeSize;
+                parameters.ZookeeperNodeSize = value.ZookeeperNodeSize;
+                HiveMetastore = value.HiveMetastore;
+                OozieMetastore = value.OozieMetastore;
+                CertificateFileContents = value.CertificateFileContents;
+                CertificateFilePath = value.CertificateFilePath;
+                AadTenantId = value.AADTenantId;
+                ObjectId = value.ObjectId;
+                CertificatePassword = value.CertificatePassword;
+
+                foreach (
+                    var storageAccount in
+                        value.AdditionalStorageAccounts.Where(
+                            storageAccount => !parameters.AdditionalStorageAccounts.ContainsKey(storageAccount.Key)))
+                {
+                    parameters.AdditionalStorageAccounts.Add(storageAccount.Key, storageAccount.Value);
+                }
+                foreach (var val in value.Configurations.Where(val => !parameters.Configurations.ContainsKey(val.Key)))
+                {
+                    parameters.Configurations.Add(val.Key, HashtableToDictionary(val.Value));
+                }
+                foreach (var action in value.ScriptActions.Where(action => !parameters.ScriptActions.ContainsKey(action.Key)))
+                {
+                    parameters.ScriptActions.Add(action.Key, action.Value.Select(a => a.GetScriptActionFromPSModel()).ToList());
+                }
+            }
+        }
+
         [Parameter(HelpMessage = "Gets or sets the database to store the metadata for Oozie.")]
         public AzureHDInsightMetastore OozieMetastore { get; set; }
 
@@ -118,9 +206,9 @@ namespace Microsoft.Azure.Commands.HDInsight
             get { return parameters.DefaultStorageContainer; }
             set { parameters.DefaultStorageContainer = value; }
         }
-        
+
         [Parameter(HelpMessage = "Gets or sets the version of the HDInsight cluster.")]
-        public string Version 
+        public string Version
         {
             get { return parameters.Version; }
             set { parameters.Version = value; }
@@ -134,7 +222,7 @@ namespace Microsoft.Azure.Commands.HDInsight
         }
 
         [Parameter(HelpMessage = "Gets or sets the size of the Data Node.")]
-        public string WorkerNodeSize 
+        public string WorkerNodeSize
         {
             get { return parameters.WorkerNodeSize; }
             set { parameters.WorkerNodeSize = value; }
@@ -148,7 +236,7 @@ namespace Microsoft.Azure.Commands.HDInsight
         }
 
         [Parameter(HelpMessage = "Gets or sets the flavor for a cluster.")]
-        public HDInsightClusterType ClusterType
+        public string ClusterType
         {
             get { return parameters.ClusterType; }
             set { parameters.ClusterType = value; }
@@ -175,6 +263,13 @@ namespace Microsoft.Azure.Commands.HDInsight
             set { parameters.OSType = value; }
         }
 
+        [Parameter(HelpMessage = "Gets or sets the cluster tier for this HDInsight cluster.")]
+        public Tier ClusterTier
+        {
+            get { return parameters.ClusterTier; }
+            set { parameters.ClusterTier = value; }
+        }
+
         [Parameter(HelpMessage = "Gets or sets SSH credential.")]
         public PSCredential SshCredential { get; set; }
 
@@ -194,84 +289,19 @@ namespace Microsoft.Azure.Commands.HDInsight
         [Parameter(HelpMessage = "Gets or sets the Service Principal Object Id for accessing Azure Data Lake.")]
         public Guid ObjectId { get; set; }
 
-        [Parameter(HelpMessage = "Gets or sets the Service Principal Certificate for accessing Azure Data Lake.")]
+        [Parameter(HelpMessage = "Gets or sets the Service Principal Certificate file path for accessing Azure Data Lake.",
+            ParameterSetName = CertificateFilePathSet)]
         public string CertificateFilePath { get; set; }
+
+        [Parameter(HelpMessage = "Gets or sets the Service Principal Certificate file contents for accessing Azure Data Lake.",
+            ParameterSetName = CertificateFileContentsSet)]
+        public byte[] CertificateFileContents { get; set; }
 
         [Parameter(HelpMessage = "Gets or sets the Service Principal Certificate Password for accessing Azure Data Lake.")]
         public string CertificatePassword { get; set; }
 
-        [Parameter(HelpMessage = "Gets or sets the Service Principal AAD Tenant Id for accessing Azure Data Lake.", ParameterSetName = "ServicePrincipal")]
+        [Parameter(HelpMessage = "Gets or sets the Service Principal AAD Tenant Id for accessing Azure Data Lake.")]
         public Guid AadTenantId { get; set; }
-
-        [Parameter(ValueFromPipeline = true,
-            HelpMessage = "The HDInsight cluster configuration to use when creating the new cluster.")]
-        public AzureHDInsightConfig Config {
-            get
-            {
-                var result = new AzureHDInsightConfig
-                {
-                    ClusterType = parameters.ClusterType,
-                    DefaultStorageAccountName = parameters.DefaultStorageAccountName,
-                    DefaultStorageAccountKey = parameters.DefaultStorageAccountKey,
-                    WorkerNodeSize = parameters.WorkerNodeSize,
-                    HeadNodeSize = parameters.HeadNodeSize,
-                    ZookeeperNodeSize = parameters.ZookeeperNodeSize,
-                    HiveMetastore = HiveMetastore,
-                    OozieMetastore = OozieMetastore,
-                    ObjectId = ObjectId,
-                    AADTenantId = AadTenantId,
-                    CertificateFilePath = CertificateFilePath,
-                    CertificatePassword = CertificatePassword
-                };
-                foreach (
-                    var storageAccount in
-                        parameters.AdditionalStorageAccounts.Where(
-                            storageAccount => !result.AdditionalStorageAccounts.ContainsKey(storageAccount.Key)))
-                {
-                    result.AdditionalStorageAccounts.Add(storageAccount.Key, storageAccount.Value);
-                }
-                foreach (var val in parameters.Configurations.Where(val => !result.Configurations.ContainsKey(val.Key)))
-                {
-                    result.Configurations.Add(val.Key, DictionaryToHashtable(val.Value));
-                }
-                foreach (var action in parameters.ScriptActions.Where(action => !result.ScriptActions.ContainsKey(action.Key)))
-                {
-                    result.ScriptActions.Add(action.Key, action.Value.Select(a => new AzureHDInsightScriptAction(a)).ToList());
-                }
-                return result;
-            }
-            set
-            {
-                parameters.ClusterType = value.ClusterType;
-                parameters.DefaultStorageAccountName = value.DefaultStorageAccountName;
-                parameters.DefaultStorageAccountKey = value.DefaultStorageAccountKey;
-                parameters.WorkerNodeSize = value.WorkerNodeSize;
-                parameters.HeadNodeSize = value.HeadNodeSize;
-                parameters.ZookeeperNodeSize = value.ZookeeperNodeSize;
-                HiveMetastore = value.HiveMetastore;
-                OozieMetastore = value.HiveMetastore;
-                CertificateFilePath = value.CertificateFilePath;
-                AadTenantId = value.AADTenantId;
-                ObjectId = value.ObjectId;
-                CertificatePassword = value.CertificatePassword;
-
-                foreach (
-                    var storageAccount in
-                        value.AdditionalStorageAccounts.Where(
-                            storageAccount => !parameters.AdditionalStorageAccounts.ContainsKey(storageAccount.Key)))
-                {
-                    parameters.AdditionalStorageAccounts.Add(storageAccount.Key, storageAccount.Value);
-                }
-                foreach (var val in value.Configurations.Where(val => !parameters.Configurations.ContainsKey(val.Key)))
-                {
-                    parameters.Configurations.Add(val.Key, HashtableToDictionary(val.Value));
-                }
-                foreach (var action in value.ScriptActions.Where(action => !parameters.ScriptActions.ContainsKey(action.Key)))
-                {
-                    parameters.ScriptActions.Add(action.Key, action.Value.Select(a => a.GetScriptActionFromPSModel()).ToList());
-                }
-            } 
-        }
 
         #endregion
 
@@ -284,7 +314,7 @@ namespace Microsoft.Azure.Commands.HDInsight
             ScriptActions = new Dictionary<ClusterNodeType, List<AzureHDInsightScriptAction>>();
         }
 
-        protected override void ProcessRecord()
+        public override void ExecuteCmdlet()
         {
             parameters.UserName = HttpCredential.UserName;
             parameters.Password = HttpCredential.Password.ConvertToString();
@@ -332,16 +362,20 @@ namespace Microsoft.Azure.Commands.HDInsight
             if (HiveMetastore != null)
             {
                 var metastore = HiveMetastore;
-                parameters.OozieMetastore = new Metastore(metastore.SqlAzureServerName, metastore.DatabaseName, metastore.Credential.UserName, metastore.Credential.Password.ConvertToString());
+                parameters.HiveMetastore = new Metastore(metastore.SqlAzureServerName, metastore.DatabaseName, metastore.Credential.UserName, metastore.Credential.Password.ConvertToString());
             }
-            if (CertificateFilePath != null && CertificatePassword != null)
+            if(!string.IsNullOrEmpty(CertificatePassword))
             {
-                Microsoft.Azure.Management.HDInsight.Models.ServicePrincipal servicePrincipal = 
-                    new Microsoft.Azure.Management.HDInsight.Models.ServicePrincipal(
-                        GetApplicationId(), GetTenantId(AadTenantId), File.ReadAllBytes(CertificateFilePath), CertificatePassword);
+                if (!string.IsNullOrEmpty(CertificateFilePath)){
+                    CertificateFileContents = File.ReadAllBytes(CertificateFilePath);
+                }
+                var servicePrincipal = new Management.HDInsight.Models.ServicePrincipal(
+                    GetApplicationId(), GetTenantId(AadTenantId), CertificateFileContents,  
+                    CertificatePassword);
+
                 parameters.Principal = servicePrincipal;
             }
-
+            
             var cluster = HDInsightManagementClient.CreateNewCluster(ResourceGroupName, ClusterName, parameters);
 
             if (cluster != null)
@@ -379,7 +413,7 @@ namespace Microsoft.Azure.Commands.HDInsight
         {
             Guid tenantId = GetTenantId(AadTenantId);
 
-            SubscriptionCloudCredentials cred = AzureSession.AuthenticationFactory.GetSubscriptionCloudCredentials(DefaultProfile.Context);
+            SubscriptionCloudCredentials cred = AzureSession.AuthenticationFactory.GetSubscriptionCloudCredentials(DefaultProfile.Context, AzureEnvironment.Endpoint.Graph);
             GraphRbacManagementClient graphClient = new GraphRbacManagementClient(tenantId.ToString(), cred);
 
             ServicePrincipalGetResult res = graphClient.ServicePrincipal.Get(ObjectId.ToString());

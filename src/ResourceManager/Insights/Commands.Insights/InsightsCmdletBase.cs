@@ -14,7 +14,6 @@
 
 using System;
 using Microsoft.Azure.Commands.ResourceManager.Common;
-using Microsoft.WindowsAzure.Commands.Utilities.Common;
 
 namespace Microsoft.Azure.Commands.Insights
 {
@@ -24,14 +23,14 @@ namespace Microsoft.Azure.Commands.Insights
     public abstract class InsightsCmdletBase : AzureRMCmdlet
     {
         /// <summary>
-        /// Executes the Cmdlet. This is a callback function to simplify the execption handling
+        /// Executes the Cmdlet. This is a callback function to simplify the exception handling
         /// </summary>
         protected abstract void ProcessRecordInternal();
 
         /// <summary>
         /// Execute the cmdlet
         /// </summary>
-        protected override void ProcessRecord()
+        public override void ExecuteCmdlet()
         {
             try
             {

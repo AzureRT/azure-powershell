@@ -18,7 +18,7 @@ using Microsoft.Azure.Management.Storage.Models;
 
 namespace Microsoft.Azure.Commands.Management.Storage.StorageAccount
 {
-    [Cmdlet(VerbsCommon.Get, StorageAccountNameAvailabilityStr), OutputType(typeof(CheckNameAvailabilityResponse))]
+    [Cmdlet(VerbsCommon.Get, StorageAccountNameAvailabilityStr), OutputType(typeof(CheckNameAvailabilityResult))]
     public class GetAzureStorageAccountNameAvailability : StorageAccountBaseCmdlet
     {
         [Parameter(
@@ -30,9 +30,9 @@ namespace Microsoft.Azure.Commands.Management.Storage.StorageAccount
         [ValidateNotNullOrEmpty]
         public string Name { get; set; }
 
-        protected override void ProcessRecord()
+        public override void ExecuteCmdlet()
         {
-            base.ProcessRecord();
+            base.ExecuteCmdlet();
 
             WriteObject(this.StorageClient.StorageAccounts.CheckNameAvailability(Name));
         }

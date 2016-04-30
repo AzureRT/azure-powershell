@@ -71,7 +71,7 @@ namespace Microsoft.Azure.Commands.HDInsight
         #endregion
 
 
-        protected override void ProcessRecord()
+        public override void ExecuteCmdlet()
         {
             if (ResourceGroupName == null)
             {
@@ -95,11 +95,6 @@ namespace Microsoft.Azure.Commands.HDInsight
 
         public JobSubmissionResponse SubmitJob()
         {
-            if (string.IsNullOrEmpty(JobDefinition.StatusFolder))
-            {
-                JobDefinition.StatusFolder = Guid.NewGuid().ToString();
-            }
-
             JobSubmissionResponse jobCreationResults;
 
             var azureMapReduceJobDefinition = JobDefinition as AzureHDInsightMapReduceJobDefinition;

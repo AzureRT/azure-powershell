@@ -48,8 +48,9 @@ namespace Microsoft.Azure.Commands.Resources.ProviderFeatures
         /// <summary>
         /// Executes the cmdlet
         /// </summary>
-        protected override void ProcessRecord()
+        public override void ExecuteCmdlet()
         {
+            WriteWarning("The output object type of this cmdlet will be modified in a future release.");
             this.ConfirmAction(
                 force: this.Force,
                 actionMessage: string.Format(ProjectResources.RegisteringProviderFeature, this.FeatureName, this.ProviderNamespace),
