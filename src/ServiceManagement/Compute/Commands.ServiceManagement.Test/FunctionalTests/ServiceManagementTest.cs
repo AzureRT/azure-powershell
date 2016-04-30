@@ -218,6 +218,7 @@ namespace Microsoft.WindowsAzure.Commands.ServiceManagement.Test.FunctionalTests
                     @"https://graph.ppe.windows.net/"));
                 }
 
+                currentEnvName = PreviewEnvName;
                 vmPowershellCmdlets.ImportAzurePublishSettingsFile(CredentialHelper.PublishSettingsFile, PreviewEnvName);
             }
             else
