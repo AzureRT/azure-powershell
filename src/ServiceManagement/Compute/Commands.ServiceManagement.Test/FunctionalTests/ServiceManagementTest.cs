@@ -98,7 +98,7 @@ namespace Microsoft.WindowsAzure.Commands.ServiceManagement.Test.FunctionalTests
             {
                 vmPowershellCmdlets.RunPSScript(string.Format("Remove-AzureEnvironment -Name {0} -Force", TempEnvName));
             }
-            else if (currentEnvName.Equals(PreviewEnvName)
+            else if (currentEnvName.Equals(PreviewEnvName))
             {
                 vmPowershellCmdlets.RunPSScript(string.Format("Remove-AzureEnvironment -Name {0} -Force", PreviewEnvName));
             }
