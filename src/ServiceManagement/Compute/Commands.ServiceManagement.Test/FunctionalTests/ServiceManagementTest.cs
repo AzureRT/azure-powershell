@@ -98,6 +98,10 @@ namespace Microsoft.WindowsAzure.Commands.ServiceManagement.Test.FunctionalTests
             {
                 vmPowershellCmdlets.RunPSScript(string.Format("Remove-AzureEnvironment -Name {0} -Force", TempEnvName));
             }
+            else if (currentEnvName.Equals(PreviewEnvName)
+            {
+                vmPowershellCmdlets.RunPSScript(string.Format("Remove-AzureEnvironment -Name {0} -Force", PreviewEnvName));
+            }
         }
 
         public static void SetDefaultStorage()
@@ -214,6 +218,7 @@ namespace Microsoft.WindowsAzure.Commands.ServiceManagement.Test.FunctionalTests
             {
                 if (vmPowershellCmdlets.GetAzureEnvironment(PreviewEnvName).Count == 0)
                 {
+                    Console.WriteLine("Creating new environment... : {0}", PreviewEnvName);
                     vmPowershellCmdlets.RunPSScript(string.Format(
                     @"Add-AzureEnvironment -Name {0} `
                     -PublishSettingsFileUrl {1} `
@@ -233,6 +238,10 @@ namespace Microsoft.WindowsAzure.Commands.ServiceManagement.Test.FunctionalTests
                     @"https://api-dogfood.resources.windows-int.net/",
                     @"https://df.gallery.azure-test.net/",
                     @"https://graph.ppe.windows.net/"));
+                }
+                else
+                {
+                    Console.WriteLine("Using existing environment... : {0}", PreviewEnvName);
                 }
 
                 currentEnvName = PreviewEnvName;
