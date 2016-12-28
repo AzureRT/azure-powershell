@@ -949,7 +949,7 @@ Tests that when modifying properties of a server's blob auditing policy, these p
 function Test-BlobAuditingOnServer
 {
 	# Setup
-	$testSuffix = 881277
+	$testSuffix = 881267
 	Create-TestEnvironment $testSuffix "Japan East"
 	$params = Get-SqlAuditingTestEnvironmentParameters $testSuffix
 
@@ -1049,7 +1049,7 @@ Tests that after migrating between server audit types the returned policy is of 
 function Test-ServerAuditingTypeMigration
 {
 	# Setup
-	$testSuffix = 554412
+	$testSuffix = 584412
 	Create-TestEnvironment $testSuffix "Japan East"
 	$params = Get-SqlAuditingTestEnvironmentParameters $testSuffix
 	$dbName = $params.databaseName
@@ -1065,16 +1065,13 @@ function Test-ServerAuditingTypeMigration
 		Assert-True {$policy.EventType.Contains([Microsoft.Azure.Commands.Sql.Auditing.Model.AuditEventType]::PlainSQL_Success)}
 
 		# Test
-		$UpdateAuditAction = "UPDATE ON schema::[dbo] BY [public]"
-		Set-AzureRmSqlServerAuditingPolicy -AuditType Blob -ResourceGroupName $params.rgname -ServerName $params.serverName -StorageAccountName $params.storageAccount -AuditActionGroup FAILED_DATABASE_AUTHENTICATION_GROUP -RetentionInDays 4 -AuditAction $updateAuditAction
+		Set-AzureRmSqlServerAuditingPolicy -AuditType Blob -ResourceGroupName $params.rgname -ServerName $params.serverName -StorageAccountName $params.storageAccount -AuditActionGroup FAILED_DATABASE_AUTHENTICATION_GROUP -RetentionInDays 4
 		$policy = Get-AzureRmSqlServerAuditingPolicy -ResourceGroupName $params.rgname -ServerName $params.serverName
 	
 		# Assert
 		Assert-AreEqual $policy.AuditState "Enabled"
 		Assert-AreEqual $policy.AuditActionGroup.Length 1
 		Assert-True {$policy.AuditActionGroup.Contains([Microsoft.Azure.Commands.Sql.Auditing.Model.AuditActionGroups]::FAILED_DATABASE_AUTHENTICATION_GROUP)}
-		Assert-AreEqual $policy.AuditAction.Length 1
-		Assert-AreEqual $policy.AuditAction[0] $UpdateAuditAction
 		Assert-AreEqual $policy.RetentionInDays 4
 
 		# Test
@@ -1100,4 +1097,38 @@ function Test-ServerAuditingTypeMigration
 		# Cleanup
 		Remove-TestEnvironment $testSuffix
 	}
+}
+
+<#
+.SYNOPSIS
+Tests that Get Server and Database Auditing on UK passes
+#>
+function Test-GetServerAndDatabaseAuditingInUkRegion
+{
+	# Setup
+	$testSuffix = 684412
+	Create-TestEnvironment $testSuffix "UK South"
+	$params = Get-SqlAuditingTestEnvironmentParameters $testSuffix 
+
+	try
+	{                              
+		# Test
+		$policy = Get-AzureRmSqlServerAuditingPolicy -ResourceGroupName $params.rgname -ServerName $params.serverName
+                                
+		# Assert
+		Assert-AreEqual $policy.AuditState "Disabled"
+		Assert-AreEqual $policy.RetentionInDays 0
+                                
+		# Test
+		$policy = Get-AzureRmSqlDatabaseAuditingPolicy -ResourceGroupName $params.rgname -ServerName $params.serverName -DatabaseName $params.databaseName
+                                
+		# Assert
+		Assert-AreEqual $policy.AuditState "Disabled"
+		Assert-AreEqual $policy.RetentionInDays 0
+    }
+    finally
+    {
+		# Cleanup
+		Remove-TestEnvironment $testSuffix
+    }
 }
