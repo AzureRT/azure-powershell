@@ -19,5 +19,11 @@
 -->
 ## Current Release
 
+## Version 1.3.0
+
+## Version 1.2.0
+
+## Version 1.1.0
+
 ## Version 1.0.1
 * Fixes deserialization issue for one of the properties of PSIotHub

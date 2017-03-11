@@ -19,6 +19,13 @@
 -->
 ## Current Release
 
+## Version 2.7.0
+
+## Version 2.6.0
+
+## Version 2.5.0
+* Get-AzureRmOperationalInsightsSearchResults no longer requires the Top parameter to retrieve results
+
 ## Version 2.4.0
 
 ## Version 2.3.0
