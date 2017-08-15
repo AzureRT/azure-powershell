@@ -37,6 +37,26 @@ The **Update-AzureRmSiteRecoveryProtectionDirection** cmdlet updates the source 
 
 ## PARAMETERS
 
+### -Direction
+Specifies the direction of the commit.
+The acceptable values for this parameter are:
+
+- PrimaryToRecovery
+- RecoveryToPrimary
+
+```yaml
+Type: String
+Parameter Sets: (All)
+Aliases: 
+Accepted values: PrimaryToRecovery, RecoveryToPrimary
+
+Required: True
+Position: Named
+Default value: None
+Accept pipeline input: False
+Accept wildcard characters: False
+```
+
 ### -ProtectionEntity
 Specifies the protection entity object.
 
@@ -49,25 +69,6 @@ Required: True
 Position: Named
 Default value: None
 Accept pipeline input: True (ByValue)
-Accept wildcard characters: False
-```
-
-### -Direction
-Specifies the direction of the commit.
-The acceptable values for this parameter are:
-
-- PrimaryToRecovery
-- RecoveryToPrimary
-
-```yaml
-Type: String
-Parameter Sets: (All)
-Aliases: 
-
-Required: True
-Position: Named
-Default value: None
-Accept pipeline input: False
 Accept wildcard characters: False
 ```
 
@@ -104,7 +105,21 @@ This cmdlet supports the common parameters: -Debug, -ErrorAction, -ErrorVariable
 
 ## INPUTS
 
+### ASRProtectionEntity
+
+Parameter 'ProtectionEntity' accepts value of type 'ASRProtectionEntity' from the pipeline
+
+### ASRRecoveryPlan
+
+Parameter 'RecoveryPlan' accepts value of type 'ASRRecoveryPlan' from the pipeline
+
+### ASRReplicationProtectedItem
+
+Parameter 'ReplicationProtectedItem' accepts value of type 'ASRReplicationProtectedItem' from the pipeline
+
 ## OUTPUTS
+
+### Microsoft.Azure.Commands.SiteRecovery.ASRJob
 
 ## NOTES
 

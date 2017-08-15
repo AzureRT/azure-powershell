@@ -62,7 +62,9 @@ Accept wildcard characters: False
 ```
 
 ### -PassThru
-Indicates the resulting updated owner should be returned.```yaml
+Indicates the resulting updated owner should be returned.
+
+```yaml
 Type: SwitchParameter
 Parameter Sets: (All)
 Aliases: 
@@ -97,6 +99,7 @@ The acceptable values for this parameter are: User and Group.
 Type: Owner
 Parameter Sets: (All)
 Aliases: 
+Accepted values: User, Group
 
 Required: True
 Position: 2

@@ -44,18 +44,16 @@ The **Get-AzureRmSiteRecoveryStorageClassification** cmdlet gets storage classif
 
 ## PARAMETERS
 
-### -Name
-Specifies the name of the storage classification that this cmdlet gets.
-
+### -Fabric
 ```yaml
-Type: String
-Parameter Sets: ByName
+Type: ASRFabric
+Parameter Sets: ByFabricObject
 Aliases: 
 
 Required: True
 Position: Named
 Default value: None
-Accept pipeline input: False
+Accept pipeline input: True (ByValue)
 Accept wildcard characters: False
 ```
 
@@ -74,16 +72,18 @@ Accept pipeline input: False
 Accept wildcard characters: False
 ```
 
-### -Fabric
+### -Name
+Specifies the name of the storage classification that this cmdlet gets.
+
 ```yaml
-Type: ASRFabric
-Parameter Sets: ByFabricObject
+Type: String
+Parameter Sets: ByName
 Aliases: 
 
 Required: True
 Position: Named
 Default value: None
-Accept pipeline input: True (ByValue)
+Accept pipeline input: False
 Accept wildcard characters: False
 ```
 
@@ -105,7 +105,17 @@ This cmdlet supports the common parameters: -Debug, -ErrorAction, -ErrorVariable
 
 ## INPUTS
 
+### ASRFabric
+
+Parameter 'Fabric' accepts value of type 'ASRFabric' from the pipeline
+
+### ASRServer
+
+Parameter 'Server' accepts value of type 'ASRServer' from the pipeline
+
 ## OUTPUTS
+
+### System.Collections.Generic.IEnumerable`1[Microsoft.Azure.Commands.SiteRecovery.ASRStorageClassification]
 
 ## NOTES
 

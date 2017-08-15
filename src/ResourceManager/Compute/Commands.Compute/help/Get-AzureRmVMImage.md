@@ -31,7 +31,7 @@ The **Get-AzureRmVMImage** cmdlet gets all the versions of a VMImage.
 
 ### Example 1: Get VMImage objects
 ```
-PS C:\>Get-AzureRmVMImage -Location "Central US" -PublisherName "Canonical" -Offer "UbuntuServer" -Skus "15.04-DAILY"
+PS C:\> Get-AzureRmVMImage -Location "Central US" -PublisherName "Canonical" -Offer "UbuntuServer" -Skus "15.04-DAILY"
 ```
 
 This command gets all the versions of VMImage that match the specified values.
@@ -137,6 +137,10 @@ This cmdlet supports the common parameters: -Debug, -ErrorAction, -ErrorVariable
 ## INPUTS
 
 ## OUTPUTS
+
+### Microsoft.Azure.Commands.Compute.Models.PSVirtualMachineImage
+
+### Microsoft.Azure.Commands.Compute.Models.PSVirtualMachineImageDetail
 
 ## NOTES
 

@@ -38,21 +38,6 @@ This command creates an Autosacale email notification for the subscription admin
 
 ## PARAMETERS
 
-### -Webhooks
-Specifies a comma-separated list of Autoscale webhooks.
-
-```yaml
-Type: WebhookNotification[]
-Parameter Sets: (All)
-Aliases: 
-
-Required: False
-Position: 0
-Default value: None
-Accept pipeline input: True (ByPropertyName)
-Accept wildcard characters: False
-```
-
 ### -CustomEmails
 Specifies a comma-separated list of email addresses.
 
@@ -98,12 +83,29 @@ Accept pipeline input: True (ByPropertyName)
 Accept wildcard characters: False
 ```
 
+### -Webhooks
+Specifies a comma-separated list of Autoscale webhooks.
+
+```yaml
+Type: WebhookNotification[]
+Parameter Sets: (All)
+Aliases: 
+
+Required: False
+Position: 0
+Default value: None
+Accept pipeline input: True (ByPropertyName)
+Accept wildcard characters: False
+```
+
 ### CommonParameters
 This cmdlet supports the common parameters: -Debug, -ErrorAction, -ErrorVariable, -InformationAction, -InformationVariable, -OutVariable, -OutBuffer, -PipelineVariable, -Verbose, -WarningAction, and -WarningVariable. For more information, see about_CommonParameters (http://go.microsoft.com/fwlink/?LinkID=113216).
 
 ## INPUTS
 
 ## OUTPUTS
+
+### Microsoft.Azure.Management.Monitor.Management.Models.AutoscaleNotification
 
 ## NOTES
 

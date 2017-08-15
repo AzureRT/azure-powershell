@@ -13,11 +13,11 @@ Creates a new primary or secondary key for the authorization rule on the specifi
 
 ```
 New-AzureRmEventHubNamespaceKey [-ResourceGroup] <String> [-NamespaceName] <String>
- -AuthorizationRuleName <String> [-RegenerateKeys] <String> [-WhatIf] [-Confirm] [<CommonParameters>]
+ [-AuthorizationRuleName] <String> [-RegenerateKeys] <String> [-WhatIf] [-Confirm]
 ```
 
 ## DESCRIPTION
-The **New-AzureRmEventHubNamespaceKey** cmdlet regenerates the primary or secondary key for the for the given authorization rule on the specified Event Hubs namespace.
+The New-AzureRmEventHubNamespaceKey cmdlet regenerates the primary or secondary key for the for the given authorization rule on the specified Event Hubs namespace.
 
 ## EXAMPLES
 
@@ -26,22 +26,22 @@ The **New-AzureRmEventHubNamespaceKey** cmdlet regenerates the primary or second
 PS C:\> New-AzureRmEventHubNameSpaceKey -ResourceGroup MyResourceGroupName -NamespaceName MyNamespaceName  -AuthorizationRuleName MyAuthRuleName -RegenerateKeys PrimaryKey
 ```
 
-Regenerates the primary key for the authorization rule `MyAuthRuleName` in the Event Hubs namespace `MyNamespaceName`, with resource group `MyResourceGroupName`.
+Regenerates the primary key for the authorization rule \`MyAuthRuleName\` in the Event Hubs namespace \`MyNamespaceName\`, with resource group \`MyResourceGroupName\`.
 
 ## PARAMETERS
 
-### -Confirm
-Prompts you for confirmation before running the cmdlet.
+### -AuthorizationRuleName
+Authorization rule name.
 
 ```yaml
-Type: SwitchParameter
+Type: String
 Parameter Sets: (All)
-Aliases: cf
+Aliases: 
 
-Required: False
-Position: Named
-Default value: False
-Accept pipeline input: False
+Required: True
+Position: 2
+Default value: None
+Accept pipeline input: True (ByPropertyName)
 Accept wildcard characters: False
 ```
 
@@ -61,7 +61,7 @@ Accept wildcard characters: False
 ```
 
 ### -RegenerateKeys
-Key to regenerate: `PrimaryKey` or `SecondaryKey`.
+Key to regenerate: \`PrimaryKey\` or \`SecondaryKey\`.
 
 ```yaml
 Type: String
@@ -91,6 +91,21 @@ Accept pipeline input: True (ByPropertyName)
 Accept wildcard characters: False
 ```
 
+### -Confirm
+Prompts you for confirmation before running the cmdlet.
+
+```yaml
+Type: SwitchParameter
+Parameter Sets: (All)
+Aliases: cf
+
+Required: False
+Position: Named
+Default value: False
+Accept pipeline input: False
+Accept wildcard characters: False
+```
+
 ### -WhatIf
 Shows what would happen if the cmdlet runs.
 The cmdlet is not run.
@@ -106,24 +121,6 @@ Default value: False
 Accept pipeline input: False
 Accept wildcard characters: False
 ```
-
-### -AuthorizationRuleName
-Authorization rule name.
-
-```yaml
-Type: String
-Parameter Sets: (All)
-Aliases: 
-
-Required: True
-Position: Named
-Default value: None
-Accept pipeline input: True (ByPropertyName)
-Accept wildcard characters: False
-```
-
-### CommonParameters
-This cmdlet supports the common parameters: -Debug, -ErrorAction, -ErrorVariable, -InformationAction, -InformationVariable, -OutVariable, -OutBuffer, -PipelineVariable, -Verbose, -WarningAction, and -WarningVariable. For more information, see about_CommonParameters (http://go.microsoft.com/fwlink/?LinkID=113216).
 
 ## INPUTS
 

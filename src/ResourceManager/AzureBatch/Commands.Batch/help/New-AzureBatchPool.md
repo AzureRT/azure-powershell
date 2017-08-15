@@ -37,6 +37,18 @@ New-AzureBatchPool [-Id] <String> -VirtualMachineSize <String> [-DisplayName <St
  [<CommonParameters>]
 ```
 
+### CloudServiceAndAutoScale
+```
+New-AzureBatchPool [-Id] <String> -VirtualMachineSize <String> [-DisplayName <String>]
+ [-AutoScaleEvaluationInterval <TimeSpan>] [-AutoScaleFormula <String>] [-MaxTasksPerComputeNode <Int32>]
+ [-TaskSchedulingPolicy <PSTaskSchedulingPolicy>] [-Metadata <IDictionary>]
+ [-InterComputeNodeCommunicationEnabled] [-StartTask <PSStartTask>]
+ [-CertificateReferences <PSCertificateReference[]>]
+ [-ApplicationPackageReferences <PSApplicationPackageReference[]>]
+ [-CloudServiceConfiguration <PSCloudServiceConfiguration>] [-NetworkConfiguration <PSNetworkConfiguration>]
+ -BatchContext <BatchAccountContext> [-WhatIf] [-Confirm] [<CommonParameters>]
+```
+
 ### VirtualMachineAndAutoScale
 ```
 New-AzureBatchPool [-Id] <String> -VirtualMachineSize <String> [-DisplayName <String>]
@@ -48,18 +60,6 @@ New-AzureBatchPool [-Id] <String> -VirtualMachineSize <String> [-DisplayName <St
  [-VirtualMachineConfiguration <PSVirtualMachineConfiguration>]
  [-NetworkConfiguration <PSNetworkConfiguration>] -BatchContext <BatchAccountContext> [-WhatIf] [-Confirm]
  [<CommonParameters>]
-```
-
-### CloudServiceAndAutoScale
-```
-New-AzureBatchPool [-Id] <String> -VirtualMachineSize <String> [-DisplayName <String>]
- [-AutoScaleEvaluationInterval <TimeSpan>] [-AutoScaleFormula <String>] [-MaxTasksPerComputeNode <Int32>]
- [-TaskSchedulingPolicy <PSTaskSchedulingPolicy>] [-Metadata <IDictionary>]
- [-InterComputeNodeCommunicationEnabled] [-StartTask <PSStartTask>]
- [-CertificateReferences <PSCertificateReference[]>]
- [-ApplicationPackageReferences <PSApplicationPackageReference[]>]
- [-CloudServiceConfiguration <PSCloudServiceConfiguration>] [-NetworkConfiguration <PSNetworkConfiguration>]
- -BatchContext <BatchAccountContext> [-WhatIf] [-Confirm] [<CommonParameters>]
 ```
 
 ## DESCRIPTION
@@ -105,7 +105,7 @@ The default value is 15 minutes, and the minimum value is 5 minutes.
 
 ```yaml
 Type: TimeSpan
-Parameter Sets: VirtualMachineAndAutoScale, CloudServiceAndAutoScale
+Parameter Sets: CloudServiceAndAutoScale, VirtualMachineAndAutoScale
 Aliases: 
 
 Required: False
@@ -120,7 +120,7 @@ Specifies the formula for automatically scaling the pool.
 
 ```yaml
 Type: String
-Parameter Sets: VirtualMachineAndAutoScale, CloudServiceAndAutoScale
+Parameter Sets: CloudServiceAndAutoScale, VirtualMachineAndAutoScale
 Aliases: 
 
 Required: False
@@ -394,6 +394,10 @@ Accept wildcard characters: False
 This cmdlet supports the common parameters: -Debug, -ErrorAction, -ErrorVariable, -InformationAction, -InformationVariable, -OutVariable, -OutBuffer, -PipelineVariable, -Verbose, -WarningAction, and -WarningVariable. For more information, see about_CommonParameters (http://go.microsoft.com/fwlink/?LinkID=113216).
 
 ## INPUTS
+
+### BatchAccountContext
+
+Parameter 'BatchContext' accepts value of type 'BatchAccountContext' from the pipeline
 
 ## OUTPUTS
 

@@ -46,19 +46,6 @@ The **Get-AzureRmSiteRecoveryNetworkMapping** cmdlet gets information about Azur
 
 ## PARAMETERS
 
-### -PrimaryFabric
-```yaml
-Type: ASRFabric
-Parameter Sets: EnterpriseToEnterprise, EnterpriseToAzure
-Aliases: 
-
-Required: True
-Position: Named
-Default value: None
-Accept pipeline input: True (ByValue)
-Accept wildcard characters: False
-```
-
 ### -Azure
 Indicates that the command gets a list of network mappings for networks on the primary server mapped to Azure virtual networks.
 
@@ -74,16 +61,16 @@ Accept pipeline input: False
 Accept wildcard characters: False
 ```
 
-### -RecoveryFabric
+### -PrimaryFabric
 ```yaml
 Type: ASRFabric
-Parameter Sets: EnterpriseToEnterprise
+Parameter Sets: EnterpriseToEnterprise, EnterpriseToAzure
 Aliases: 
 
 Required: True
 Position: Named
 Default value: None
-Accept pipeline input: False
+Accept pipeline input: True (ByValue)
 Accept wildcard characters: False
 ```
 
@@ -97,6 +84,19 @@ Required: True
 Position: Named
 Default value: None
 Accept pipeline input: True (ByValue)
+Accept wildcard characters: False
+```
+
+### -RecoveryFabric
+```yaml
+Type: ASRFabric
+Parameter Sets: EnterpriseToEnterprise
+Aliases: 
+
+Required: True
+Position: Named
+Default value: None
+Accept pipeline input: False
 Accept wildcard characters: False
 ```
 
@@ -118,7 +118,17 @@ This cmdlet supports the common parameters: -Debug, -ErrorAction, -ErrorVariable
 
 ## INPUTS
 
+### ASRFabric
+
+Parameter 'PrimaryFabric' accepts value of type 'ASRFabric' from the pipeline
+
+### ASRServer
+
+Parameter 'PrimaryServer' accepts value of type 'ASRServer' from the pipeline
+
 ## OUTPUTS
+
+### System.Collections.Generic.IEnumerable`1[Microsoft.Azure.Commands.SiteRecovery.ASRNetworkMapping]
 
 ## NOTES
 

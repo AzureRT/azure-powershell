@@ -64,7 +64,9 @@ Accept wildcard characters: False
 ```
 
 ### -Force
-Forces the command to run without asking for user confirmation.```yaml
+Forces the command to run without asking for user confirmation.
+
+```yaml
 Type: SwitchParameter
 Parameter Sets: (All)
 Aliases: 
@@ -125,13 +127,15 @@ Accept wildcard characters: False
 ```
 
 ### -Recurse
-Indicates that this delete operation should go through and also delete and drop all resources dependent on this credential.```yaml
+Indicates that this delete operation should go through and also delete and drop all resources dependent on this credential.
+
+```yaml
 Type: SwitchParameter
 Parameter Sets: (All)
 Aliases: 
 
 Required: False
-Position: 4
+Position: Named
 Default value: None
 Accept pipeline input: True (ByPropertyName)
 Accept wildcard characters: False

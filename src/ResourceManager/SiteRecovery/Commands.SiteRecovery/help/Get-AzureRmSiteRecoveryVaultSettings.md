@@ -21,6 +21,11 @@ The **Get-AzureRmSiteRecoveryVaultSettings** cmdlet gets settings information re
 
 ## EXAMPLES
 
+### Example 1
+```
+
+```
+
 ## PARAMETERS
 
 ### CommonParameters
@@ -29,6 +34,8 @@ This cmdlet supports the common parameters: -Debug, -ErrorAction, -ErrorVariable
 ## INPUTS
 
 ## OUTPUTS
+
+### Microsoft.Azure.Commands.SiteRecovery.ASRVaultSettings
 
 ## NOTES
 

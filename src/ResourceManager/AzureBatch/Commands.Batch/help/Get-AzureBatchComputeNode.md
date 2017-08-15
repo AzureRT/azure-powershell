@@ -14,13 +14,13 @@ Gets Batch compute nodes from a pool.
 
 ### ODataFilter (Default)
 ```
-Get-AzureBatchComputeNode -PoolId <String> [-Filter <String>] [-MaxCount <Int32>] [-Select <String>]
+Get-AzureBatchComputeNode [-PoolId] <String> [-Filter <String>] [-MaxCount <Int32>] [-Select <String>]
  -BatchContext <BatchAccountContext> [<CommonParameters>]
 ```
 
 ### Id
 ```
-Get-AzureBatchComputeNode -PoolId <String> [[-Id] <String>] [-Select <String>]
+Get-AzureBatchComputeNode [-PoolId] <String> [[-Id] <String>] [-Select <String>]
  -BatchContext <BatchAccountContext> [<CommonParameters>]
 ```
 
@@ -235,7 +235,7 @@ Parameter Sets: ODataFilter, Id
 Aliases: 
 
 Required: True
-Position: Named
+Position: 0
 Default value: None
 Accept pipeline input: True (ByPropertyName)
 Accept wildcard characters: False
@@ -261,6 +261,14 @@ Accept wildcard characters: False
 This cmdlet supports the common parameters: -Debug, -ErrorAction, -ErrorVariable, -InformationAction, -InformationVariable, -OutVariable, -OutBuffer, -PipelineVariable, -Verbose, -WarningAction, and -WarningVariable. For more information, see about_CommonParameters (http://go.microsoft.com/fwlink/?LinkID=113216).
 
 ## INPUTS
+
+### BatchAccountContext
+
+Parameter 'BatchContext' accepts value of type 'BatchAccountContext' from the pipeline
+
+### PSCloudPool
+
+Parameter 'Pool' accepts value of type 'PSCloudPool' from the pipeline
 
 ## OUTPUTS
 

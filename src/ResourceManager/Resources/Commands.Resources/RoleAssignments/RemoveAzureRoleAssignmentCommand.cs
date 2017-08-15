@@ -13,8 +13,8 @@
 // ----------------------------------------------------------------------------------
 
 using Microsoft.Azure.Commands.Resources.Models;
-using Microsoft.Azure.Commands.Resources.Models.ActiveDirectory;
 using Microsoft.Azure.Commands.Resources.Models.Authorization;
+using Microsoft.Azure.Graph.RBAC.Version1_6.ActiveDirectory;
 using Microsoft.WindowsAzure.Commands.Common;
 using System;
 using System.Collections.Generic;
@@ -170,7 +170,7 @@ namespace Microsoft.Azure.Commands.Resources
                     ResourceGroupName = ResourceGroupName,
                     ResourceName = ResourceName,
                     ResourceType = ResourceType,
-                    Subscription = DefaultProfile.Context.Subscription.Id.ToString()
+                    Subscription = DefaultProfile.DefaultContext.Subscription.Id.ToString()
                 },
                 ExcludeAssignmentsForDeletedPrincipals = false,
                 // we should never expand principal groups in the Delete scenario
@@ -179,13 +179,15 @@ namespace Microsoft.Azure.Commands.Resources
                 IncludeClassicAdministrators = false
             };
 
+            AuthorizationClient.ValidateScope(options.Scope, true);
+
             ConfirmAction(
                 ProjectResources.RemovingRoleAssignment,
                 string.Empty,
                 () =>
                 {
                     roleAssignments = PoliciesClient.RemoveRoleAssignment(options,
-                        DefaultProfile.Context.Subscription.Id.ToString());
+                        DefaultProfile.DefaultContext.Subscription.Id.ToString());
                     if (PassThru)
                     {
                         WriteObject(roleAssignments, enumerateCollection: true);

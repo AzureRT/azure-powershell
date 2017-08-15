@@ -33,6 +33,21 @@ This command gets the default definition of the function named ScoreTweet by usi
 
 ## PARAMETERS
 
+### -File
+Specifies the path of a .json file that contains the JavaScript Object Notation (JSON) representation of the request body for the retrieve default function definition request.
+
+```yaml
+Type: String
+Parameter Sets: (All)
+Aliases: 
+
+Required: True
+Position: 3
+Default value: None
+Accept pipeline input: False
+Accept wildcard characters: False
+```
+
 ### -JobName
 Specifies the name of the Stream Analytics job to which functions belong.
 This cmdlet gets the default definition for a function in the job that this parameter specifies.
@@ -64,21 +79,6 @@ Accept pipeline input: True (ByPropertyName)
 Accept wildcard characters: False
 ```
 
-### -File
-Specifies the path of a .json file that contains the JavaScript Object Notation (JSON) representation of the request body for the retrieve default function definition request.
-
-```yaml
-Type: String
-Parameter Sets: (All)
-Aliases: 
-
-Required: True
-Position: 3
-Default value: None
-Accept pipeline input: False
-Accept wildcard characters: False
-```
-
 ### -ResourceGroupName
 Specifies the name of the resource group to which Stream Analytics functions belongs.
 This cmdlet gets a function definition for the group that this parameter specifies.
@@ -101,6 +101,8 @@ This cmdlet supports the common parameters: -Debug, -ErrorAction, -ErrorVariable
 ## INPUTS
 
 ## OUTPUTS
+
+### Microsoft.Azure.Commands.StreamAnalytics.Models.PSFunction
 
 ## NOTES
 

@@ -23,7 +23,7 @@ The **Get-AzureRmVMImageOffer** cmdlet gets the VMImage offer types.
 
 ### Example 1: Get offer types for a publisher
 ```
-PS C:\>Get-AzureRmVMImageOffer -Location "Central US" -PublisherName "Fabrikam"
+PS C:\> Get-AzureRmVMImageOffer -Location "Central US" -PublisherName "Fabrikam"
 ```
 
 This command gets the offer types for the specified publisher in the Central US region.
@@ -67,6 +67,8 @@ This cmdlet supports the common parameters: -Debug, -ErrorAction, -ErrorVariable
 ## INPUTS
 
 ## OUTPUTS
+
+### Microsoft.Azure.Commands.Compute.Models.PSVirtualMachineImageOffer
 
 ## NOTES
 

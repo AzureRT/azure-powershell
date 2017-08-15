@@ -195,6 +195,7 @@ Specifies an action the Batch service takes if all tasks in the job are in the c
 Type: OnAllTasksComplete
 Parameter Sets: (All)
 Aliases: 
+Accepted values: NoAction, TerminateJob
 
 Required: False
 Position: Named
@@ -210,6 +211,7 @@ Specifies an action the Batch service takes if any task in the job fails.
 Type: OnTaskFailure
 Parameter Sets: (All)
 Aliases: 
+Accepted values: NoAction, PerformExitOptionsJobAction
 
 Required: False
 Position: Named
@@ -269,6 +271,10 @@ Accept wildcard characters: False
 This cmdlet supports the common parameters: -Debug, -ErrorAction, -ErrorVariable, -InformationAction, -InformationVariable, -OutVariable, -OutBuffer, -PipelineVariable, -Verbose, -WarningAction, and -WarningVariable. For more information, see about_CommonParameters (http://go.microsoft.com/fwlink/?LinkID=113216).
 
 ## INPUTS
+
+### BatchAccountContext
+
+Parameter 'BatchContext' accepts value of type 'BatchAccountContext' from the pipeline
 
 ## OUTPUTS
 

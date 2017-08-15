@@ -30,21 +30,6 @@ This does not apply to recovery services vaults.
 
 ## PARAMETERS
 
-### -ASRVault
-Specifies an **ASRVault** object.
-
-```yaml
-Type: ASRVault
-Parameter Sets: AzureSiteRecoveryVault
-Aliases: 
-
-Required: True
-Position: Named
-Default value: None
-Accept pipeline input: True (ByValue)
-Accept wildcard characters: False
-```
-
 ### -ARSVault
 Specifies an **ARSVault** object.
 
@@ -60,12 +45,37 @@ Accept pipeline input: True (ByValue)
 Accept wildcard characters: False
 ```
 
+### -ASRVault
+Specifies an **ASRVault** object.
+
+```yaml
+Type: ASRVault
+Parameter Sets: AzureSiteRecoveryVault
+Aliases: 
+
+Required: True
+Position: Named
+Default value: None
+Accept pipeline input: True (ByValue)
+Accept wildcard characters: False
+```
+
 ### CommonParameters
 This cmdlet supports the common parameters: -Debug, -ErrorAction, -ErrorVariable, -InformationAction, -InformationVariable, -OutVariable, -OutBuffer, -PipelineVariable, -Verbose, -WarningAction, and -WarningVariable. For more information, see about_CommonParameters (http://go.microsoft.com/fwlink/?LinkID=113216).
 
 ## INPUTS
 
+### ARSVault
+
+Parameter 'ARSVault' accepts value of type 'ARSVault' from the pipeline
+
+### ASRVault
+
+Parameter 'ASRVault' accepts value of type 'ASRVault' from the pipeline
+
 ## OUTPUTS
+
+### Microsoft.Azure.Commands.SiteRecovery.ASRVaultSettings
 
 ## NOTES
 

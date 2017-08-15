@@ -16,9 +16,13 @@ using Microsoft.ApplicationInsights;
 using Microsoft.ApplicationInsights.DataContracts;
 using Microsoft.ApplicationInsights.Extensibility;
 using Microsoft.WindowsAzure.Commands.Utilities.Common;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Serialization;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
+using System.Net.NetworkInformation;
 using System.Security.Cryptography;
 using System.Text;
 
@@ -49,6 +53,27 @@ namespace Microsoft.WindowsAzure.Commands.Common
         /// Lock used to synchronize mutation of the tracing interceptors.
         /// </summary>
         private readonly object _lock = new object();
+
+        private static string _hashMacAddress = string.Empty;
+
+        private static string HashMacAddress
+        {
+            get
+            {
+                if (_hashMacAddress == string.Empty)
+                {
+                    var macAddress = NetworkInterface.GetAllNetworkInterfaces()?
+                        .FirstOrDefault(nic => nic != null && 
+                                               nic.OperationalStatus == OperationalStatus.Up &&
+                                               nic.GetPhysicalAddress() != null &&
+                                               !string.IsNullOrWhiteSpace(nic.GetPhysicalAddress().ToString()))?
+                        .GetPhysicalAddress()?.ToString();
+                    _hashMacAddress = string.IsNullOrWhiteSpace(macAddress) ? null : GenerateSha256HashString(macAddress)?.Replace("-", string.Empty)?.ToLowerInvariant();
+                }
+
+                return _hashMacAddress;
+            }
+        }
 
         public MetricHelper()
         {
@@ -104,6 +129,19 @@ namespace Microsoft.WindowsAzure.Commands.Common
             }
         }
 
+        public void LogCustomEvent<T>(string eventName, T payload, bool force = false)
+        {
+            if (!force && !IsMetricTermAccepted())
+            {
+                return;
+            }
+
+            foreach (TelemetryClient client in TelemetryClients)
+            {
+                client.TrackEvent(eventName, SerializeCustomEventPayload(payload));
+            }
+        }
+
         private void LogUsageEvent(AzurePSQoSEvent qos)
         {
             foreach (TelemetryClient client in TelemetryClients)
@@ -135,7 +173,8 @@ namespace Microsoft.WindowsAzure.Commands.Common
                 LoadTelemetryClientContext(qos, client.Context);
                 PopulatePropertiesFromQos(qos, eventProperties);
                 // qos.Exception contains exception message which may contain Users specific data. 
-                // We should not collect users specific data. 
+                // We should not collect users specific data.
+                eventProperties.Add("Message", "Message removed due to PII.");
                 eventProperties.Add("StackTrace", qos.Exception.StackTrace);
                 eventProperties.Add("ExceptionType", qos.Exception.GetType().ToString());
                 client.TrackException(null, eventProperties, eventMetrics);
@@ -161,6 +200,7 @@ namespace Microsoft.WindowsAzure.Commands.Common
             eventProperties.Add("UserId", qos.Uid);
             eventProperties.Add("x-ms-client-request-id", qos.ClientRequestId);
             eventProperties.Add("UserAgent", AzurePowerShell.UserAgentValue.ToString());
+            eventProperties.Add("HashMacAddress", HashMacAddress);
             if (qos.InputFromPipeline != null)
             {
                 eventProperties.Add("InputFromPipeline", qos.InputFromPipeline.Value.ToString());
@@ -207,9 +247,31 @@ namespace Microsoft.WindowsAzure.Commands.Common
         /// <returns></returns>
         public static string GenerateSha256HashString(string originInput)
         {
-            SHA256 sha256 = SHA256.Create();
-            var bytes = sha256.ComputeHash(Encoding.UTF8.GetBytes(originInput));
-            return BitConverter.ToString(bytes);
+            if (string.IsNullOrWhiteSpace(originInput))
+            {
+                return string.Empty;
+            }
+
+            using (var sha256 = new SHA256CryptoServiceProvider())
+            {
+                var bytes = sha256.ComputeHash(Encoding.UTF8.GetBytes(originInput));
+                return BitConverter.ToString(bytes);
+            }
+        }
+
+        /// <summary>
+        /// Generate a serialized payload for custom events.
+        /// </summary>
+        /// <param name="payload">The payload object for the custom event.</param>
+        /// <returns>The serialized payload.</returns>
+        public static Dictionary<string, string> SerializeCustomEventPayload<T>(T payload)
+        {
+            var payloadAsJson = JsonConvert.SerializeObject(payload, new JsonSerializerSettings
+            {
+                ContractResolver = new CamelCasePropertyNamesContractResolver()
+            });
+
+            return JsonConvert.DeserializeObject<Dictionary<string, string>>(payloadAsJson);
         }
     }
 }

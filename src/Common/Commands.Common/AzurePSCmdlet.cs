@@ -14,7 +14,7 @@
 
 using Microsoft.ApplicationInsights;
 using Microsoft.Azure.Commands.Common.Authentication;
-using Microsoft.Azure.Commands.Common.Authentication.Models;
+using Microsoft.Azure.Commands.Common.Authentication.Abstractions;
 using Microsoft.Azure.ServiceManagemenet.Common.Models;
 using Microsoft.WindowsAzure.Commands.Common;
 using Newtonsoft.Json;
@@ -98,13 +98,13 @@ namespace Microsoft.WindowsAzure.Commands.Utilities.Common
         /// <summary>
         /// Gets PowerShell module version used for user agent header.
         /// </summary>
-        protected string ModuleVersion { get { return Assembly.GetCallingAssembly().GetName().Version.ToString(); } }
+        protected string ModuleVersion { get { return AzurePowerShell.AssemblyVersion; } }
 
         /// <summary>
         /// The context for management cmdlet requests - includes account, tenant, subscription, 
         /// and credential information for targeting and authorizing management calls.
         /// </summary>
-        protected abstract AzureContext DefaultContext { get; }
+        protected abstract IAzureContext DefaultContext { get; }
 
         /// <summary>
         /// Initializes AzurePSCmdlet properties.
@@ -138,23 +138,32 @@ namespace Microsoft.WindowsAzure.Commands.Utilities.Common
                 if (string.Equals(value, bool.FalseString, StringComparison.OrdinalIgnoreCase))
                 {
                     // Disable data collection only if it is explicitly set to 'false'.
-                    _dataCollectionProfile = new AzurePSDataCollectionProfile(true);
+                    _dataCollectionProfile = new AzurePSDataCollectionProfile(false);
                 }
                 else if (string.Equals(value, bool.TrueString, StringComparison.OrdinalIgnoreCase))
                 {
                     // Enable data collection only if it is explicitly set to 'true'.
-                    _dataCollectionProfile = new AzurePSDataCollectionProfile(false);
+                    _dataCollectionProfile = new AzurePSDataCollectionProfile(true);
                 }
             }
 
             // If the environment value is null or empty, or not correctly set, try to read the setting from default file location.
             if (_dataCollectionProfile == null)
             {
+                // If it exists, remove the old AzureDataCollectionProfile.json file
+                string oldFileFullPath = Path.Combine(AzurePowerShell.ProfileDirectory,
+                    AzurePSDataCollectionProfile.OldDefaultFileName);
+                if (AzureSession.Instance.DataStore.FileExists(oldFileFullPath))
+                {
+                    AzureSession.Instance.DataStore.DeleteFile(oldFileFullPath);
+                }
+
+                // Try and read from the new AzurePSDataCollectionProfile.json file
                 string fileFullPath = Path.Combine(AzurePowerShell.ProfileDirectory,
                     AzurePSDataCollectionProfile.DefaultFileName);
-                if (File.Exists(fileFullPath))
+                if (AzureSession.Instance.DataStore.FileExists(fileFullPath))
                 {
-                    string contents = File.ReadAllText(fileFullPath);
+                    string contents = AzureSession.Instance.DataStore.ReadFileAsText(fileFullPath);
                     _dataCollectionProfile =
                         JsonConvert.DeserializeObject<AzurePSDataCollectionProfile>(contents);
                 }
@@ -224,7 +233,7 @@ namespace Microsoft.WindowsAzure.Commands.Utilities.Common
                 }
             }
 
-            if (!interactive && !_dataCollectionProfile.EnableAzureDataCollection.HasValue)
+            if (!interactive && _dataCollectionProfile != null && !_dataCollectionProfile.EnableAzureDataCollection.HasValue)
             {
                 _dataCollectionProfile.EnableAzureDataCollection = false;
             }
@@ -234,7 +243,7 @@ namespace Microsoft.WindowsAzure.Commands.Utilities.Common
         /// <summary>
         /// Prompt for the current data collection profile
         /// </summary>
-        protected abstract void PromptForDataCollectionProfileIfNotExists();
+        protected abstract void SetDataCollectionProfileIfNotExists();
 
         protected virtual void LogCmdletStartInvocationInfo()
         {
@@ -275,10 +284,10 @@ namespace Microsoft.WindowsAzure.Commands.Utilities.Common
 
         protected virtual void SetupHttpClientPipeline()
         {
-            AzureSession.ClientFactory.UserAgents.Add(new ProductInfoHeaderValue(ModuleName, string.Format("v{0}", ModuleVersion)));            
-            AzureSession.ClientFactory.UserAgents.Add(new ProductInfoHeaderValue(PSVERSION, string.Format("v{0}", PSVersion)));
+            AzureSession.Instance.ClientFactory.UserAgents.Add(new ProductInfoHeaderValue(ModuleName, string.Format("v{0}", ModuleVersion)));            
+            AzureSession.Instance.ClientFactory.UserAgents.Add(new ProductInfoHeaderValue(PSVERSION, string.Format("v{0}", PSVersion)));
 
-            AzureSession.ClientFactory.AddHandler(
+            AzureSession.Instance.ClientFactory.AddHandler(
                 new CmdletInfoHandler(this.CommandRuntime.ToString(),
                     this.ParameterSetName, this._clientRequestId));
 
@@ -286,15 +295,15 @@ namespace Microsoft.WindowsAzure.Commands.Utilities.Common
 
         protected virtual void TearDownHttpClientPipeline()
         {
-            AzureSession.ClientFactory.UserAgents.RemoveWhere(u => u.Product.Name == ModuleName);
-            AzureSession.ClientFactory.RemoveHandler(typeof(CmdletInfoHandler));
+            AzureSession.Instance.ClientFactory.UserAgents.RemoveWhere(u => u.Product.Name == ModuleName);
+            AzureSession.Instance.ClientFactory.RemoveHandler(typeof(CmdletInfoHandler));
         }
         /// <summary>
         /// Cmdlet begin process. Write to logs, setup Http Tracing and initialize profile
         /// </summary>
         protected override void BeginProcessing()
         {
-            PromptForDataCollectionProfileIfNotExists();
+            SetDataCollectionProfileIfNotExists();
             InitializeQosEvent();
             LogCmdletStartInvocationInfo();
             SetupDebuggingTraces();
@@ -497,7 +506,7 @@ namespace Microsoft.WindowsAzure.Commands.Utilities.Common
                 sb.AppendLine(content);
             }
 
-            AzureSession.DataStore.WriteFile(filePath, sb.ToString());
+            AzureSession.Instance.DataStore.WriteFile(filePath, sb.ToString());
         }
 
         /// <summary>

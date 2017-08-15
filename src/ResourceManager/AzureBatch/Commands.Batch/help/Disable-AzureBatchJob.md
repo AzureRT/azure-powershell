@@ -64,6 +64,7 @@ Valid values are:
 Type: DisableJobOption
 Parameter Sets: (All)
 Aliases: 
+Accepted values: Requeue, Terminate, Wait
 
 Required: True
 Position: 1
@@ -91,6 +92,14 @@ Accept wildcard characters: False
 This cmdlet supports the common parameters: -Debug, -ErrorAction, -ErrorVariable, -InformationAction, -InformationVariable, -OutVariable, -OutBuffer, -PipelineVariable, -Verbose, -WarningAction, and -WarningVariable. For more information, see about_CommonParameters (http://go.microsoft.com/fwlink/?LinkID=113216).
 
 ## INPUTS
+
+### BatchAccountContext
+
+Parameter 'BatchContext' accepts value of type 'BatchAccountContext' from the pipeline
+
+### String
+
+Parameter 'Id' accepts value of type 'String' from the pipeline
 
 ## OUTPUTS
 

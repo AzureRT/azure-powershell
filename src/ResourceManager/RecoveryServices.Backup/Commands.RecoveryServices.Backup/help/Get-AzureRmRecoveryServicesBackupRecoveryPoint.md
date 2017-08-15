@@ -14,22 +14,19 @@ Gets the recovery points for a backed up item.
 
 ### NoFilterParameterSet (Default)
 ```
-Get-AzureRmRecoveryServicesBackupRecoveryPoint [-Item] <ItemBase> [-InformationAction <ActionPreference>]
- [-InformationVariable <String>] [<CommonParameters>]
+Get-AzureRmRecoveryServicesBackupRecoveryPoint [-Item] <ItemBase> [<CommonParameters>]
 ```
 
 ### DateTimeFilter
 ```
 Get-AzureRmRecoveryServicesBackupRecoveryPoint [[-StartDate] <DateTime>] [[-EndDate] <DateTime>]
- [-Item] <ItemBase> [-InformationAction <ActionPreference>] [-InformationVariable <String>]
- [<CommonParameters>]
+ [-Item] <ItemBase> [<CommonParameters>]
 ```
 
 ### RecoveryPointId
 ```
 Get-AzureRmRecoveryServicesBackupRecoveryPoint [-Item] <ItemBase> [-RecoveryPointId] <String>
- [-KeyFileDownloadLocation <String>] [-InformationAction <ActionPreference>] [-InformationVariable <String>]
- [<CommonParameters>]
+ [[-KeyFileDownloadLocation] <String>] [<CommonParameters>]
 ```
 
 ## DESCRIPTION
@@ -61,21 +58,6 @@ The last command gets an array of recovery points for the item in $BackupItem, a
 
 ## PARAMETERS
 
-### -StartDate
-Specifies the start of the date range.
-
-```yaml
-Type: DateTime
-Parameter Sets: DateTimeFilter
-Aliases: 
-
-Required: False
-Position: 0
-Default value: None
-Accept pipeline input: False
-Accept wildcard characters: False
-```
-
 ### -EndDate
 Specifies the end of the date range.
 
@@ -85,60 +67,6 @@ Parameter Sets: DateTimeFilter
 Aliases: 
 
 Required: False
-Position: 1
-Default value: None
-Accept pipeline input: False
-Accept wildcard characters: False
-```
-
-### -InformationAction
-Specifies how this cmdlet responds to an information event.
-
-The acceptable values for this parameter are:
-
-- Continue
-- Ignore
-- Inquire
-- SilentlyContinue
-- Stop
-- Suspend
-
-```yaml
-Type: ActionPreference
-Parameter Sets: (All)
-Aliases: infa
-
-Required: False
-Position: Named
-Default value: None
-Accept pipeline input: False
-Accept wildcard characters: False
-```
-
-### -InformationVariable
-Specifies an information variable.
-
-```yaml
-Type: String
-Parameter Sets: (All)
-Aliases: iv
-
-Required: False
-Position: Named
-Default value: None
-Accept pipeline input: False
-Accept wildcard characters: False
-```
-
-### -RecoveryPointId
-Specifies the recovery point ID.
-
-```yaml
-Type: String
-Parameter Sets: RecoveryPointId
-Aliases: 
-
-Required: True
 Position: 1
 Default value: None
 Accept pipeline input: False
@@ -170,7 +98,37 @@ Parameter Sets: RecoveryPointId
 Aliases: 
 
 Required: False
-Position: Named
+Position: 2
+Default value: None
+Accept pipeline input: False
+Accept wildcard characters: False
+```
+
+### -RecoveryPointId
+Specifies the recovery point ID.
+
+```yaml
+Type: String
+Parameter Sets: RecoveryPointId
+Aliases: 
+
+Required: True
+Position: 1
+Default value: None
+Accept pipeline input: False
+Accept wildcard characters: False
+```
+
+### -StartDate
+Specifies the start of the date range.
+
+```yaml
+Type: DateTime
+Parameter Sets: DateTimeFilter
+Aliases: 
+
+Required: False
+Position: 0
 Default value: None
 Accept pipeline input: False
 Accept wildcard characters: False
@@ -181,7 +139,15 @@ This cmdlet supports the common parameters: -Debug, -ErrorAction, -ErrorVariable
 
 ## INPUTS
 
+### ItemBase
+
+Parameter 'Item' accepts value of type 'ItemBase' from the pipeline
+
 ## OUTPUTS
+
+### Microsoft.Azure.Commands.RecoveryServices.Backup.Cmdlets.Models.RecoveryPointBase
+
+### System.Collections.Generic.IList`1[Microsoft.Azure.Commands.RecoveryServices.Backup.Cmdlets.Models.RecoveryPointBase]
 
 ## NOTES
 

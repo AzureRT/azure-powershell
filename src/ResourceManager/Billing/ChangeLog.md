@@ -19,6 +19,27 @@
 -->
 ## Current Release
 
+## Version 0.13.4
+
+## Version 0.13.3
+
+## Version 0.13.2
+
+## Version 0.13.1
+
+## Version 0.13.0
+
+## Version 0.12.1
+
+## Version 0.12.0
+* New Cmdlet Get-AzureRmBillingPeriod
+    - cmdlet to retrieve azure billing periods of the subscription.
+* Update Cmdlet Get-AzureRmBillingInvoice
+	- new property BillingPeriodNames
+	- output in list view
+
+## Version 0.11.0
+
 ## Version 0.10.0
 * New Cmdlet Get-AzureRmBillingInvoice
     - cmdlet to retrieve azure billing invoices of the subscription.

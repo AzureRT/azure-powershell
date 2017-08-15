@@ -38,33 +38,18 @@ This command gets CPU percentage of the App Service Plan
 
 ## PARAMETERS
 
-### -Metrics
-Metrics
+### -AppServicePlan
+App Service Plan Object
 
 ```yaml
-Type: String[]
-Parameter Sets: (All)
+Type: ServerFarmWithRichSku
+Parameter Sets: S2
 Aliases: 
 
 Required: True
-Position: 2
+Position: 0
 Default value: None
-Accept pipeline input: False
-Accept wildcard characters: False
-```
-
-### -StartTime
-Start Time in UTC
-
-```yaml
-Type: DateTime
-Parameter Sets: (All)
-Aliases: 
-
-Required: True
-Position: 3
-Default value: None
-Accept pipeline input: False
+Accept pipeline input: True (ByValue)
 Accept wildcard characters: False
 ```
 
@@ -90,6 +75,7 @@ Granularity
 Type: String
 Parameter Sets: (All)
 Aliases: 
+Accepted values: PT1M, PT1H, P1D
 
 Required: True
 Position: 5
@@ -113,16 +99,16 @@ Accept pipeline input: False
 Accept wildcard characters: False
 ```
 
-### -ResourceGroupName
-Resource Group Name
+### -Metrics
+Metrics
 
 ```yaml
-Type: String
-Parameter Sets: S1
+Type: String[]
+Parameter Sets: (All)
 Aliases: 
 
 Required: True
-Position: 0
+Position: 2
 Default value: None
 Accept pipeline input: False
 Accept wildcard characters: False
@@ -143,18 +129,33 @@ Accept pipeline input: False
 Accept wildcard characters: False
 ```
 
-### -AppServicePlan
-App Service Plan Object
+### -ResourceGroupName
+Resource Group Name
 
 ```yaml
-Type: ServerFarmWithRichSku
-Parameter Sets: S2
+Type: String
+Parameter Sets: S1
 Aliases: 
 
 Required: True
 Position: 0
 Default value: None
-Accept pipeline input: True (ByValue)
+Accept pipeline input: False
+Accept wildcard characters: False
+```
+
+### -StartTime
+Start Time in UTC
+
+```yaml
+Type: DateTime
+Parameter Sets: (All)
+Aliases: 
+
+Required: True
+Position: 3
+Default value: None
+Accept pipeline input: False
 Accept wildcard characters: False
 ```
 
@@ -162,6 +163,10 @@ Accept wildcard characters: False
 This cmdlet supports the common parameters: -Debug, -ErrorAction, -ErrorVariable, -InformationAction, -InformationVariable, -OutVariable, -OutBuffer, -PipelineVariable, -Verbose, -WarningAction, and -WarningVariable. For more information, see about_CommonParameters (http://go.microsoft.com/fwlink/?LinkID=113216).
 
 ## INPUTS
+
+### ServerFarmWithRichSku
+
+Parameter 'AppServicePlan' accepts value of type 'ServerFarmWithRichSku' from the pipeline
 
 ## OUTPUTS
 

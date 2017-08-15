@@ -12,16 +12,16 @@ Creates a mapping between virtual networks.
 
 ## SYNTAX
 
-### EnterpriseToAzure
-```
-New-AzureRmSiteRecoveryNetworkMapping [-Name <String>] -PrimaryNetwork <ASRNetwork> -AzureVMNetworkId <String>
- [<CommonParameters>]
-```
-
 ### EnterpriseToEnterprise
 ```
 New-AzureRmSiteRecoveryNetworkMapping [-Name <String>] -PrimaryNetwork <ASRNetwork>
  -RecoveryNetwork <ASRNetwork> [<CommonParameters>]
+```
+
+### EnterpriseToAzure
+```
+New-AzureRmSiteRecoveryNetworkMapping [-Name <String>] -PrimaryNetwork <ASRNetwork> -AzureVMNetworkId <String>
+ [<CommonParameters>]
 ```
 
 ## DESCRIPTION
@@ -30,6 +30,21 @@ The **New-AzureRMSiteRecoveryNetworkMapping** cmdlet creates a mapping between t
 ## EXAMPLES
 
 ## PARAMETERS
+
+### -AzureVMNetworkId
+Specifies the Azure virtual network ID.
+
+```yaml
+Type: String
+Parameter Sets: EnterpriseToAzure
+Aliases: 
+
+Required: True
+Position: Named
+Default value: None
+Accept pipeline input: False
+Accept wildcard characters: False
+```
 
 ### -Name
 ```yaml
@@ -59,21 +74,6 @@ Accept pipeline input: True (ByValue)
 Accept wildcard characters: False
 ```
 
-### -AzureVMNetworkId
-Specifies the Azure virtual network ID.
-
-```yaml
-Type: String
-Parameter Sets: EnterpriseToAzure
-Aliases: 
-
-Required: True
-Position: Named
-Default value: None
-Accept pipeline input: False
-Accept wildcard characters: False
-```
-
 ### -RecoveryNetwork
 Specifies the recovery network object.
 
@@ -94,7 +94,13 @@ This cmdlet supports the common parameters: -Debug, -ErrorAction, -ErrorVariable
 
 ## INPUTS
 
+### ASRNetwork
+
+Parameter 'PrimaryNetwork' accepts value of type 'ASRNetwork' from the pipeline
+
 ## OUTPUTS
+
+### Microsoft.Azure.Commands.SiteRecovery.ASRJob
 
 ## NOTES
 

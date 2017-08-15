@@ -25,6 +25,61 @@ Update-AzureRmSiteRecoveryPolicy -Policy <ASRPolicy> [-ReplicationMethod <String
 
 ## PARAMETERS
 
+### -ApplicationConsistentSnapshotFrequencyInHours
+```yaml
+Type: Int32
+Parameter Sets: (All)
+Aliases: 
+
+Required: False
+Position: Named
+Default value: None
+Accept pipeline input: False
+Accept wildcard characters: False
+```
+
+### -Authentication
+```yaml
+Type: String
+Parameter Sets: (All)
+Aliases: 
+Accepted values: Certificate, Kerberos
+
+Required: False
+Position: Named
+Default value: None
+Accept pipeline input: False
+Accept wildcard characters: False
+```
+
+### -Compression
+```yaml
+Type: String
+Parameter Sets: (All)
+Aliases: 
+Accepted values: Enable, Disable
+
+Required: False
+Position: Named
+Default value: None
+Accept pipeline input: False
+Accept wildcard characters: False
+```
+
+### -Encryption
+```yaml
+Type: String
+Parameter Sets: (All)
+Aliases: 
+Accepted values: Enable, Disable
+
+Required: False
+Position: Named
+Default value: None
+Accept pipeline input: False
+Accept wildcard characters: False
+```
+
 ### -Policy
 ```yaml
 Type: ASRPolicy
@@ -38,7 +93,7 @@ Accept pipeline input: True (ByValue)
 Accept wildcard characters: False
 ```
 
-### -ReplicationFrequencyInSeconds
+### -RecoveryAzureStorageAccountId
 ```yaml
 Type: String
 Parameter Sets: (All)
@@ -64,9 +119,51 @@ Accept pipeline input: False
 Accept wildcard characters: False
 ```
 
-### -ApplicationConsistentSnapshotFrequencyInHours
+### -ReplicaDeletion
 ```yaml
-Type: Int32
+Type: String
+Parameter Sets: (All)
+Aliases: 
+Accepted values: Required, NotRequired
+
+Required: False
+Position: Named
+Default value: None
+Accept pipeline input: False
+Accept wildcard characters: False
+```
+
+### -ReplicationFrequencyInSeconds
+```yaml
+Type: String
+Parameter Sets: (All)
+Aliases: 
+Accepted values: 30, 300, 900
+
+Required: False
+Position: Named
+Default value: None
+Accept pipeline input: False
+Accept wildcard characters: False
+```
+
+### -ReplicationMethod
+```yaml
+Type: String
+Parameter Sets: (All)
+Aliases: 
+Accepted values: Online, Offline
+
+Required: False
+Position: Named
+Default value: None
+Accept pipeline input: False
+Accept wildcard characters: False
+```
+
+### -ReplicationPort
+```yaml
+Type: UInt16
 Parameter Sets: (All)
 Aliases: 
 
@@ -90,101 +187,14 @@ Accept pipeline input: False
 Accept wildcard characters: False
 ```
 
-### -RecoveryAzureStorageAccountId
-```yaml
-Type: String
-Parameter Sets: (All)
-Aliases: 
-
-Required: False
-Position: Named
-Default value: None
-Accept pipeline input: False
-Accept wildcard characters: False
-```
-
-### -Encryption
-```yaml
-Type: String
-Parameter Sets: (All)
-Aliases: 
-
-Required: False
-Position: Named
-Default value: None
-Accept pipeline input: False
-Accept wildcard characters: False
-```
-
-### -ReplicationMethod
-```yaml
-Type: String
-Parameter Sets: (All)
-Aliases: 
-
-Required: False
-Position: Named
-Default value: None
-Accept pipeline input: False
-Accept wildcard characters: False
-```
-
-### -Compression
-```yaml
-Type: String
-Parameter Sets: (All)
-Aliases: 
-
-Required: False
-Position: Named
-Default value: None
-Accept pipeline input: False
-Accept wildcard characters: False
-```
-
-### -ReplicationPort
-```yaml
-Type: UInt16
-Parameter Sets: (All)
-Aliases: 
-
-Required: False
-Position: Named
-Default value: None
-Accept pipeline input: False
-Accept wildcard characters: False
-```
-
-### -Authentication
-```yaml
-Type: String
-Parameter Sets: (All)
-Aliases: 
-
-Required: False
-Position: Named
-Default value: None
-Accept pipeline input: False
-Accept wildcard characters: False
-```
-
-### -ReplicaDeletion
-```yaml
-Type: String
-Parameter Sets: (All)
-Aliases: 
-
-Required: False
-Position: Named
-Default value: None
-Accept pipeline input: False
-Accept wildcard characters: False
-```
-
 ### CommonParameters
 This cmdlet supports the common parameters: -Debug, -ErrorAction, -ErrorVariable, -InformationAction, -InformationVariable, -OutVariable, -OutBuffer, -PipelineVariable, -Verbose, -WarningAction, and -WarningVariable. For more information, see about_CommonParameters (http://go.microsoft.com/fwlink/?LinkID=113216).
 
 ## INPUTS
+
+### ASRPolicy
+
+Parameter 'Policy' accepts value of type 'ASRPolicy' from the pipeline
 
 ## OUTPUTS
 
